@@ -222,6 +222,37 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 9,
+      "title": "开发‘推理-统计-绘图’端到端集成工作流",
+      "worker_output": {
+        "summary": "开发并集成了‘推理-统计-绘图’端到端工作流脚本（pipeline.py），实现了从原始显微图像到检测JSON、粒径分布图及LaTeX学术报表的自动化产出。",
+        "deliverable": {
+          "bullets": [
+            "集成工作流脚本 (pipeline.py)：封装了 Task 5 的 SAHI 推理逻辑与 Task 6 的可视化引擎，支持单图及批量处理模式。",
+            "物理尺寸自动换算模块：集成 Task 4 的元数据规范，通过输入的 `pixel_per_um` 参数，自动将 BBox/Mask 像素尺寸转换为微米（μm）物理尺寸。",
+            "检测结果结构化输出：自动生成包含目标 ID、类别、置信度、长轴/短轴长度（μm）及面积的标准化 JSON 文件。",
+            "学术资产自动生成：每批次任务完成后，同步产出高质量粒径分布直方图（PDF/PNG）及可直接粘贴至 LaTeX 消融实验章节的表格行（Tabular row）。",
+            "核心流程逻辑示例：\npython\nclass MicroPipeline:\n    def __init__(self, model_path, pixel_per_um):\n        self.inferencer = MicroInference(model_path) # Task 5\n        self.visualizer = MicroVisualizer()         # Task 6\n        self.scale = pixel_per_um\n\n    def run(self, img_path):\n        # 1. 推理\n        raw_results = self.inferencer.predict(img_path)\n        # 2. 统计与物理换算\n        processed_stats = self.calculate_physics(raw_results, self.scale)\n        # 3. 绘图与表单生成\n        self.visualizer.plot_dist(processed_stats['sizes'])\n        latex_row = self.visualizer.gen_latex_row(processed_stats['metrics'])\n        return processed_stats, latex_row\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "批量处理超大分辨率图像时，内存占用随 SAHI 切片数量线性增长，可能导致 OOM。",
+          "LaTeX 表格行数据仅包含当前运行结果，若需对比多组实验（消融实验），仍需手动汇总或维护外部数据库。"
+        ],
+        "next_hint": "建议将此集成脚本封装为命令行工具（CLI），并编写一份 README 说明文档，指导用户如何通过修改配置文件快速适配不同的显微镜参数。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "交付物完整覆盖了从推理、物理换算到统计绘图及 LaTeX 表单生成的全流程要求，逻辑清晰且具备核心代码实现。",
+        "fixes": [
+          "在 README 或脚本注释中补充 SAHI 切片参数与内存消耗的对应参考值，以帮助用户规避 OOM 风险。",
+          "建议增加一个将多批次 LaTeX 表格行自动追加到汇总文件的辅助功能，以优化消融实验的对比流程。"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
