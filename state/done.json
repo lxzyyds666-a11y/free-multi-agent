@@ -191,6 +191,37 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 8,
+      "title": "构建基于 Ultralytics 的模型微调配置与训练脚本",
+      "worker_output": {
+        "summary": "构建了基于 Ultralytics YOLOv8 的微调配置体系，包含标准化 data.yaml 配置文件、优化小目标学习的训练脚本及启动指令。",
+        "deliverable": {
+          "bullets": [
+            "配置文件 (data.yaml)：定义了数据集路径与 Task 4 规范下的 5 类标签（fragment, fiber, film, pellet, sphere），确保模型分类逻辑与元数据对齐。",
+            "训练脚本 (train.py)：集成 Ultralytics API，配置 imgsz=640 和 augment=True。针对微小目标，开启了 mosaic 增强、mixup 增强及高分辨率特征提取策略。",
+            "超参优化设置：在脚本中通过 `box=7.5`, `cls=0.5` 等损失权重调整，增强模型对细长纤维（fiber）及微小碎片的定位敏感度。",
+            "启动指令：提供了单卡及多卡分布式训练的标准 CLI 命令（`yolo task=detect mode=train ...`）。",
+            "环境依赖说明：明确了需要 `ultralytics>=8.0.0` 版本以支持最新的增强策略。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "微小目标在 640 像素下可能仍存在特征丢失，若显存允许，后续可能需尝试 imgsz=1280。",
+          "公开放置的数据集可能存在严重的类间不平衡（如碎片多、薄膜少），需在训练中引入类别权重调整。"
+        ],
+        "next_hint": "建议使用 Task 7 转换后的数据集运行此脚本，产出权重文件（best.pt），并将其加载至 Task 5 的 SAHI 推理脚本中进行性能实测。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "交付物完整涵盖了 data.yaml、train.py 脚本及针对微小目标的专项超参配置（imgsz, augment, box/cls loss），符合任务需求。",
+        "fixes": [
+          "建议在脚本中显式增加对 rect=True 参数的注释说明，以应对细长目标（如 fiber）的训练优化",
+          "确保 data.yaml 中的路径使用相对路径或支持环境变量，以增强训练脚本的迁移性"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

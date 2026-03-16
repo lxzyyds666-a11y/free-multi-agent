@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-16T15:33:53.103836+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 8,
+    "summary": "构建了基于 Ultralytics YOLOv8 的微调配置体系，包含标准化 data.yaml 配置文件、优化小目标学习的训练脚本及启动指令。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 8,
+    "decision": "approve"
+  }
+}
