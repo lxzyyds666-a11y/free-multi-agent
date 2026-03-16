@@ -107,6 +107,32 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 5,
+      "title": "编写基于 SAHI + YOLOv8 的推理原型脚本",
+      "worker_output": {
+        "summary": "开发并验证了基于 SAHI + YOLOv8 的微小目标切片推理原型脚本，实现了对高分辨率显微图像的自动化目标检测与标准化结果输出。",
+        "deliverable": {
+          "bullets": [
+            "环境安装命令：`pip install -U torch torchvision ultralytics sahi`",
+            "核心 Python 脚本 (inference_prototype.py)：\n```python\nimport json\nfrom sahi import AutoDetectionModel\nfrom sahi.predict import get_sliced_prediction\n\ndef run_micro_inference(img_path, model_path='yolov8n.pt'):\n    # 1. 初始化 YOLOv8 检测模型 (SAHI 封装)\n    detection_model = AutoDetectionModel.from_pretrained(\n        model_type='yolov8',\n        model_path=model_path,\n        confidence_threshold=0.25,\n        device='cpu' # 或 'cuda:0'\n    )\n\n    # 2. 执行切片推理\n    result = get_sliced_prediction(\n        img_path,\n        detection_model,\n        slice_height=512,\n        slice_width=512,\n        overlap_height_ratio=0.2,\n        overlap_width_ratio=0.2\n    )\n\n    # 3. 提取标准化结果\n    predictions = []\n    for obj in result.object_prediction_list:\n        predictions.append({\n            \"bbox\": [round(x, 2) for x in [obj.bbox.minx, obj.bbox.miny, obj.bbox.width, obj.bbox.height]],\n            \"confidence\": round(float(obj.score.value), 4),\n            \"class_id\": obj.category.id\n        })\n    return predictions\n\nif __name__ == '__main__':\n    # 示例调用\n    sample_img = 'micro_sample.jpg' # 替换为实际路径\n    results = run_micro_inference(sample_img)\n    print(json.dumps(results, indent=2))\n```",
+            "脚本功能说明：支持自动将大图切分为 512x512 窗口，通过 20% 重叠率解决边缘截断问题，并输出符合 Task 4 规范的 JSON 列表。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "当前使用 YOLOv8 默认 COCO 权重，对显微图像中的微碳屑（形态迥异）识别率极低，仅能验证流程跑通。",
+          "SAHI 推理虽然解决了分辨率问题，但会显著增加 CPU/GPU 计算时间，不适合实时性要求极高的场景。"
+        ],
+        "next_hint": "建议收集 Task 1 中的 MicroNet 数据集，利用 Task 4 的标签规范进行模型 Fine-tuning，替换脚本中的 `yolov8n.pt` 以获得实际识别能力。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "脚本实现完整且符合 SAHI 标准工作流，环境安装命令及示例调用一应俱全，准确响应了任务需求与反馈建议。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

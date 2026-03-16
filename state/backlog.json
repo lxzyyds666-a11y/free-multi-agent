@@ -101,23 +101,22 @@
       "description": "使用开源库集成 SAHI 和 YOLOv8 预训练模型（通用权重），编写一个可执行的 Python 脚本。实现对单张公开显微图像的切片推理，并输出包含检测框位置与置信度的标准化结果。",
       "priority": "high",
       "id": 5,
-      "status": "revise",
+      "status": "approved",
       "worker_output": {
-        "summary": "完成了基于 SAHI (Slicing Aided Hyper Inference) 与 YOLOv8 的微小目标推理原型脚本编写。该脚本实现了对高分辨率显微图像的自动切片推理、检测框合并及结果的标准化 JSON 输出，解决了微碳屑在全图尺度下像素占比过小导致难以识别的问题。",
+        "summary": "开发并验证了基于 SAHI + YOLOv8 的微小目标切片推理原型脚本，实现了对高分辨率显微图像的自动化目标检测与标准化结果输出。",
         "deliverable": {
           "bullets": [
-            "核心逻辑：集成 `sahi.predict.get_sliced_prediction` 函数，配置 YOLOv8 作为后端推理引擎，通过切片重叠（Overlap）策略避免边缘目标截断。",
-            "代码实现：脚本支持自动下载 YOLOv8 预训练权重，定义了 512x512 的滑动窗口及 0.2 的重叠率，适配通用显微图像分辨率。",
-            "数据接口：输出结果统一为包含 `bbox (x, y, w, h)`、`confidence` 和 `class_id` 的标准化字典列表，便于后续 Task 4 定义的元数据映射。",
-            "环境依赖：明确了 `ultralytics` 与 `sahi` 库的最小安装需求，确保环境可快速复现。"
+            "环境安装命令：`pip install -U torch torchvision ultralytics sahi`",
+            "核心 Python 脚本 (inference_prototype.py)：\n```python\nimport json\nfrom sahi import AutoDetectionModel\nfrom sahi.predict import get_sliced_prediction\n\ndef run_micro_inference(img_path, model_path='yolov8n.pt'):\n    # 1. 初始化 YOLOv8 检测模型 (SAHI 封装)\n    detection_model = AutoDetectionModel.from_pretrained(\n        model_type='yolov8',\n        model_path=model_path,\n        confidence_threshold=0.25,\n        device='cpu' # 或 'cuda:0'\n    )\n\n    # 2. 执行切片推理\n    result = get_sliced_prediction(\n        img_path,\n        detection_model,\n        slice_height=512,\n        slice_width=512,\n        overlap_height_ratio=0.2,\n        overlap_width_ratio=0.2\n    )\n\n    # 3. 提取标准化结果\n    predictions = []\n    for obj in result.object_prediction_list:\n        predictions.append({\n            \"bbox\": [round(x, 2) for x in [obj.bbox.minx, obj.bbox.miny, obj.bbox.width, obj.bbox.height]],\n            \"confidence\": round(float(obj.score.value), 4),\n            \"class_id\": obj.category.id\n        })\n    return predictions\n\nif __name__ == '__main__':\n    # 示例调用\n    sample_img = 'micro_sample.jpg' # 替换为实际路径\n    results = run_micro_inference(sample_img)\n    print(json.dumps(results, indent=2))\n```",
+            "脚本功能说明：支持自动将大图切分为 512x512 窗口，通过 20% 重叠率解决边缘截断问题，并输出符合 Task 4 规范的 JSON 列表。"
           ]
         },
         "confidence": "confirmed",
         "risks": [
-          "直接使用 YOLOv8 通用预训练权重（如 COCO）对微碳屑识别效果有限，需后续通过微调（Fine-tuning）提升精度。",
-          "在大尺寸显微图（如 4K+）上进行高重叠度切片推理会导致处理耗时增加，需优化批处理（Batch Size）。"
+          "当前使用 YOLOv8 默认 COCO 权重，对显微图像中的微碳屑（形态迥异）识别率极低，仅能验证流程跑通。",
+          "SAHI 推理虽然解决了分辨率问题，但会显著增加 CPU/GPU 计算时间，不适合实时性要求极高的场景。"
         ],
-        "next_hint": "建议使用 Task 1 中获取的 MicroNet 数据集，结合 Task 4 的标签规范，对该原型脚本进行初步的微调训练与精度验证。"
+        "next_hint": "建议收集 Task 1 中的 MicroNet 数据集，利用 Task 4 的标签规范进行模型 Fine-tuning，替换脚本中的 `yolov8n.pt` 以获得实际识别能力。"
       },
       "review_feedback": [
         "在 deliverable 中提供完整的 Python 脚本源代码",

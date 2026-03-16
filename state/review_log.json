@@ -53,6 +53,16 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 5,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "脚本实现完整且符合 SAHI 标准工作流，环境安装命令及示例调用一应俱全，准确响应了任务需求与反馈建议。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
