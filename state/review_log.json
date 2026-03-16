@@ -1,3 +1,14 @@
 {
-  "items": []
+  "items": [
+    {
+      "task_id": 1,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 成功检索并详细列出了 4 个符合要求的微塑料数据集，涵盖了 Kaggle、Hugging Face 及学术存储库（Zenodo/GitHub），并准确标注了授权协议。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
+    }
+  ]
 }

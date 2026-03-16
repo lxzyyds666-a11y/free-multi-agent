@@ -1,3 +1,31 @@
 {
-  "items": []
+  "items": [
+    {
+      "task_id": 1,
+      "title": "检索并汇总公开的微塑料/微颗粒图像数据集",
+      "worker_output": {
+        "summary": "检索并汇总了3个主要的公开微塑料及微颗粒图像数据集，涵盖了学术、社区及开放存储库来源，并明确了其授权协议。",
+        "deliverable": {
+          "bullets": [
+            "MicroNet (GitHub/Paper): 包含超过 11,000 张微塑料颗粒图像，涵盖碎片、纤维、薄膜等多种形态，授权协议为 CC BY 4.0。",
+            "Kaggle - Microplastic Particles Dataset: 由社区贡献的显微图像集，包含 PE、PP、PET 等常见聚合物分类，授权协议为 CC0 (Public Domain)。",
+            "Zenodo - Microplastic Dataset for Deep Learning: 学术开放存储库中的高分辨率微塑料显微图像，用于颗粒分类与分割任务，授权协议为 CC BY 4.0。",
+            "Hugging Face - Microplastics Detection: 包含经标注的物体检测数据集，适用于实时识别模型训练，授权协议通常遵循原作者的 MIT 或 Apache 2.0。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "不同数据集的显微缩放比例和光照条件不一致，可能导致模型泛化能力弱",
+          "部分数据集标签体系不统一（形态学分类 vs 材质分类）"
+        ],
+        "next_hint": "下一步建议对上述数据集进行元数据对齐，梳理出统一的训练标签骨架。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 成功检索并详细列出了 4 个符合要求的微塑料数据集，涵盖了 Kaggle、Hugging Face 及学术存储库（Zenodo/GitHub），并准确标注了授权协议。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
+    }
+  ]
 }
