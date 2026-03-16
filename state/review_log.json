@@ -39,6 +39,20 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 5,
+      "decision": "revise",
+      "review": {
+        "decision": "revise",
+        "reason": "任务明确要求“编写一个可执行的 Python 脚本”，但目前输出仅为逻辑描述和摘要，缺失核心代码实现。",
+        "fixes": [
+          "在 deliverable 中提供完整的 Python 脚本源代码",
+          "提供该脚本的运行环境安装命令（requirements.txt 内容或 pip install 语句）",
+          "增加一个简单的脚本调用示例，演示如何输入图像并获取 JSON 输出"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

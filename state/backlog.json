@@ -101,7 +101,29 @@
       "description": "使用开源库集成 SAHI 和 YOLOv8 预训练模型（通用权重），编写一个可执行的 Python 脚本。实现对单张公开显微图像的切片推理，并输出包含检测框位置与置信度的标准化结果。",
       "priority": "high",
       "id": 5,
-      "status": "todo"
+      "status": "revise",
+      "worker_output": {
+        "summary": "完成了基于 SAHI (Slicing Aided Hyper Inference) 与 YOLOv8 的微小目标推理原型脚本编写。该脚本实现了对高分辨率显微图像的自动切片推理、检测框合并及结果的标准化 JSON 输出，解决了微碳屑在全图尺度下像素占比过小导致难以识别的问题。",
+        "deliverable": {
+          "bullets": [
+            "核心逻辑：集成 `sahi.predict.get_sliced_prediction` 函数，配置 YOLOv8 作为后端推理引擎，通过切片重叠（Overlap）策略避免边缘目标截断。",
+            "代码实现：脚本支持自动下载 YOLOv8 预训练权重，定义了 512x512 的滑动窗口及 0.2 的重叠率，适配通用显微图像分辨率。",
+            "数据接口：输出结果统一为包含 `bbox (x, y, w, h)`、`confidence` 和 `class_id` 的标准化字典列表，便于后续 Task 4 定义的元数据映射。",
+            "环境依赖：明确了 `ultralytics` 与 `sahi` 库的最小安装需求，确保环境可快速复现。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "直接使用 YOLOv8 通用预训练权重（如 COCO）对微碳屑识别效果有限，需后续通过微调（Fine-tuning）提升精度。",
+          "在大尺寸显微图（如 4K+）上进行高重叠度切片推理会导致处理耗时增加，需优化批处理（Batch Size）。"
+        ],
+        "next_hint": "建议使用 Task 1 中获取的 MicroNet 数据集，结合 Task 4 的标签规范，对该原型脚本进行初步的微调训练与精度验证。"
+      },
+      "review_feedback": [
+        "在 deliverable 中提供完整的 Python 脚本源代码",
+        "提供该脚本的运行环境安装命令（requirements.txt 内容或 pip install 语句）",
+        "增加一个简单的脚本调用示例，演示如何输入图像并获取 JSON 输出"
+      ]
     },
     {
       "title": "实现学术图表生成模块（LaTeX 模板与分布图）",
