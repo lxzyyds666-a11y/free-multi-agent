@@ -80,6 +80,33 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 4,
+      "title": "制定统一的微颗粒元数据与标签映射规范",
+      "worker_output": {
+        "summary": "制定了多源微塑料数据集的统一标签映射表，并定义了包含物理比例尺信息的标准化元数据存储 JSON 格式，旨在消除语义歧义并支撑物理尺寸计算。",
+        "deliverable": {
+          "bullets": [
+            "标签归一化映射：将 MicroNet、Kaggle、Zenodo 等来源的标签统一为 [fragment, fiber, film, pellet, sphere] 五大核心形态类别。",
+            "物理比例尺规范：定义 'pixel_per_um' 为标准转换因子，规定在元数据中强制记录原始 scale_bar 长度与像素长度的映射关系。",
+            "JSON Schema 定义：设计了集成图像信息、物理参数、标注坐标的统一数据格式，支持检测框（BBox）与多边形掩码（Mask）。",
+            "映射示例：MicroNet 'Fragment' -> 'fragment'；Kaggle 'Fragments' -> 'fragment'；Zenodo 'Line' -> 'fiber'；通用 'Beads' -> 'pellet'。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "部分公开数据集（如部分 Kaggle 上传项）未附带 Scale Bar 图像，导致无法获取绝对物理尺寸，仅能进行相对尺寸分析。",
+          "不同研究者对 'fragment' 与 'pellet' 的形态界限定义存在主观重叠。"
+        ],
+        "next_hint": "建议编写数据清洗转换脚本，将 Task 1 中的 MicroNet 数据集按此规范转换为标准的 JSON 训练集格式。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "输出结果完整覆盖了标签归一化、物理比例尺定义及JSON Schema设计，逻辑具体且具备实操性。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

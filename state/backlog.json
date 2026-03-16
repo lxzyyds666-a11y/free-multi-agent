@@ -71,7 +71,45 @@
         ],
         "next_hint": "建议根据此骨架编写一个自动化脚本示例，实现从标注数据到学术图表生成的端到端代码闭环（Mock阶段）。"
       }
+    },
+    {
+      "title": "制定统一的微颗粒元数据与标签映射规范",
+      "description": "针对 Task 1 汇总的 MicroNet、Kaggle 等多源数据集，设计一套统一的标签归一化映射表（如将各库中的‘碎片’、‘纤维’等类别对齐），并定义物理比例尺（Pixel-to-μm）的标准化存储 JSON 格式。",
+      "priority": "high",
+      "id": 4,
+      "status": "approved",
+      "worker_output": {
+        "summary": "制定了多源微塑料数据集的统一标签映射表，并定义了包含物理比例尺信息的标准化元数据存储 JSON 格式，旨在消除语义歧义并支撑物理尺寸计算。",
+        "deliverable": {
+          "bullets": [
+            "标签归一化映射：将 MicroNet、Kaggle、Zenodo 等来源的标签统一为 [fragment, fiber, film, pellet, sphere] 五大核心形态类别。",
+            "物理比例尺规范：定义 'pixel_per_um' 为标准转换因子，规定在元数据中强制记录原始 scale_bar 长度与像素长度的映射关系。",
+            "JSON Schema 定义：设计了集成图像信息、物理参数、标注坐标的统一数据格式，支持检测框（BBox）与多边形掩码（Mask）。",
+            "映射示例：MicroNet 'Fragment' -> 'fragment'；Kaggle 'Fragments' -> 'fragment'；Zenodo 'Line' -> 'fiber'；通用 'Beads' -> 'pellet'。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "部分公开数据集（如部分 Kaggle 上传项）未附带 Scale Bar 图像，导致无法获取绝对物理尺寸，仅能进行相对尺寸分析。",
+          "不同研究者对 'fragment' 与 'pellet' 的形态界限定义存在主观重叠。"
+        ],
+        "next_hint": "建议编写数据清洗转换脚本，将 Task 1 中的 MicroNet 数据集按此规范转换为标准的 JSON 训练集格式。"
+      }
+    },
+    {
+      "title": "编写基于 SAHI + YOLOv8 的推理原型脚本",
+      "description": "使用开源库集成 SAHI 和 YOLOv8 预训练模型（通用权重），编写一个可执行的 Python 脚本。实现对单张公开显微图像的切片推理，并输出包含检测框位置与置信度的标准化结果。",
+      "priority": "high",
+      "id": 5,
+      "status": "todo"
+    },
+    {
+      "title": "实现学术图表生成模块（LaTeX 模板与分布图）",
+      "description": "基于 Task 3 的骨架，编写脚本利用 Mock 数据生成符合学术规范的粒径分布直方图，并自动填充一份 LaTeX 格式的对比实验消融表模板。",
+      "priority": "medium",
+      "id": 6,
+      "status": "todo"
     }
   ],
-  "next_task_id": 4
+  "next_task_id": 7
 }
