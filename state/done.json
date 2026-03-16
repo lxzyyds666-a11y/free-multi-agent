@@ -163,6 +163,34 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 7,
+      "title": "编写 MicroNet 数据集清洗与格式转换脚本",
+      "worker_output": {
+        "summary": "开发了 MicroNet 数据集清洗与格式转换脚本，实现了将原始标注映射至统一分类体系，并同步生成 YOLO 训练格式（.txt）与包含物理比例尺信息的元数据文件（metadata.json）。",
+        "deliverable": {
+          "bullets": [
+            "转换脚本 (micronet_converter.py)：支持将 MicroNet 原始 JSON/COCO 标注转换为 YOLO 归一化坐标格式，自动过滤非目标类别。",
+            "标签对齐逻辑：执行 Task 4 规范，将原始标签（如 'Fragment', 'Line'）映射为 [fragment, fiber, film, pellet, sphere]。",
+            "物理元数据集成：在转换过程中注入 'pixel_per_um' 参数，为每个图像生成包含物理尺寸信息的 JSON 条目。",
+            "数据校验机制：脚本内置图像尺寸检查与坐标合法性校验，自动剔除标注超出边界或零面积的无效样本。",
+            "目录结构定义：遵循 YOLO 标准目录（/images, /labels）并附带 root 级的 dataset_summary.json。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "MicroNet 不同子集（如来自不同实验批次）的物理比例尺可能存在差异，若全局统一设置 pixel_per_um 会导致尺寸计算偏差。",
+          "原始标注中的多边形（Polygon）在转换为 YOLO 矩形框（BBox）时会丢失形状细节，可能影响后续针对纤维的精细化分析。"
+        ],
+        "next_hint": "建议使用转换后的数据集进行 YOLOv8 的首轮训练（Fine-tuning），并利用 Task 6 的模块验证物理尺寸统计的准确性。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "脚本功能设计完整，准确执行了任务要求的标签映射与物理元数据集成，且风险识别具有前瞻性。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

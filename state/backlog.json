@@ -147,7 +147,46 @@
         ],
         "next_hint": "建议将 Task 5 的推理结果转化为本模块所需的统计向量，实现从“图像输入”到“论文图表”的端到端自动化。"
       }
+    },
+    {
+      "title": "编写 MicroNet 数据集清洗与格式转换脚本",
+      "description": "基于 Task 4 确定的标签映射规范，编写 Python 脚本将 MicroNet 原始标注文件转换为标准的 YOLO 格式（.txt）及包含物理比例尺信息的 JSON 元数据，确立训练数据基准。",
+      "priority": "high",
+      "id": 7,
+      "status": "approved",
+      "worker_output": {
+        "summary": "开发了 MicroNet 数据集清洗与格式转换脚本，实现了将原始标注映射至统一分类体系，并同步生成 YOLO 训练格式（.txt）与包含物理比例尺信息的元数据文件（metadata.json）。",
+        "deliverable": {
+          "bullets": [
+            "转换脚本 (micronet_converter.py)：支持将 MicroNet 原始 JSON/COCO 标注转换为 YOLO 归一化坐标格式，自动过滤非目标类别。",
+            "标签对齐逻辑：执行 Task 4 规范，将原始标签（如 'Fragment', 'Line'）映射为 [fragment, fiber, film, pellet, sphere]。",
+            "物理元数据集成：在转换过程中注入 'pixel_per_um' 参数，为每个图像生成包含物理尺寸信息的 JSON 条目。",
+            "数据校验机制：脚本内置图像尺寸检查与坐标合法性校验，自动剔除标注超出边界或零面积的无效样本。",
+            "目录结构定义：遵循 YOLO 标准目录（/images, /labels）并附带 root 级的 dataset_summary.json。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "MicroNet 不同子集（如来自不同实验批次）的物理比例尺可能存在差异，若全局统一设置 pixel_per_um 会导致尺寸计算偏差。",
+          "原始标注中的多边形（Polygon）在转换为 YOLO 矩形框（BBox）时会丢失形状细节，可能影响后续针对纤维的精细化分析。"
+        ],
+        "next_hint": "建议使用转换后的数据集进行 YOLOv8 的首轮训练（Fine-tuning），并利用 Task 6 的模块验证物理尺寸统计的准确性。"
+      }
+    },
+    {
+      "title": "构建基于 Ultralytics 的模型微调配置与训练脚本",
+      "description": "编写用于微调 YOLOv8 的 `data.yaml` 配置文件及训练启动脚本（train.py），设置适用于微小目标学习的超参数（如 augment: True, imgsz: 640），并提供在公开数据集上启动微调的指令。",
+      "priority": "high",
+      "id": 8,
+      "status": "todo"
+    },
+    {
+      "title": "开发‘推理-统计-绘图’端到端集成工作流",
+      "description": "编写一个集成脚本，将 Task 5 的推理输出自动对接至 Task 6 的可视化模块。实现输入单张或一批显微图像，自动生成对应的检测 JSON、粒径分布图及 LaTeX 消融实验表单行数据。",
+      "priority": "medium",
+      "id": 9,
+      "status": "todo"
     }
   ],
-  "next_task_id": 7
+  "next_task_id": 10
 }
