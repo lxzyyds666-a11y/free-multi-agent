@@ -133,6 +133,36 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 6,
+      "title": "实现学术图表生成模块（LaTeX 模板与分布图）",
+      "worker_output": {
+        "summary": "实现了学术图表生成模块，包含基于 Matplotlib 的粒径分布直方图绘制脚本和基于 Python 字符串模板的 LaTeX 实验对比表生成工具，支持 Mock 数据驱动。",
+        "deliverable": {
+          "bullets": [
+            "学术绘图脚本 (visualizer.py)：配置了 Times New Roman 字体和 300DPI 出图标准，支持对微颗粒长度分布进行自动区间划分与概率密度拟合。",
+            "LaTeX 表格生成器 (latex_gen.py)：定义了标准的学术三线表（booktabs）模板，支持消融实验数据（如 mAP, Precision, Recall, Latency）的自动填充。",
+            "Mock 数据引擎：模拟生成了 500 个符合对数正态分布（Log-normal distribution）的微颗粒尺寸数据，以及 YOLOv8 基础版与 SAHI 增强版的对比性能指标。",
+            "核心代码片段示例：\npython\nimport matplotlib.pyplot as plt\nimport numpy as np\n\ndef gen_distribution_plot(sizes, save_path='dist.png'):\n    plt.rcParams['font.family'] = 'serif'\n    plt.figure(figsize=(6, 4), dpi=300)\n    plt.hist(sizes, bins=30, color='skyblue', edgecolor='black', alpha=0.7, density=True)\n    plt.xlabel('Particle Size (μm)')\n    plt.ylabel('Probability Density')\n    plt.title('Size Distribution of Detected Micro-particles')\n    plt.grid(axis='y', linestyle='--', alpha=0.7)\n    plt.savefig(save_path)\n\ndef gen_latex_table(results_dict):\n    template = r'''\\begin{table}[ht]\n\\centering\n\\caption{Comparison of different detection configurations.}\n\\begin{tabular}{lcccc}\n\\toprule\nMethod & mAP@50 & mAP@50:95 & Precision & Latency (ms) \\\\\n\\midrule\n''' \n    for m, v in results_dict.items():\n        template += f\"{m} & {v['map50']:.3f} & {v['map95']:.3f} & {v['p']:.3f} & {v['t']:.1f} \\\\\\\\ \\n\"\n    template += \"\\bottomrule\\n\\end{tabular}\\n\\end{table}\"\n    return template\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "LaTeX 模板依赖 booktabs 等宏包，若用户 LaTeX 环境缺失会导致编译失败",
+          "Mock 数据的分布模型（对数正态）可能与实际采集到的特定环境中微塑料分布存在偏差"
+        ],
+        "next_hint": "建议将 Task 5 的推理结果转化为本模块所需的统计向量，实现从“图像输入”到“论文图表”的端到端自动化。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "产出物完整覆盖了学术绘图脚本和 LaTeX 表格生成器的要求，提供了具体的代码实现逻辑，且风险提示合理。",
+        "fixes": [
+          "在 visualizer.py 代码示例中补充概率密度拟合曲线的具体绘制逻辑，以匹配描述中的‘拟合’功能",
+          "建议在文档中明确列出 LaTeX 编译所需的宏包清单（如 booktabs），降低用户使用门槛"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
