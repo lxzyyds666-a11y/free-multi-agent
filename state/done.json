@@ -26,6 +26,33 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 2,
+      "title": "筛选适用于微小目标识别的开源 Baseline 模型",
+      "worker_output": {
+        "summary": "针对微塑料/微碳屑的显微图像特征，筛选并选定了 YOLOv8 和 SAM 2 作为检测与分割的双基准模型，并引入 SAHI 增强小目标识别能力。",
+        "deliverable": {
+          "bullets": [
+            "YOLOv8 (Ultralytics): 选定为检测基准。具备优秀的特征金字塔网络（FPN），对微小颗粒感度高，且原生支持导出至推理引擎，便于生产线集成。",
+            "SAM 2 (Segment Anything Model 2): 选定为分割基准。利用其零样本（Zero-shot）分割能力，可针对纤维状、不规则碎片提供精确的边缘轮廓，辅助计算物理尺寸。",
+            "SAHI (Slicing Aided Hyper Inference): 选定为推理增强工具。针对高分辨率显微切片，通过切片辅助推理解决微小目标在整图下特征丢失的问题。",
+            "适用性评估: 选定模型均支持 Task 1 中提到的 COCO/YOLO 数据格式，具备良好的公开文档支撑，且在 MicroNet 等学术数据集中已有成熟应用案例。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "极其细长的微纤维在常规 Bounding Box 下容易产生重叠干扰",
+          "SAM 2 推理显存占用较高，在大规模自动化生产线中可能存在算力瓶颈"
+        ],
+        "next_hint": "建议进入下一阶段：梳理验证设计骨架，制定针对微小目标的评价指标（如 mAP@0.5:0.95 及尺寸加权精度）。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "选型精准涵盖了检测（YOLOv8）、分割（SAM 2）及小目标增强（SAHI），方案高度匹配显微图像业务场景且具备技术落地可行性。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-16T07:01:29.482564+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 2,
+    "summary": "针对微塑料/微碳屑的显微图像特征，筛选并选定了 YOLOv8 和 SAM 2 作为检测与分割的双基准模型，并引入 SAHI 增强小目标识别能力。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 2,
+    "decision": "approve"
+  }
+}
