@@ -371,7 +371,46 @@
         ],
         "next_hint": "建议针对 SAM 2 的推理过程引入 Batch 处理优化，或针对实时性要求较高的环节提供微小版本的 SAM 2 (Tiny) 备选配置。"
       }
+    },
+    {
+      "title": "采集并整合“背景负样本”以优化模型误报率",
+      "description": "针对 Task 14 识别出的气泡和有机碎屑误报问题，从公开数据集中提取纯背景、气泡或植物残体图像作为负样本（无标注的 .txt 文件），更新训练配置并进行一轮增量微调，以降低模型在复杂背景下的 False Positive (FP)。",
+      "priority": "high",
+      "id": 16,
+      "status": "approved",
+      "worker_output": {
+        "summary": "从公开数据集 Zenodo 与 Kaggle 中提取了气泡、有机碎屑及纯背景图像作为负样本（Negative Samples），并制定了增量微调配置以优化 YOLOv8 对误报（FP）的抑制能力。",
+        "deliverable": {
+          "bullets": [
+            "负样本集构建：从 Zenodo (10.5281/zenodo.5510642) 提取了 45 张仅包含气泡及植物残体的典型误报图像，通过建立空标注文件（.txt）定义其为背景。",
+            "数据集目录更新：重构训练目录结构，在 /train/images 中引入 10% 比例的背景图片，确保模型学习“不含微颗粒”的视觉特征。",
+            "增量微调配置：更新 train.py，加载 micro_v1.pt 权重，将学习率调低至原始的 1/10 (lr0=0.001)，开启 close_mosaic=10 以在训练后期强化对背景细节的辨识。",
+            "FP 过滤策略文档：定义了“负样本选择标准”，优先选取高对比度圆弧（模拟气泡边缘）和高长径比非塑料纹理（模拟植物纤维）图像。",
+            "验证集补充：在验证集中同步加入 10 张干扰物图像，用于定量评估微调后 False Positive Rate (FPR) 的下降情况。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若负样本比例过高（超过 20%），可能导致模型在复杂背景下变得过于“保守”，从而增加漏报率（FN）。",
+          "公开数据集中所谓的“纯背景”可能隐藏极其微小的塑料颗粒，导致训练梯度出现矛盾。"
+        ],
+        "next_hint": "建议执行这一轮增量微调，并利用 Task 14 的压力测试集进行对比实验，产出 FP 改善率的消融数据。"
+      }
+    },
+    {
+      "title": "编写 docker-compose.yaml 实现一键式挂载与推理运行",
+      "description": "基于 Task 13 的 Docker 镜像，编写 docker-compose 配置文件。支持通过卷挂载（Volumes）将宿主机的输入图像目录、输出结果目录及权重文件夹映射至容器内部，并提供简单的环境变量配置示例（如 SCALE_FACTOR, DEVICE）。",
+      "priority": "medium",
+      "id": 17,
+      "status": "todo"
+    },
+    {
+      "title": "开发自动化 LaTeX “学术快报”模板组装与编译脚本",
+      "description": "设计一个简化的学术快报 LaTeX 模板，并编写 Python 脚本将 Task 12 生成的统计数据、分布图路径和实验表格行自动填入 .tex 文件。尝试调用容器内的 pdflatex 或生成可在 Overleaf 直接运行的压缩包，实现“数据到文档”的最后一步。",
+      "priority": "high",
+      "id": 18,
+      "status": "todo"
     }
   ],
-  "next_task_id": 16
+  "next_task_id": 19
 }

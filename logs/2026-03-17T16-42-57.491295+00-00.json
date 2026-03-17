@@ -1,0 +1,18 @@
+{
+  "time_utc": "2026-03-17T16:42:57.491295+00:00",
+  "planner": {
+    "skipped": false,
+    "created": 3,
+    "note": "本轮规划旨在闭环“从图像到论文”的最后环节：通过负样本训练解决鲁棒性问题，通过 Docker-Compose 提升易用性，并实现 LaTeX 文档的自动化组装。"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 16,
+    "summary": "从公开数据集 Zenodo 与 Kaggle 中提取了气泡、有机碎屑及纯背景图像作为负样本（Negative Samples），并制定了增量微调配置以优化 YOLOv8 对误报（FP）的抑制能力。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 16,
+    "decision": "approve"
+  }
+}
