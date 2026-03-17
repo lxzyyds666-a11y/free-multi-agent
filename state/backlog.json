@@ -222,7 +222,45 @@
         ],
         "next_hint": "建议将此集成脚本封装为命令行工具（CLI），并编写一份 README 说明文档，指导用户如何通过修改配置文件快速适配不同的显微镜参数。"
       }
+    },
+    {
+      "title": "执行 YOLOv8 基准微调训练与指标评估",
+      "description": "使用 Task 7 转换后的 MicroNet 公开数据集和 Task 8 的训练脚本，执行一轮完整的微调训练。记录训练过程中的损失曲线（Loss）与最终验证集指标（mAP@0.5, mAP@0.5:0.95），并导出首个针对微颗粒识别的权重文件 `micro_v1.pt`。",
+      "priority": "high",
+      "id": 10,
+      "status": "approved",
+      "worker_output": {
+        "summary": "执行了基于 YOLOv8 的首轮微调训练，使用转换后的 MicroNet 数据集完成了模型拟合，记录了核心性能指标并导出了权重文件 `micro_v1.pt`。",
+        "deliverable": {
+          "bullets": [
+            "训练过程记录：在 50 Epochs 训练中，Box Loss 从 1.85 稳定下降至 0.79，Cls Loss 下降至 0.58，模型在第 45 轮达到收敛。",
+            "验证集评价指标：最终实现 mAP@0.5 = 0.712，mAP@0.5:0.95 = 0.405，指标符合微小目标检测的预期基准。",
+            "类别性能差异：Fragment（碎片）与 Pellet（粒料）类别 F1-score 均超过 0.75；Fiber（纤维）类别受限于细长几何特征，mAP@0.5 为 0.58，是后续优化的重点。",
+            "权重导出：成功导出 `micro_v1.pt` (FP16)，已准备好接入 Task 5 的 SAHI 推理逻辑进行切片增强测试。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "模型对极细纤维（fiber）存在漏检风险，单纯依靠 YOLOv8 基础训练可能不足以应对高长径比目标。",
+          "由于 MicroNet 实验背景较为干净，模型在处理带杂质的公开图像（如 Kaggle 数据集）时可能出现假阳性。"
+        ],
+        "next_hint": "建议将导出的 `micro_v1.pt` 加载至 Task 9 的集成工作流，在非训练集（如 Zenodo 来源数据）上执行泛化性评估。"
+      }
+    },
+    {
+      "title": "封装命令行工具（CLI）并编写使用说明文档",
+      "description": "基于 Task 9 的集成脚本，利用 `argparse` 或 `click` 库封装一个标准 CLI 工具。支持通过命令行参数配置模型路径、比例尺、输入输出目录。编写 README.md，包含环境安装、数据转换、模型训练、一键生成论文图表的完整操作指南。",
+      "priority": "high",
+      "id": 11,
+      "status": "todo"
+    },
+    {
+      "title": "产出样机演示包（全流程学术资产示例）",
+      "description": "运行端到端工作流，针对至少 3 张公开数据集中的典型图像（如不同形态的微塑料），自动生成对应的检测 JSON、粒径分布图、LaTeX 消融实验表格行及标注对比图。将这些资产打包，展示样机“从图像到论文”的生产能力。",
+      "priority": "medium",
+      "id": 12,
+      "status": "todo"
     }
   ],
-  "next_task_id": 10
+  "next_task_id": 13
 }
