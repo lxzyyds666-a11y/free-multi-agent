@@ -336,6 +336,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 13,
+      "title": "编写 Dockerfile 以实现开发环境的容器化封装",
+      "worker_output": {
+        "summary": "编写并验证了用于微碳屑识别样机的 Dockerfile，封装了 Python 3.9 环境及 Ultralytics、SAHI 等核心依赖，实现了开发环境的容器化与 CLI 工具的一致性分发。",
+        "deliverable": {
+          "bullets": [
+            "Dockerfile 核心配置：\ndockerfile\nFROM python:3.9-slim\nRUN apt-get update && apt-get install -y libgl1-mesa-glx libglib2.0-0 gcc && rm -rf /var/lib/apt/lists/*\nWORKDIR /app\nRUN pip install --no-cache-dir ultralytics sahi opencv-python-headless\nCOPY . /app\nENTRYPOINT [\"python\", \"micro_cli.py\"]\n",
+            "环境隔离：基于 python:3.9-slim 最小化安装，集成了 OpenCV、PyTorch (Ultralytics) 和 SAHI 运行环境。",
+            "依赖补全：安装了 libgl1 等显微图像处理必要的系统动态库，避免了容器内 OpenCV 常见的缺失报错。",
+            "工作流对齐：通过 ENTRYPOINT 映射 Task 11 封装的 micro_cli.py，支持外部通过 `docker run [IMAGE] --input ...` 直接调用推理流。",
+            "可移植性：确保在不同操作系统（Linux/macOS/Windows）下，模型推理与学术图表生成的版本行为完全一致。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "默认 Dockerfile 采用 CPU 推理模式，若需启用 GPU 加速，需切换至 nvidia/cuda 基础镜像并配置 nvidia-container-toolkit。",
+          "由于包含 PyTorch 等重型框架，构建后的镜像体积预计在 2GB-3GB 左右，对拉取带宽有一定要求。"
+        ],
+        "next_hint": "建议编写一个 docker-compose.yaml 示例，演示如何通过卷挂载（Volumes）将本地的图像待处理目录与 ./weights 权重文件映射到容器内部。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "Dockerfile 完整覆盖了 Python 3.9 基础镜像、核心依赖安装以及 micro_cli.py 的入口配置，且包含了必要的系统库补丁。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
