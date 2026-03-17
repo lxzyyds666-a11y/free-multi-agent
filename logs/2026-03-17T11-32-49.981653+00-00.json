@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-17T11:32:49.981653+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 14,
+    "summary": "针对非训练集的 Kaggle 与 Zenodo 公开显微图像执行了模型鲁棒性压力测试，识别并记录了模型在复杂背景（气泡、有机碎屑、非均匀光照）下的典型失效模式。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 14,
+    "decision": "approve"
+  }
+}
