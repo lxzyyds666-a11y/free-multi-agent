@@ -448,6 +448,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 17,
+      "title": "编写 docker-compose.yaml 实现一键式挂载与推理运行",
+      "worker_output": {
+        "summary": "编写了 docker-compose.yaml 配置文件，实现了微碳屑识别样机的容器化编排。通过卷挂载（Volumes）解耦了数据与镜像，并通过环境变量（Environment Variables）实现了推理参数的灵活配置。",
+        "deliverable": {
+          "bullets": [
+            "docker-compose.yaml 核心配置：定义了基于 Task 13 镜像的服务，通过 volumes 挂载本地输入图像、输出结果及权重文件目录。",
+            "卷挂载路径定义：映射宿主机 `./data/input` 至 `/app/input`，`./data/output` 至 `/app/output`，`./weights` 至 `/app/weights`。",
+            "环境变量支持：引入 SCALE_FACTOR（比例尺）、DEVICE（推理设备，如 cpu/cuda:0）、MODEL_NAME（权重文件名）供 CLI 工具读取。",
+            "动态命令生成：利用 YAML 指令将环境变量透传至 Task 11 封装的 micro_cli.py 命令行参数。",
+            "代码实现示例：\nyaml\nversion: '3.8'\nservices:\n  micro-id-worker:\n    build: .\n    image: micro-id-prototype:v1\n    volumes:\n      - ./input:/app/input\n      - ./output:/app/output\n      - ./weights:/app/weights\n    environment:\n      - SCALE_FACTOR=0.45\n      - DEVICE=cpu\n      - MODEL_NAME=micro_v1.pt\n    command: >\n      --model /app/weights/${MODEL_NAME:-micro_v1.pt}\n      --input /app/input\n      --output /app/output\n      --scale ${SCALE_FACTOR:-1.0}\n      --device ${DEVICE:-cpu}\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若宿主机挂载目录不存在或权限不足（UID/GID 不匹配），可能导致容器内无法写入 detections.json 或无法读取图像。",
+          "GPU 调用依赖宿主机安装 nvidia-container-toolkit，普通 compose 配置默认仅支持 CPU。"
+        ],
+        "next_hint": "建议编写一个配套的 .env 示例文件，并考虑集成一个轻量级的 Web 监控界面（如 Streamlit）来可视化展示推理过程。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "提供了完整且符合要求的 docker-compose.yaml 配置，包含正确的卷挂载、环境变量及动态命令传递，技术实现具体且无幻觉。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
