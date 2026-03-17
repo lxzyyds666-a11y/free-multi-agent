@@ -252,7 +252,25 @@
       "description": "基于 Task 9 的集成脚本，利用 `argparse` 或 `click` 库封装一个标准 CLI 工具。支持通过命令行参数配置模型路径、比例尺、输入输出目录。编写 README.md，包含环境安装、数据转换、模型训练、一键生成论文图表的完整操作指南。",
       "priority": "high",
       "id": 11,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务完成了微碳屑识别样机的命令行工具（CLI）封装，并编写了覆盖全生命周期的 README.md 使用指南，实现了“图像输入-结果统计-图表产出”的标准化操作。",
+        "deliverable": {
+          "bullets": [
+            "CLI 工具 (micro_cli.py)：基于 argparse 封装，支持 --model (模型路径)、--input (输入目录)、--output (结果目录)、--scale (pixel_per_um 比例尺) 及 --device (计算设备) 等参数。",
+            "一键化工作流集成：CLI 工具内部调用 Task 9 的集成脚本，自动触发 SAHI 切片推理、物理尺寸换算及 Task 6 的学术图表生成模块。",
+            "README.md 核心文档：包含环境配置（Python 3.9+ / Torch / Ultralytics）、数据预处理（Task 7 转换脚本）、模型微调（Task 8 训练指令）及 CLI 运行示例。",
+            "操作指令示例：`python micro_cli.py --model weights/micro_v1.pt --input ./raw_data --output ./results --scale 0.45 --device cuda:0`。",
+            "资产输出说明：明确了输出目录将包含 `detections.json` (原始结果)、`distribution.png` (粒径分布图) 及 `table_row.tex` (LaTeX 表格源码)。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "CLI 工具依赖多个重量级库（Ultralytics, SAHI），初次安装可能由于网络或 CUDA 版本不匹配导致失败",
+          "大规模批量处理时，若未指定 --device，默认 CPU 推理速度将非常缓慢"
+        ],
+        "next_hint": "建议将此工具打包为 Docker 镜像，以彻底消除环境配置差异，确保在不同学术研究环境下的可复用性。"
+      }
     },
     {
       "title": "产出样机演示包（全流程学术资产示例）",

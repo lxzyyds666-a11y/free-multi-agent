@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-17T08:34:41.004891+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 11,
+    "summary": "本任务完成了微碳屑识别样机的命令行工具（CLI）封装，并编写了覆盖全生命周期的 README.md 使用指南，实现了“图像输入-结果统计-图表产出”的标准化操作。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 11,
+    "decision": "approve"
+  }
+}
