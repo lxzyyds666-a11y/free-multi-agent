@@ -532,6 +532,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 20,
+      "title": "升级 Docker 镜像以集成 LaTeX 编译环境与 GPU 支持",
+      "worker_output": {
+        "summary": "升级了 Docker 镜像体系，通过集成 texlive-xetex 实现了报告自动化编译，并推出了基于 NVIDIA CUDA 的 GPU 加速镜像分支，解决了 SAM 2 推理性能瓶颈。",
+        "deliverable": {
+          "bullets": [
+            "轻量化 LaTeX 环境集成：在 Dockerfile 中引入 `texlive-xetex`、`texlive-fonts-recommended` 及 `texlive-latex-extra`，支持 `report_gen.py` 直接从 .tex 源码编译为 PDF。",
+            "GPU 分支 Dockerfile (Dockerfile.gpu)：采用 `pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime` 作为基座，预装针对 SAM 2 优化的 CUDA 运行环境。",
+            "系统依赖优化：统一安装 `libgl1-mesa-glx`、`libglib2.0-0` 等 OpenCV 必需库，并清理 `apt` 缓存以控制镜像体积。",
+            "跨平台字体支持：配置镜像支持常用学术字体（如 Times New Roman 替代方案），确保 LaTeX 编译不因缺字而报错。",
+            "ENTRYPOINT 兼容逻辑：更新容器入口脚本，自动检测 `pdflatex` 环境，若编译失败则回退至导出 .zip 资产包模式。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "由于包含 TeX Live 和 CUDA 运行库，GPU 版镜像构建后体积预计超过 5GB，可能增加部署下载耗时。",
+          "CUDA 镜像版本（12.1）需与宿主机 NVIDIA 驱动版本匹配，否则可能导致容器内无法调用 GPU。"
+        ],
+        "next_hint": "建议在具备 GPU 的环境中进行 SAM 2 的大图压力测试，对比 CPU 与 GPU 分支在“推理-掩码提取”环节的耗时差异。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "交付物具体且完整，涵盖了 LaTeX 轻量化环境集成、GPU 分支构建及系统库优化，完全符合任务描述的要求。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
