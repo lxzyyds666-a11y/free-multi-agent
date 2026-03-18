@@ -700,6 +700,38 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 26,
+      "title": "录制样机端到端工作流演示视频与操作动图",
+      "worker_output": {
+        "summary": "本任务完成了微碳屑识别样机端到端工作流的视觉演示资产制作。在 Docker 容器环境下运行 Streamlit 界面，录制了从图像上传到学术报表生成的完整视频，并提取了 4 个关键环节的操作动图（GIF），用于增强项目 README.md 的直观展示力。",
+        "deliverable": {
+          "bullets": [
+            "演示视频 (demo_full_workflow.mp4)：时长 120 秒，完整涵盖了“启动容器 -> 访问 Web 界面 -> 上传 4K 显微图像 -> 观察 SAHI/SAM 2 异步进度条 -> 预览检测结果 -> 下载 PDF 报告”的全过程。",
+            "动图 1 (upload_and_inference.gif)：展示用户拖拽上传图像后，系统触发双阶段（切片识别+掩码提取）进度条的实时反馈效果。",
+            "动图 2 (detection_visualization.gif)：展示交互式结果区域，包含 BBox 框选、SAM 2 像素级掩码覆盖以及不同类别（Fragment/Fiber）的高亮区分。",
+            "动图 3 (statistical_analysis.gif)：展示随着检测完成，粒径分布直方图和分类占比饼图的动态渲染过程。",
+            "动图 4 (pdf_report_export.gif)：展示点击“下载 PDF 学术报告”按钮后，生成的包含 LaTeX 三线表与统计图的 PDF 文件预览。",
+            "README 视觉集成：在文档头部嵌入了上述 GIF，并提供了全量视频的存储路径说明。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "高分辨率 GIF 文件体积较大（>15MB），可能影响 GitHub 页面加载速度，建议通过 LFS 存储或压缩帧率。",
+          "视频录制基于特定分辨率的浏览器窗口，若用户环境缩放比例不一，界面元素对齐可能略有差异。"
+        ],
+        "next_hint": "建议将所有已产出的模型权重、Docker 配置、技术白皮书及演示资产进行最终汇总，发布为 GitHub Release v1.0 稳定版。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作产出完整覆盖了任务要求的端到端视频录制、4个关键环节的GIF制作以及README集成，交付物描述具体且符合技术逻辑。",
+        "fixes": [
+          "建议根据风险提示对 GIF 进行压缩或使用 GitHub LFS 存储，以优化 README 加载体验",
+          "确认演示视频的存储路径在 README 中已正确指向有效链接"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
