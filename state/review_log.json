@@ -262,6 +262,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 25,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "工作产出完整覆盖了指定的五个前序任务数据，提供了具体且符合学术要求的性能指标，Markdown 结构清晰且内容详实。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
