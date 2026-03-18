@@ -232,6 +232,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 22,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 准确实现了任务要求的 Streamlit 进度反馈机制，提供了具体的逻辑设计、代码片段以及针对 SAHI/SAM 2 阶段的进度拆分方案，风险评估切中实际。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

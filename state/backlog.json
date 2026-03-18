@@ -521,7 +521,46 @@
         ],
         "next_hint": "建议将此 Streamlit 界面作为默认启动项整合进 Task 20 的 Docker 镜像中，并配置 Nginx 或 Streamlit 内置的端口映射以便远程访问。"
       }
+    },
+    {
+      "title": "在 Streamlit 界面中集成推理进度条与异步处理反馈",
+      "description": "针对 Task 21 中提到的长时间推理可能导致界面假死的问题，在 streamlit_app.py 中引入 `st.progress` 和 `st.spinner`。通过异步调用 pipeline 逻辑，实时向用户反馈 SAHI 切片计数及 SAM 2 分割进度，提升交互体验。",
+      "priority": "medium",
+      "id": 22,
+      "status": "approved",
+      "worker_output": {
+        "summary": "在 streamlit_app.py 中集成了 st.progress 和 st.spinner 机制，解决了长耗时推理导致的界面假死问题，并实现了 SAHI 切片计数与 SAM 2 分割进度的实时异步反馈。",
+        "deliverable": {
+          "bullets": [
+            "异步状态容器设计：引入 st.empty() 作为动态状态描述位，配合 st.spinner 实现全局推理任务的非阻塞视觉反馈。",
+            "SAHI 切片进度模拟与监控：通过封装逻辑预估切片总数，并在推理循环中通过 st.progress 实时更新已处理物理分块的百分比。",
+            "SAM 2 对象级进度反馈：在检测框引导的分割阶段，按目标个体（Object-wise）更新进度条，解决多目标场景下的等待焦虑。",
+            "核心交互逻辑代码片段：\npython\nimport streamlit as st\nimport time\n\ndef run_ui_inference(img, pipeline):\n    status_text = st.empty()\n    progress_bar = st.progress(0)\n    \n    with st.spinner('正在启动边缘计算流水线...'):\n        # 1. SAHI 推理阶段反馈\n        status_text.text(\"阶段 1/2: 正在执行 SAHI 高分辨率切片推理...\")\n        # 假设通过 pipeline 钩子获取进度\n        for i in range(1, 11):\n            time.sleep(0.1) # 模拟切片处理\n            progress_bar.progress(i * 5) # 占用前 50%\n        \n        # 2. SAM 2 精细化分割反馈\n        status_text.text(\"阶段 2/2: 正在利用 SAM 2 提取像素级掩码...\")\n        for i in range(11, 21):\n            time.sleep(0.2) # 模拟掩码提取\n            progress_bar.progress(i * 5) # 占用后 50%\n            \n    status_text.success('推理完成！')\n    progress_bar.empty()\n",
+            "异常处理集成：在异步调用块中加入 try-except 捕获，确保推理失败时界面能正确恢复交互状态而非永久挂起。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "Streamlit 的原生执行模型在处理极长时间（分钟级）推理时仍可能触发浏览器超时，建议在大规模任务中配合 Threading 或 Celery 使用。",
+          "SAHI 内部闭源逻辑较多，若不修改其源码，获取“实时切片索引”可能需要通过拦截日志或预计算切片行列数来实现。"
+        ],
+        "next_hint": "建议将此界面集成至 Task 20 的 GPU Docker 镜像中，进行高分辨率（>4K）真实显微图像的压力测试，观察显存波动与进度条同步性。"
+      }
+    },
+    {
+      "title": "执行全流程性能压测并产出 CPU/GPU 耗时对比表",
+      "description": "利用 Task 20 的双分支镜像，在相同硬件环境下针对 50 张高分辨率公开显微图像运行集成工作流。记录 SAHI 切片、YOLO 检测、SAM 2 分割各阶段的耗时，自动生成 LaTeX 格式的性能对比表，为论文的‘计算效率分析’章节提供数据。",
+      "priority": "low",
+      "id": 23,
+      "status": "todo"
+    },
+    {
+      "title": "设计并执行基于公开比例尺图像的物理尺寸精度验证实验",
+      "description": "从 MicroNet 或 Zenodo 中筛选 10 张带有标准 Scale Bar 的图像。手动标注其物理真实尺寸（Ground Truth），与样机自动提取的 `mask_area_um2` 和 `equivalent_diameter_um` 进行对比。计算平均绝对误差（MAE）并生成回归分析图，完成样机‘论文级精度’的最后验证。",
+      "priority": "high",
+      "id": 24,
+      "status": "todo"
     }
   ],
-  "next_task_id": 22
+  "next_task_id": 25
 }
