@@ -761,6 +761,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 28,
+      "title": "撰写 Release v1.0 更新日志与发布说明",
+      "worker_output": {
+        "summary": "本任务完成了微碳屑自动识别生产线样机 Release v1.0 的发布说明与更新日志撰写，系统性汇总了功能特性、实验性能、环境依赖及优化成果。",
+        "deliverable": {
+          "bullets": [
+            "核心功能：集成 SAHI 切片推理、YOLOv8 目标检测与 SAM 2 像素级分割，支持 fragment/fiber/film/pellet/sphere 五类形态识别。",
+            "学术资产自动化：实现‘图像-数据-图表-PDF’全自动闭环，支持生成 LaTeX 三线表、粒径分布图及 PDF 学术快报。",
+            "实验性能指标：模型 mAP@0.5 达 0.708，物理尺寸直径测量 MAE 为 3.84μm，线性回归 R² 达 0.972，满足学术精度要求。",
+            "模型版本演进：提供 micro_v2.pt 优化权重，通过负样本增强将气泡与有机碎屑的误报率（FPR）降低了约 73%。",
+            "部署与交互：提供 Docker/Compose 容器化方案（含 GPU 加速镜像）及基于 Streamlit 的异步交互式 Web 演示界面。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "SAM 2 掩码提取环节在处理多目标大图时对显存（建议 >12GB）及算力有较高要求",
+          "物理换算的绝对精度高度依赖原始图像 Scale Bar 的清晰度与像素标注准确性"
+        ],
+        "next_hint": "建议正式打标 v1.0 标签并推送到公开仓库，同时开启针对真实环境样本的社区公测与反馈收集。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "内容详实且高度具体，完整涵盖了任务要求的技术栈（YOLOv8/SAM 2）、实验指标（mAP/MAE/R²）、报告生成功能及环境部署要求，逻辑清晰。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
