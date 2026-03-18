@@ -222,6 +222,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 21,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "提交结果完整涵盖了任务要求的所有核心功能，包括图像上传、模型集成可视化、统计图表生成及 PDF 下载，且提供了清晰的代码架构参考。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
