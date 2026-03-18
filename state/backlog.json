@@ -704,7 +704,25 @@
       "description": "选择并添加适用的开源协议文件（如 Apache-2.0），并编写 CITATION.cff 或 BibTeX 模板，明确说明在该论文生产线辅助下产出研究成果时如何正确引用本样机项目。",
       "priority": "high",
       "id": 29,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "为微碳屑自动识别生产线样机配置了 Apache-2.0 开源许可证，并编写了标准化的 CITATION.cff 与 BibTeX 引用模板，确立了学术成果产出的溯源与合规规范。",
+        "deliverable": {
+          "bullets": [
+            "开源许可证文件 (LICENSE)：选定 Apache-2.0 协议，允许学术及商业用途的自由修改与分发，同时保留项目方的版权及免责声明。",
+            "可机器读取引用文件 (CITATION.cff)：遵循 GitHub 引用规范，包含了项目名称、版本 (v1.0.0)、作者占位符、关键词（Microplastics, Computer Vision, SAM2）及代码仓库 URL。",
+            "BibTeX 学术引用模板：提供了适用于 LaTeX 的 @software 引用条目，明确建议用户在使用该样机辅助绘图或生成数据时，于论文 Reference 部分标注本项目。",
+            "核心引用声明 (README fragment)：‘If you use this prototype for your research, please cite it as: [BibTeX Entry]’，并说明了引用对开源项目维护的重要性。",
+            "许可证兼容性说明文档：简要梳理了样机依赖项（Ultralytics-AGPL-3.0, SAM2-Apache-2.0）的授权边界，建议用户在修改核心检测器时注意协议传染性。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "上游依赖（如 Ultralytics YOLOv8）采用 AGPL-3.0 协议，若用户基于本项目进行封闭式商业二次开发，可能存在授权冲突风险。",
+          "样机当前缺乏持久化数字对象标识符 (DOI)，建议后续在 Zenodo 或 Figshare 存档以获得正式索引。"
+        ],
+        "next_hint": "本阶段开发任务已基本闭环，建议进行最终的仓库仓库完整性自检，并将所有文档、代码、权重及演示视频打包发布至正式的托管平台。"
+      }
     },
     {
       "title": "编写并执行 Docker 镜像一键启动冒烟测试脚本",
