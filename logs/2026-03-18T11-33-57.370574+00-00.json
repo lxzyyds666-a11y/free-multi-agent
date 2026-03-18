@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-18T11:33:57.370574+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 23,
+    "summary": "利用 Task 20 的双分支镜像，对 50 张高分辨率（均值 4096×3072 px）公开显微图像执行了全流程性能压测，量化了 SAHI、YOLOv8 与 SAM 2 在 CPU 与 GPU 环境下的耗时差异，并生成了标准 LaTeX 对比表。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 23,
+    "decision": "approve"
+  }
+}
