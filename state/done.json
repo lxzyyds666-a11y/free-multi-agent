@@ -732,6 +732,35 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 27,
+      "title": "整理最终代码仓库结构并编写贡献指南 (CONTRIBUTING.md)",
+      "worker_output": {
+        "summary": "完成了公开可用的微碳屑自动识别生产线样机的最终代码仓库结构梳理，并编写了《贡献指南 (CONTRIBUTING.md)》，明确了模型扩展与物理逻辑集成的标准化路径。",
+        "deliverable": {
+          "bullets": [
+            "规范化目录结构：确立了 src/ (核心代码)、weights/ (预训练权重)、templates/ (LaTeX模板)、docs/ (技术文档与演示资产) 及 data/ (输入输出挂载区) 的层级体系。",
+            "代码模块化解耦：将推理 (inference.py)、分割 (segmentation.py)、物理换算 (physics.py) 与 UI (app.py) 独立封装，确保生产线逻辑清晰。",
+            "贡献指南 (CONTRIBUTING.md)：定义了开发者接入规范，包含环境配置、Git 工作流及测试用例运行说明。",
+            "模型扩展协议：在文档中明确说明了如何通过继承 BaseDetector 类来快速集成 YOLOv9/10，包括权重加载与输出格式对齐要求。",
+            "物理参数计算扩展：提供了在 physics.py 中新增几何参数（如分形维数、圆度）的函数接口说明，支持从 Mask 直接提取自定义物理特征。",
+            "清理冗余资产：移除了开发阶段的临时 Mock 脚本、中间过程日志及未标注的原始图像碎片，确保仓库公开可用性。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "新集成模型（如 YOLOv10）可能引入不兼容的 PyTorch 或 Ultralytics 版本依赖冲突。",
+          "缺乏自动化 CI/CD 测试流程，社区贡献的代码可能破坏现有的物理尺寸换算精度。"
+        ],
+        "next_hint": "建议将当前整理好的代码与 Task 25/26 的文档及演示资产进行最终对齐，发布 GitHub Release v1.0 稳定版。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "交付物完整覆盖了目录结构整理、冗余清理以及贡献指南编写的要求，且提供了具体的代码模块化方案与扩展协议，内容详实具体。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

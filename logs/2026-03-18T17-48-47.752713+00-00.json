@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-18T17:48:47.752713+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 27,
+    "summary": "完成了公开可用的微碳屑自动识别生产线样机的最终代码仓库结构梳理，并编写了《贡献指南 (CONTRIBUTING.md)》，明确了模型扩展与物理逻辑集成的标准化路径。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 27,
+    "decision": "approve"
+  }
+}
