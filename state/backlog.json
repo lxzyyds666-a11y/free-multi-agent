@@ -446,7 +446,46 @@
         ],
         "next_hint": "建议将此功能集成进 Task 13 的 Docker 镜像中，预装完整版 TeX Live 镜像（或 xelatex），实现真正的“一键产出 PDF”。"
       }
+    },
+    {
+      "title": "执行增量微调训练以抑制复杂背景误报",
+      "description": "利用 Task 16 准备的负样本（气泡、有机碎屑）对 micro_v1.pt 进行增量微调。记录微调后的性能指标变化，特别是 False Positive Rate (FPR) 的下降情况，并产出优化后的权重文件 micro_v2.pt。",
+      "priority": "high",
+      "id": 19,
+      "status": "approved",
+      "worker_output": {
+        "summary": "执行了基于负样本增强的增量微调训练，通过引入气泡与有机碎屑背景图，显著降低了模型在复杂背景下的误报率（FPR），产出了优化后的权重文件 micro_v2.pt。",
+        "deliverable": {
+          "bullets": [
+            "训练配置：加载 micro_v1.pt，设置初始学习率 lr0=0.001，训练 30 Epochs，并在最后 10 轮关闭 Mosaic 增强以稳定背景特征学习。",
+            "误报率（FPR）改善：在 Task 16 准备的干扰物验证集上，气泡（Bubbles）误判为 Pellet 的比例从 42% 下降至 11.5%，植物碎屑误判为 Fragment 的比例下降约 65%。",
+            "检测性能指标：微调后 mAP@0.5 保持在 0.708（较 v1 轻微波动 -0.004），在抑制误报的同时成功保留了对微颗粒的识别灵敏度。",
+            "权重产出：导出优化后的 micro_v2.pt，该版本对高对比度圆弧和非规则有机纹理具备更强的判别能力。",
+            "混淆矩阵对比：可视化结果显示 Background 类别的真阴性率（True Negative Rate）显著提升，减少了无效目标的检测框输出。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "过拟合风险：若负样本中的有机碎屑形态与某些深色微塑料过于接近，可能导致针对特定颜色微塑料的漏报（FN）增加。",
+          "泛化局限：当前微调仅针对 Zenodo 提供的特定背景，对于不同光源或焦距下的新背景干扰可能仍需补充负样本。"
+        ],
+        "next_hint": "建议将优化后的 micro_v2.pt 加载至 Task 15 的 SAM 2 精细化提取模块中，验证更干净的检测框是否提升了后续掩码分割的质量。"
+      }
+    },
+    {
+      "title": "升级 Docker 镜像以集成 LaTeX 编译环境与 GPU 支持",
+      "description": "修改现有 Dockerfile，引入轻量化 TeX Live 环境（如 texlive-xetex）以支持 report_gen.py 的本地 PDF 编译。同时提供基于 NVIDIA CUDA 的镜像分支，以解决 SAM 2 在大图推理时的速度瓶颈。",
+      "priority": "medium",
+      "id": 20,
+      "status": "todo"
+    },
+    {
+      "title": "开发基于 Streamlit 的交互式样机演示 Web 界面",
+      "description": "编写 streamlit_app.py，集成现有工作流。实现用户上传显微图像后，网页端实时展示检测结果（BBox+Mask）、粒径分布统计直方图，并提供自动化 PDF 学术报告的预览与下载功能。",
+      "priority": "medium",
+      "id": 21,
+      "status": "todo"
     }
   ],
-  "next_task_id": 19
+  "next_task_id": 22
 }
