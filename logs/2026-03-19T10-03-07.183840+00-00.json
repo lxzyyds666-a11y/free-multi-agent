@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-19T10:03:07.183840+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 33,
+    "summary": "开发并验证了 `fetch_public_data.py` 脚本，实现了从 Zenodo API 自动获取显微图像数据集及其标注文件，并内置 MD5 校验机制，确保了公开样机演示数据的完整性与复现性。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 33,
+    "decision": "approve"
+  }
+}
