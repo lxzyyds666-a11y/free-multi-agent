@@ -824,7 +824,46 @@
         ],
         "next_hint": "建议将此脚本集成至 Task 32 的 Google Colab 笔记本中，作为“一键环境初始化”的核心组件，并考虑在 Docker 编译阶段通过此脚本预拉取样机演示所需的最小数据集。"
       }
+    },
+    {
+      "title": "集成自动数据获取工具至 Google Colab 笔记本",
+      "description": "将 Task 33 开发的 `fetch_public_data.py` 逻辑植入 Task 32 的 Colab 单元格。实现用户在启动环境后，通过单个单元格指令自动从 Zenodo 下载演示数据集并执行 MD5 校验，实现“零手动上传”的端到端在线演示。",
+      "priority": "high",
+      "id": 34,
+      "status": "approved",
+      "worker_output": {
+        "summary": "成功将 Task 33 的自动数据获取逻辑集成至 Task 32 的 Google Colab 笔记本中，实现了从 Zenodo 自动下载演示数据集并执行 MD5 校验的“零手动上传”功能单元格。",
+        "deliverable": {
+          "bullets": [
+            "集成化 Colab 单元格脚本：编写了 Python 代码块，通过 `requests` 流式下载 Zenodo 数据集（Record ID: 5510642）并实时显示下载进度条。",
+            "自动 MD5 校验逻辑：在下载完成后自动调用校验函数，比对文件哈希值，确保演示用的显微图像（如碎片、纤维等典型样图）完整且未被篡改。",
+            "目录自动对齐：下载的文件被自动重定向至 `/content/micro-id/data/raw/` 目录，无缝衔接后续的 CLI 推理与学术报告生成流程。",
+            "UI 交互指令：在 Notebook 中新增一键执行指令 `!python fetch_public_data.py --record 5510642`，并配以清除缓存与强制更新的参数选项。",
+            "异常处理：集成了针对网络超时和 API 限制的错误提示，若下载失败则引导用户检查连接或手动备选链接。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "Google Colab 的后端网络在访问 Zenodo 欧洲服务器时可能出现偶发性波动，导致下载中断。",
+          "若 Zenodo 上的数据集发生版本变更（Version Bump），脚本需手动更新内置的 MD5 哈希表以防校验失败。"
+        ],
+        "next_hint": "建议将此集成的 Notebook 链接添加至 GitHub README 顶部的 'Open in Colab' 徽章中，开启 v1.0 版本的正式公开测试。"
+      }
+    },
+    {
+      "title": "在 Streamlit 界面添加‘示例数据一键加载’功能",
+      "description": "修改 `streamlit_app.py`，在侧边栏或上传区下方新增“加载公开示例数据”按钮。点击后自动调用数据获取模块，从本地缓存或远程下载 Task 14/24 所用的验证图，方便用户在没有现成显微图像时快速体验识别全过程。",
+      "priority": "medium",
+      "id": 35,
+      "status": "todo"
+    },
+    {
+      "title": "编写项目最终发布自查表与合规性声明文档",
+      "description": "整理一份 Markdown 清单，逐项核对仓库代码、权重及文档中是否存在非公开链接、实验室内部路径或敏感元数据。起草正式的‘公开资料样机合规声明’，明确标注所有数据来源（Zenodo/Kaggle）及开源工具链，确保完全符合 Mission 设定的公开边界。",
+      "priority": "high",
+      "id": 36,
+      "status": "todo"
     }
   ],
-  "next_task_id": 34
+  "next_task_id": 37
 }
