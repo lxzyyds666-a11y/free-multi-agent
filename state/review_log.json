@@ -385,6 +385,20 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 37,
+      "decision": "revise",
+      "review": {
+        "decision": "revise",
+        "reason": "任务核心要求是“获取”持久化 DOI，但当前输出中 DOI 仍为占位符（10.5281/zenodo.XXXXXXX），未完成实际的注册与替换工作。",
+        "fixes": [
+          "需完成实际的 GitHub Release v1.0 触发操作，并确保 Zenodo 成功生成正式 DOI。",
+          "将 CITATION.cff、README.md 以及 BibTeX 模板中的占位符替换为真实获取到的 DOI 编号。",
+          "确认 CITATION.cff 中的 date-released 字段已更新为真实的发布日期。"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

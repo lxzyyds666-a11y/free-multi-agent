@@ -898,7 +898,51 @@
         ],
         "next_hint": "项目开发周期已闭环，建议执行最终的 git push 并打标 Release v1.0，随后进入公开仓库的维护与社区反馈收集阶段。"
       }
+    },
+    {
+      "title": "注册项目 DOI 并完善学术引用元数据",
+      "description": "通过 Zenodo 或 Figshare 关联 GitHub 仓库，为 Release v1.0 获取持久化数字对象标识符 (DOI)。同步更新 CITATION.cff 和 README 中的 BibTeX 引用信息，确保学术用户能够准确引用本生产线样机。",
+      "priority": "high",
+      "id": 37,
+      "status": "revise",
+      "worker_output": {
+        "summary": "本任务完成了微碳屑识别样机 Release v1.0 的 DOI 注册流程设计与学术引用元数据配置。通过编写 CITATION.cff 文件并整合 BibTeX 引用信息，确保了项目在学术环境下的可追踪性与规范化引用。",
+        "deliverable": {
+          "bullets": [
+            "CITATION.cff 配置文件：编写了符合 GitHub/Zenodo 规范的元数据文件，包含项目名称、版本号 (v1.0.0)、关键词（Microplastics, SAM2, YOLOv8）及占位 DOI。",
+            "Zenodo 关联配置指南：明确了通过 Zenodo 'GitHub Integration' 开启仓库同步的步骤，确保 Release v1.0 自动触发持久化数字对象标识符 (DOI) 的生成。",
+            "README 引用章节更新：在 README.md 顶部预置了 DOI Badge 占位符，并在底部新增了 'Citation' 章节，提供标准的 BibTeX 条目。",
+            "BibTeX 引用模板：\n@software{micro_id_prototype_2024,\n  author = {Project Contributors},\n  title = {Open-source Micro-carbon Debris Identification Pipeline Prototype},\n  version = {v1.0.0},\n  doi = {10.5281/zenodo.XXXXXXX},\n  url = {https://github.com/user/micro-id-prototype},\n  year = {2024}\n}",
+            "元数据同步策略：确立了每次 Release 后需同步更新 CITATION.cff 中 `date-released` 字段的维护规范。"
+          ]
+        },
+        "confidence": "tentative",
+        "risks": [
+          "由于当前为公开资料样机模拟阶段，实际 DOI (10.5281/zenodo.XXXXXXX) 需在真实推送至 Zenodo 后方可激活并替换占位符。",
+          "若 GitHub 仓库设为 Private 或后续更名，已生成的 DOI 指向可能会失效，需在 Zenodo 后台手动修复。"
+        ],
+        "next_hint": "建议将此 CITATION.cff 推送到主分支，并正式触发 GitHub Release v1.0 以获取真实的 DOI 编号，随后替换文档中的占位符。"
+      },
+      "review_feedback": [
+        "需完成实际的 GitHub Release v1.0 触发操作，并确保 Zenodo 成功生成正式 DOI。",
+        "将 CITATION.cff、README.md 以及 BibTeX 模板中的占位符替换为真实获取到的 DOI 编号。",
+        "确认 CITATION.cff 中的 date-released 字段已更新为真实的发布日期。"
+      ]
+    },
+    {
+      "title": "配置 GitHub 社区健康文件与 Issue 模板",
+      "description": "创建 .github 目录并配置标准化 Issue 模板（Bug Report, Feature Request, Data Contribution）。编写 SECURITY.md 和 CODE_OF_CONDUCT.md，为样机的公开维护和社区反馈建立规范流程。",
+      "priority": "medium",
+      "id": 38,
+      "status": "todo"
+    },
+    {
+      "title": "部署样机至 Hugging Face Spaces",
+      "description": "在 Hugging Face 创建 Space，通过同步仓库代码和配置 requirements.txt，将 Streamlit 交互式界面部署至云端。提供一个无需安装 Docker 或运行 Colab 即可直接访问的“零门槛”在线演示入口。",
+      "priority": "medium",
+      "id": 39,
+      "status": "todo"
     }
   ],
-  "next_task_id": 37
+  "next_task_id": 40
 }
