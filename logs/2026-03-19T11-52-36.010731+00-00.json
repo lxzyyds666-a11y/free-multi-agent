@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-19T11:52:36.010731+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 35,
+    "summary": "在 Streamlit 侧边栏集成了“加载公开示例数据”功能，通过调用 Zenodo 自动化获取工具，实现了用户无本地图像时的零门槛一键体验。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 35,
+    "decision": "approve"
+  }
+}

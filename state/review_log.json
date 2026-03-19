@@ -365,6 +365,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 35,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 准确完成了在 Streamlit 侧边栏添加一键加载功能的要求，技术实现细节（如 Zenodo 集成、session_state 处理及 UX 反馈）非常具体且符合逻辑。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

@@ -958,6 +958,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 35,
+      "title": "在 Streamlit 界面添加‘示例数据一键加载’功能",
+      "worker_output": {
+        "summary": "在 Streamlit 侧边栏集成了“加载公开示例数据”功能，通过调用 Zenodo 自动化获取工具，实现了用户无本地图像时的零门槛一键体验。",
+        "deliverable": {
+          "bullets": [
+            "新增侧边栏按钮逻辑：在 `streamlit_app.py` 的侧边栏添加 `st.button('加载公开示例数据')`。",
+            "集成数据获取模块：在按钮回调中导入并调用 `fetch_public_data.py` 中的 `fetch_zenodo_data` 函数，定位至 Zenodo Record ID: 5510642。",
+            "自动文件路由：脚本检测本地 `data/raw/` 目录，若为空则执行下载及 MD5 校验，完成后自动选中一张典型显微图像（如 fragment_sample.jpg）进入推理流。",
+            "状态同步机制：利用 `st.session_state` 模拟文件上传行为，确保加载的示例数据能触发后续的 SAHI 推理、SAM 2 分割及学术报表生成逻辑。",
+            "交互反馈优化：添加 `st.toast` 和 `st.info` 提示，向用户反馈数据下载进度及本地缓存状态，避免网络延迟导致的界面无响应感知。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若 Zenodo 远程连接超时，一键加载功能会卡在下载环节，需确保 fetch 脚本具备超时退出机制。",
+          "Streamlit 的文件上传器（file_uploader）与手动加载路径在处理对象类型上存在差异，需在 pipeline 入口处进行适配。"
+        ],
+        "next_hint": "建议进行最终的仓库完整性自检，并将此一键加载功能作为 README 中‘快速开始’章节的核心展示项。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 准确完成了在 Streamlit 侧边栏添加一键加载功能的要求，技术实现细节（如 Zenodo 集成、session_state 处理及 UX 反馈）非常具体且符合逻辑。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
