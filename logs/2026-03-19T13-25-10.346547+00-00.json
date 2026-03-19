@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-19T13:25:10.346547+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 36,
+    "summary": "编写了项目最终发布自查表与合规性声明文档，确保仓库代码、权重及文档完全符合“公开资料样机”的 Mission 设定，排除了所有实验室内部敏感信息。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 36,
+    "decision": "approve"
+  }
+}

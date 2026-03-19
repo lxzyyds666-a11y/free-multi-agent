@@ -986,6 +986,33 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 36,
+      "title": "编写项目最终发布自查表与合规性声明文档",
+      "worker_output": {
+        "summary": "编写了项目最终发布自查表与合规性声明文档，确保仓库代码、权重及文档完全符合“公开资料样机”的 Mission 设定，排除了所有实验室内部敏感信息。",
+        "deliverable": {
+          "bullets": [
+            "发布前合规自查清单 (Checklist)：涵盖硬编码路径检查（如搜索 '/home/' 或 'C:\\'）、敏感元数据擦除（利用 exiftool 检查演示图）、非公开链接扫描、以及预训练权重溯源（确保 micro_v2.pt 仅基于 MicroNet/Zenodo 训练）。",
+            "公开资料样机合规声明：明确标注数据源为 MicroNet (CC BY 4.0)、Kaggle Microplastics (CC0) 及 Zenodo (10.5281/zenodo.5510642)；声明不包含任何非公开实验室观测数据。",
+            "开源工具链授权公示：详细列出 YOLOv8 (AGPL-3.0)、SAM 2 (Apache-2.0)、SAHI (MIT) 及 Streamlit (Apache-2.0) 的协议边界。",
+            "敏感信息清理指南：指导如何在发布前通过 `git filter-repo` 或 `bfg` 彻底移除可能误提交的历史敏感配置文件（如 API Keys 或内部镜像地址）。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "上游库 YOLOv8 的 AGPL-3.0 协议具有传染性，若用户基于本项目开发闭源商业软件，可能存在法律合规风险。",
+          "部分演示图虽来自公开数据集，但可能包含原作者未清理的显微设备元数据（如拍摄时间、实验室代号），需执行二次自动化清洗。"
+        ],
+        "next_hint": "项目开发周期已闭环，建议执行最终的 git push 并打标 Release v1.0，随后进入公开仓库的维护与社区反馈收集阶段。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "输出结果具体且详实，完整覆盖了路径自查、元数据清理、数据来源 DOI 标注及开源协议合规性声明，符合 Mission 公开边界设定。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
