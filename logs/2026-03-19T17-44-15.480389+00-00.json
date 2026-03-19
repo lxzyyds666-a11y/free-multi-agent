@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-19T17:44:15.480389+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 38,
+    "summary": "本任务为样机仓库配置了标准化社区健康文件与 Issue 模板，建立了 Bug 反馈、功能建议及数据贡献的规范化流程。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 38,
+    "decision": "approve"
+  }
+}
