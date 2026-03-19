@@ -845,6 +845,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 31,
+      "title": "编写 GitHub Actions 自动化 CI 配置文件",
+      "worker_output": {
+        "summary": "本任务编写并验证了 GitHub Actions 自动化 CI 配置文件 `.github/workflows/smoke-test.yml`，实现了在代码提交或 PR 时自动触发基于 Docker 的冒烟测试，确保核心推理逻辑的连通性。",
+        "deliverable": {
+          "bullets": [
+            "配置文件路径：`.github/workflows/smoke-test.yml`",
+            "触发条件：配置为在 `main` 分支的 `push` 以及针对 `main` 分支的 `pull_request` 时自动触发。",
+            "运行环境：采用 `ubuntu-latest` 标准镜像，内置 Docker 与 Docker Compose 环境。",
+            "核心步骤：包含代码检出 (Checkout)、Docker Buildx 初始化、Docker 镜像构建验证，以及执行 Task 30 编写的 `smoke_test.sh` 脚本。",
+            "YAML 源码示例：\n```yaml\nname: Smoke Test CI\non:\n  push:\n    branches: [ main ]\n  pull_request:\n    branches: [ main ]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Checkout Code\n        uses: actions/checkout@v4\n      - name: Set up Docker Buildx\n        uses: docker/setup-buildx-action@v3\n      - name: Build and Run Smoke Test\n        run: |\n          chmod +x smoke_test.sh\n          ./smoke_test.sh\n        env:\n          DEVICE: cpu\n          SCALE_FACTOR: 0.45\n```"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "GitHub Hosted Runner 的内存限制（约 7GB）可能在执行 SAM 2 CPU 推理大图时触发 OOM 导致 CI 失败。",
+          "由于包含 PyTorch 和 TeX Live，Docker 镜像构建过程可能超过 10 分钟，建议后续引入镜像层缓存 (cache-from/cache-to)。"
+        ],
+        "next_hint": "建议在 CI 流程中引入 Docker Layer Caching 机制，并考虑在测试脚本中使用极小尺寸（如 128x128）的 Mock 图像以降低 CI 资源消耗。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "配置文件完整覆盖了触发条件、运行环境以及脚本执行等核心要求，YAML 代码编写规范且具备针对性风险提示。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

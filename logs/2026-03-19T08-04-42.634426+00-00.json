@@ -1,0 +1,18 @@
+{
+  "time_utc": "2026-03-19T08:04:42.634426+00:00",
+  "planner": {
+    "skipped": false,
+    "created": 3,
+    "note": "在 Release v1.0 之后，规划通过自动化 CI 确保稳定性，并通过 Colab 和数据自动获取脚本降低公众用户的技术与硬件验证门槛。"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 31,
+    "summary": "本任务编写并验证了 GitHub Actions 自动化 CI 配置文件 `.github/workflows/smoke-test.yml`，实现了在代码提交或 PR 时自动触发基于 Docker 的冒烟测试，确保核心推理逻辑的连通性。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 31,
+    "decision": "approve"
+  }
+}
