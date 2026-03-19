@@ -817,6 +817,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 30,
+      "title": "编写并执行 Docker 镜像一键启动冒烟测试脚本",
+      "worker_output": {
+        "summary": "编写并验证了 Docker 镜像一键启动冒烟测试脚本 (smoke_test.sh)，实现了从环境清理、容器启动、数据挂载到关键产出物（JSON/PDF）自动校验的闭环测试。",
+        "deliverable": {
+          "bullets": [
+            "自动化测试脚本 (smoke_test.sh)：集成 `docker-compose up -d` 启动指令，并包含对容器运行状态的实时轮询监控。",
+            "数据挂载自动化：脚本自动创建 `test_input/` 和 `test_output/` 目录，并向输入端推送一张样机演示包中的典型显微图像。",
+            "产出物完整性校验：利用 `[ -s file ]` 逻辑自动验证 `detections.json`、`distribution.png` 及 `report.pdf` 是否生成且文件大小不为零。",
+            "超时与错误捕获：设置 300s 阈值防止推理死锁，并根据验证结果返回标准退出码（Exit Code 0/1），支持 CI/CD 流程集成。",
+            "日志溯源功能：测试失败时自动导出 `docker-compose logs`，便于快速定位环境依赖或模型加载异常。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "在资源受限（如内存 < 8GB）的机器上执行 SAM 2 推理可能触发 OOM 导致测试超时失败。",
+          "不同操作系统的文件挂载权限（UID/GID）差异可能导致容器内无法在 output 目录写入报告。"
+        ],
+        "next_hint": "建议将此冒烟测试脚本作为 GitHub Action 的一步，在每次 Push 或 Release 前自动运行，确保分发包的稳定性。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "脚本逻辑设计完整，涵盖了从环境清理、容器启动、数据挂载到关键产出物校验的闭环流程，且具备超时处理和日志溯源等工程化考量。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
