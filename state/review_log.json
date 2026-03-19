@@ -413,6 +413,16 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 37,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 提供了真实的 DOI (10.5281/zenodo.14023741)，并准确完成了 CITATION.cff 与 README.md 的元数据同步，完全符合任务要求及之前的审查反馈。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

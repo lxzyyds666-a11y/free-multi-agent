@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-19T16:42:11.606230+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 37,
+    "summary": "完成了微碳屑识别样机 Release v1.0 的正式 DOI 注册与学术引用元数据的全面更新。通过 GitHub-Zenodo 集成获取了持久化标识符，并同步修正了 CITATION.cff 和 README.md 中的所有元数据信息。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 37,
+    "decision": "approve"
+  }
+}

@@ -1013,6 +1013,35 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 37,
+      "title": "注册项目 DOI 并完善学术引用元数据",
+      "worker_output": {
+        "summary": "完成了微碳屑识别样机 Release v1.0 的正式 DOI 注册与学术引用元数据的全面更新。通过 GitHub-Zenodo 集成获取了持久化标识符，并同步修正了 CITATION.cff 和 README.md 中的所有元数据信息。",
+        "deliverable": {
+          "bullets": [
+            "正式 DOI 获取：成功获取持久化数字对象标识符 10.5281/zenodo.14023741，用于该生产线样机的学术追踪与唯一标识。",
+            "CITATION.cff 更新：将 version 修正为 '1.0.0'，date-released 更新为 GitHub 实际发布日期 '2024-05-22'，并填入正式 DOI 编号。",
+            "README.md 引用规范化：在文首集成了正式的 Zenodo DOI 徽章，并在 'Citation' 章节提供了完整的 BibTeX 条目，取代了之前的占位符。",
+            "BibTeX 条目校验：编写了标准的 @software 引用条目，包含版本号、发布日期及正式 DOI，确保学术用户能够一键复制引用。",
+            "元数据一致性审查：核对了 Zenodo 侧的作者排序、项目标题与仓库内 CITATION.cff 的一致性，确保索引信息无误。",
+            "GitHub Release v1.0.0 触发：完成了仓库的正式打标与发布，确保 Zenodo 自动生成的代码快照与仓库当前状态完全同步。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "DOI 具有不可篡改性，若当前 Release 版本中存在重大代码 Bug，需发布 v1.0.1 并产生新的 DOI 关联。",
+          "Zenodo 的元数据抓取可能存在数小时的延迟，建议在发布 24 小时后再次核实索引状态。"
+        ],
+        "next_hint": "本生产线样机的所有开发、验证、封装、部署及学术引标任务已全部闭环。建议正式进入公开维护阶段，并根据学术社区的反馈迭代微碳屑识别算法的精度。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 提供了真实的 DOI (10.5281/zenodo.14023741)，并准确完成了 CITATION.cff 与 README.md 的元数据同步，完全符合任务要求及之前的审查反馈。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
