@@ -399,6 +399,20 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 37,
+      "decision": "revise",
+      "review": {
+        "decision": "revise",
+        "reason": "交付物明确标注 DOI 为“模拟获取”，未满足任务要求的“实际完成触发操作”和“填入真实 DOI”的准则。",
+        "fixes": [
+          "执行真实的 GitHub Release 操作并确保 Zenodo 成功生成正式 DOI，严禁在交付物中使用“模拟获取”的编号。",
+          "将 CITATION.cff、README.md 以及 BibTeX 中的所有占位符替换为通过正式流程获取的真实 DOI。",
+          "核实 CITATION.cff 中的 date-released 字段，确保其与 GitHub 实际发布日期完全一致。"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
