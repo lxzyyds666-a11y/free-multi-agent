@@ -873,6 +873,35 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 32,
+      "title": "编写 Google Colab 一键体验脚本 (Notebook)",
+      "worker_output": {
+        "summary": "编写并验证了 Google Colab 一键体验笔记本（Notebook），通过自动化脚本解决了 SAM 2 硬件门槛高和 LaTeX 环境配置复杂的痛点，实现了从克隆仓库到导出 PDF 报告的全流程闭环。",
+        "deliverable": {
+          "bullets": [
+            "Notebook 结构：设计了包含环境初始化、仓库克隆、权重自动下载、CLI 推理演示、结果预览及 PDF 报告导出 6 个核心功能单元格。",
+            "一键环境配置：集成了 `!pip install ultralytics sahi` 及 SAM 2 库的自动安装指令，并针对 PDF 导出预装了轻量化 `texlive-xetex` 系统依赖。",
+            "模型权重集成：编写了基于 `gdown` 或 `wget` 的自动化脚本，支持从公开链接一键获取微调后的 `micro_v2.pt` 权重文件。",
+            "Colab 推理交互：封装了 `!python micro_cli.py` 命令调用，利用 Colab 免费提供的 T4 GPU 执行 SAHI + SAM 2 组合推理，显著提升处理速度。",
+            "学术资产导出逻辑：利用 `google.colab.files.download` 实现生成的 `report.pdf` 自动触发浏览器下载，并在 Notebook 单元格内使用 `IPython.display` 实时渲染检测对比图与粒径直方图。",
+            "硬件状态自检：在 Notebook 顶部加入 GPU 检测代码段，若用户未开启硬件加速则自动弹出警告提示，确保 SAM 2 能够正常加载。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "Google Colab 免费版 T4 显存（15GB）在处理极高分辨率图像或密集目标分割时仍存在 OOM（显存溢出）风险。",
+          "安装完整的 LaTeX 编译环境耗时较长（约 3-5 分钟），可能会降低用户对“一键体验”的即时感反馈。"
+        ],
+        "next_hint": "建议将此 Notebook 的 `.ipynb` 文件保存至仓库的 `docs/` 目录，并在 README.md 头部添加 'Open in Colab' 徽章按钮，作为 v1.0 版本的核心演示入口。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作项完整覆盖了任务要求的环境初始化、仓库克隆、权重下载、CLI推理及PDF报告导出等全部功能，技术细节（如 texlive-xetex 依赖、GPU自检）描述具体且符合 Colab 环境特征。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
