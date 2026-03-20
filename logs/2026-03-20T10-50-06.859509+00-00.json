@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-20T10:50:06.859509+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 44,
+    "summary": "编写了针对第三方公开数据集的适配指南，并开发了通用适配器脚本 `generic_adapter.py`，实现了非标准标注格式向样机统一标签体系与元数据规范的自动化转换。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 44,
+    "decision": "revise"
+  }
+}

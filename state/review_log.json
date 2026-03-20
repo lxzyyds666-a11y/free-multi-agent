@@ -483,6 +483,20 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 44,
+      "decision": "revise",
+      "review": {
+        "decision": "revise",
+        "reason": "核心交付物 generic_adapter.py 的关键逻辑仅为代码占位符（pass），未提供实际可运行的转换逻辑，不符合“提供脚本”的任务要求。",
+        "fixes": [
+          "补全 generic_adapter.py 中 transform_coco_to_standard 方法的具体实现，包括坐标从 COCO/JSON 格式到 YOLO 归一化格式的计算逻辑。",
+          "提供一个完整的 metadata.json 示例内容，展示物理参数 pixel_per_um 如何在 JSON 中具体呈现。",
+          "增加对不同来源数据集（如 Kaggle 与显微镜库）文件路径处理的具体代码逻辑。"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
