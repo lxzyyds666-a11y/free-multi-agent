@@ -1268,6 +1268,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 46,
+      "title": "集成论文-数据一致性自动审计至 CI 流水线",
+      "worker_output": {
+        "summary": "成功将“论文-数据一致性自动审计”集成至 GitHub Actions CI 流水线，实现了在冒烟测试完成后自动校验 LaTeX 文档数值与底层推理结果的一致性。",
+        "deliverable": {
+          "bullets": [
+            "更新后的 .github/workflows/smoke-test.yml：在原有冒烟测试步骤后新增了 'Paper-Data Consistency Audit' 环节。",
+            "流水线集成逻辑：配置 CI 在完成 `smoke_test.sh`（生成模拟学术资产）后，立即调用 `audit_paper.py` 对 `test_output/` 目录下的 JSON 与 TeX 文件进行比对。",
+            "中断机制实现：利用 Python 脚本的标准退出码（Exit Code），当审计工具检测到数值不一致或容差超标时，主动触发 CI 流程中断（Fail），防止错误数据进入 Release。",
+            "关键配置片段：\nyaml\n      - name: Run Consistency Audit\n        run: |\n          # 确保审计工具具备执行环境\n          pip install -r requirements.txt\n          # 执行审计，指定冒烟测试产生的输出路径\n          python audit_paper.py --latex test_output/report.tex --json test_output/detections.json --stats test_output/performance_stats.json\n",
+            "环境解耦：审计步骤配置为读取挂载卷中的持久化数据，确保了容器内推理产物与宿主机审计脚本的顺畅流转。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若冒烟测试中的 Mock 图像触发了非预期的模型随机性（如置信度微弱漂移），可能导致审计环节因极其细微的数值差异而误报 CI 失败。",
+          "CI 环境下的 LaTeX 路径与脚本默认搜索路径若不匹配，会引发文件未找到错误。"
+        ],
+        "next_hint": "建议在 CI 配置文件中引入 Docker Layer Caching 机制，以缩短每次审计任务中镜像重复构建的时间成本。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作成果准确地完成了 CI 流水线集成，提供了具体的 YAML 片段，并清晰描述了中断机制与文件路径逻辑，符合任务要求。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
