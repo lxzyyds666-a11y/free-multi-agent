@@ -1117,7 +1117,25 @@
       "description": "升级 Streamlit 界面，允许用户在侧边栏勾选不同的模型权重（v1 vs v2）或推理策略（开启 vs 关闭 SAHI/SAM2），自动执行对比推理并在页面上直接生成符合 LaTeX 规范的消融实验对比表（Table Row），直接服务于论文的实验分析章节。",
       "priority": "medium",
       "id": 45,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "升级了 Streamlit 界面，实现了“消融实验对比”动态生成功能。用户可通过侧边栏组合不同的权重版本与推理策略（SAHI/SAM2），系统自动执行对比推理并即时生成符合 LaTeX 规范的学术对比表及其对应的表项（Table Row）。",
+        "deliverable": {
+          "bullets": [
+            "Streamlit 侧边栏功能升级：新增模型权重多选框（micro_v1 vs micro_v2）及推理策略开关（Toggle SAHI, Toggle SAM2），支持用户自定义消融组合。",
+            "动态对比推理引擎 (ablation_runner.py)：封装了并行/串行执行逻辑，支持对同一张图像应用 N 种配置组合，并自动对齐推理结果（耗时、检测数、平均置信度、几何特征）。",
+            "LaTeX 消融表自动生成器：实现了基于 Python 字符串模板的动态三线表生成功能，支持根据选定项自动渲染列标题与数值行，包含指标如 Latency (s), Objects, Avg Conf, Mean Area (μm²)。",
+            "UI 实时对比视图：在页面前端增加“对比展示区”，支持分屏对比不同配置下的识别掩码效果，辅助用户直观评估消融项对检测质量的影响。",
+            "核心逻辑实现示例：\npython\n# 侧边栏配置\nselected_models = st.sidebar.multiselect('选择权重版本', ['micro_v1', 'micro_v2'], default=['micro_v2'])\nenable_sahi = st.sidebar.checkbox('开启 SAHI (切片增强)')\nenable_sam2 = st.sidebar.checkbox('开启 SAM 2 (掩码细化)')\n\n# 执行对比\nif st.button('开始消融实验对比'):\n    rows = []\n    for model_name in selected_models:\n        config = {'model': f'weights/{model_name}.pt', 'sahi': enable_sahi, 'sam2': enable_sam2}\n        metrics = pipeline.run_with_config(img, config)\n        rows.append(metrics)\n    \n    # 生成 LaTeX\n    latex_code = latex_gen.generate_ablation_table(rows)\n    st.code(latex_code, language='latex')\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "在算力受限环境（如 HF Spaces）下，多组配置连续推理会导致显著的等待时间，甚至触发 OOM。",
+          "LaTeX 表格在动态生成时，若选定项过多可能导致表格超宽，需预设缩放或截断逻辑。"
+        ],
+        "next_hint": "建议针对 Hugging Face 部署版本限制最大对比组合数量（如最多 3 组），并优先在 GPU 环境下测试 SAM2 的消融性能波动。"
+      }
     }
   ],
   "next_task_id": 46
