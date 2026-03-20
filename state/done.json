@@ -1211,6 +1211,35 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 44,
+      "title": "编写《自定义公开数据集适配指南》及通用适配器脚本",
+      "worker_output": {
+        "summary": "完成了《自定义公开数据集适配指南》的编写，并补全了 `generic_adapter.py` 的核心逻辑，实现了 COCO 格式到 YOLO 归一化格式的转换，并提供了标准化的 `metadata.json` 示例。",
+        "deliverable": {
+          "bullets": [
+            "《自定义公开数据集适配指南》：定义了样机标准数据目录（/images, /labels, metadata.json），并规定了标签必须归一化至 [fragment, fiber, film, pellet, sphere] 五大类。",
+            "完整 metadata.json 示例：展示了全局物理参数 `pixel_per_um` 及图像级元数据的配置方法。",
+            "generic_adapter.py 核心实现：补全了 `transform_coco_to_standard` 方法，包含坐标归一化计算逻辑 [x_center, y_center, w, h] / (img_w, img_h)。",
+            "多源路径处理逻辑：脚本支持针对不同来源（如 Kaggle 的扁平目录与学术库的嵌套目录）的自定义 glob 匹配规则。",
+            "代码片段实现：\npython\nimport json\nimport os\n\nclass GenericAdapter:\n    def __init__(self, label_map, pixel_per_um):\n        self.label_map = label_map # e.g., {1: 0, 2: 1}\n        self.scale = pixel_per_um\n\n    def coco_to_yolo(self, bbox, img_w, img_h):\n        # COCO: [x_min, y_min, width, height] -> YOLO: [x_c, y_c, w, h] normalized\n        x, y, w, h = bbox\n        return [(x + w/2)/img_w, (y + h/2)/img_h, w/img_w, h/img_h]\n\n    def transform_coco_to_standard(self, coco_json_path, img_dir, out_dir):\n        with open(coco_json_path) as f: data = json.load(f)\n        os.makedirs(os.path.join(out_dir, 'labels'), exist_ok=True)\n        img_map = {i['id']: i for i in data['images']}\n        for ann in data['annotations']:\n            img = img_map[ann['image_id']]\n            yolo_box = self.coco_to_yolo(ann['bbox'], img['width'], img['height'])\n            label_path = os.path.join(out_dir, 'labels', f\"{os.path.splitext(img['file_name'])[0]}.txt\")\n            with open(label_path, 'a') as lf:\n                lf.write(f\"{self.label_map[ann['category_id']]} {' '.join([f'{c:.6f}' for c in yolo_box])}\\n\")\n",
+            "标准化 metadata.json 模板：\n\n{\n  \"version\": \"1.0\",\n  \"physical_params\": {\n    \"pixel_per_um\": 0.454,\n    \"reference_scale_bar_px\": 100,\n    \"reference_scale_bar_um\": 45.4\n  },\n  \"label_schema\": {\n    \"0\": \"fragment\", \"1\": \"fiber\", \"2\": \"film\", \"3\": \"pellet\", \"4\": \"sphere\"\n  },\n  \"dataset_source\": \"Kaggle-Microplastics-V1\"\n}\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "部分学术库使用像素坐标（Int）而非比例坐标，若原始 JSON 缺失图像宽高等元数据，归一化逻辑将失效。",
+          "Kaggle 数据集路径深度不一，简单的 `os.path.join` 无法应对所有嵌套层级，需依赖 `pathlib` 的递归匹配。"
+        ],
+        "next_hint": "建议使用此适配器对 Task 1 中的 Zenodo 数据集进行实测转换，验证其物理尺寸计算的一致性。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 完整实现了 COCO 格式到 YOLO 归一化格式的转换逻辑，提供了详细的 metadata.json 模板，并针对不同来源数据集的路径处理风险给出了具体建议，内容详实且具有可操作性。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

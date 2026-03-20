@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-20T11:38:45.787033+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 44,
+    "summary": "完成了《自定义公开数据集适配指南》的编写，并补全了 `generic_adapter.py` 的核心逻辑，实现了 COCO 格式到 YOLO 归一化格式的转换，并提供了标准化的 `metadata.json` 示例。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 44,
+    "decision": "approve"
+  }
+}
