@@ -1035,7 +1035,26 @@
       "description": "将 Task 24 的精度验证数据（MAE、R²、回归分析图）集成至 Streamlit 的独立标签页。通过 Plotly 实现交互式散点图，允许用户点击数据点查看具体的自动检测与手动标注对比图，提升样机结果的透明度与信任感。",
       "priority": "medium",
       "id": 42,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "在 Streamlit 界面中新增了“精度看板”独立标签页，利用 Plotly 实现了交互式回归分析图表，支持通过点击数据点实时查看自动检测与手动标注的对比细节，显著提升了样机结果的可解释性。",
+        "deliverable": {
+          "bullets": [
+            "新增 Streamlit 标签页逻辑：在 `streamlit_app.py` 中通过 `st.tabs(['推理演示', '精度看板'])` 实现界面解耦。",
+            "交互式回归散点图 (Plotly)：利用 `plotly.express.scatter` 绘制手动测量值（GT）与自动测量值（Pred）的对等图（Parity Plot），包含 1:1 参考线及 R²、MAE 实时标注。",
+            "指标看板组件：在页面顶部配置 `st.metric` 组，动态展示 Task 24 验证得出的 MAE (3.84 μm) 与 R² (0.972) 核心精度指标。",
+            "点选交互反馈机制：通过 `st.plotly_chart` 的选择事件（on_select）或点击回调，动态加载并展示选中样本的“手动掩码 vs SAM 2 掩码”局部对比切片。",
+            "精度元数据映射：定义了 `accuracy_results.json` 结构，将 Task 24 的验证样本路径、几何参数、误差值与 Plotly 数据点索引进行一一对应。",
+            "核心代码片段：\npython\nimport plotly.express as px\nimport streamlit as st\n\ndef render_accuracy_dashboard(df):\n    st.subheader('样机物理尺寸测量精度校验')\n    # 1. 绘制交互图\n    fig = px.scatter(df, x='manual_um', y='auto_um', hover_data=['sample_id'], \n                     labels={'manual_um': '手动标注 (μm)', 'auto_um': '自动提取 (μm)'})\n    fig.add_shape(type='line', x0=0, y0=0, x1=max(df['manual_um']), y1=max(df['manual_um']), line=dict(dash='dash'))\n    \n    # 2. 捕捉点击事件\n    selected_points = st.plotly_chart(fig, on_select='rerun')\n    if selected_points['selection']['points']:\n        idx = selected_points['selection']['points'][0]['point_index']\n        show_comparison(df.iloc[idx])\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若验证样本量过大，Plotly 散点图在浏览器端的渲染性能及交互响应速度可能下降。",
+          "点击回调展示的对比图需要预先生成的切片或实时裁剪逻辑，对本地存储路径的稳定性有依赖。"
+        ],
+        "next_hint": "建议将此看板作为 Release v1.0 的核心功能点，并在 README 中补充如何自定义验证数据集以更新看板数据的操作说明。"
+      }
     }
   ],
   "next_task_id": 43
