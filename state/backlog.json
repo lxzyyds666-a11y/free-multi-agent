@@ -1055,7 +1055,46 @@
         ],
         "next_hint": "建议将此看板作为 Release v1.0 的核心功能点，并在 README 中补充如何自定义验证数据集以更新看板数据的操作说明。"
       }
+    },
+    {
+      "title": "实现“论文-数据”数值一致性自动化审计工具",
+      "description": "编写审计脚本 `audit_paper.py`，通过正则解析生成的 LaTeX 源码（Task 41 产出）中的关键学术指标（如 mAP、颗粒总数、MAE），并将其与原始 `detections.json` 及 `performance_stats.json` 中的原始数值进行交叉比对，输出一致性校验报告，确保“论文生产线”的严谨性。",
+      "priority": "high",
+      "id": 43,
+      "status": "approved",
+      "worker_output": {
+        "summary": "开发并实现了数值一致性审计工具 `audit_paper.py`，通过正则解析 LaTeX 源码中的学术指标，并与原始 `detections.json` 及 `performance_stats.json` 进行交叉校验，确保论文结论与底层数据的高度严谨性。",
+        "deliverable": {
+          "bullets": [
+            "核心审计脚本 (audit_paper.py)：利用 Python `re` 模块实现对 LaTeX 变量定义（如 \\newcommand）及三线表单元格数值的自动化提取。",
+            "指标映射协议：定义了 LaTeX 占位符与数据源的映射关系，包括：`{{TOTAL_COUNT}}` 对应 `detections.json` 长度；`{{MAP_50}}` 对应 `performance_stats.json` 字段；`{{MAE_VAL}}` 对应验证集误差。",
+            "双重校验逻辑：支持“精确匹配”与“容差匹配（Tolerance Check）”，有效处理因四舍五入（如 0.7081 vs 0.708）导致的伪一致性异常。",
+            "结构化审计报告：脚本输出包含 `status: pass|fail`、`target_metric`、`latex_value`、`raw_value` 及 `delta` 的 JSON 报告，自动标注差异显著的指标。",
+            "自动化修复辅助：当检测到轻微数值漂移（如重新训练模型后数据更新）时，脚本支持生成待更新的 LaTeX 宏定义片段，辅助人工快速订正论文。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "LaTeX 源码中若存在复杂的宏嵌套或非标准数值格式（如科学计数法 1.2e-3），正则表达式可能发生解析偏移。",
+          "不同统计口径（如全量数据 vs 过滤后数据）可能导致审计工具与论文作者的预期逻辑不一致。"
+        ],
+        "next_hint": "建议将此审计脚本集成至 GitHub Actions CI 流程中，在每次代码或模型权重更新并重新生成论文时，自动触发一致性核查。"
+      }
+    },
+    {
+      "title": "编写《自定义公开数据集适配指南》及通用适配器脚本",
+      "description": "针对非 MicroNet 来源的第三方公开数据集，详细说明如何编写符合样机要求的 `metadata.json`。提供一个通用适配器脚本 `generic_adapter.py`，演示如何将其他学术公开库（如 Kaggle 或专用显微镜库）的标注格式快速映射至样机标准标签体系。",
+      "priority": "medium",
+      "id": 44,
+      "status": "todo"
+    },
+    {
+      "title": "在 Web 界面集成‘消融实验对比’动态生成功能",
+      "description": "升级 Streamlit 界面，允许用户在侧边栏勾选不同的模型权重（v1 vs v2）或推理策略（开启 vs 关闭 SAHI/SAM2），自动执行对比推理并在页面上直接生成符合 LaTeX 规范的消融实验对比表（Table Row），直接服务于论文的实验分析章节。",
+      "priority": "medium",
+      "id": 45,
+      "status": "todo"
     }
   ],
-  "next_task_id": 43
+  "next_task_id": 46
 }

@@ -1183,6 +1183,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 43,
+      "title": "实现“论文-数据”数值一致性自动化审计工具",
+      "worker_output": {
+        "summary": "开发并实现了数值一致性审计工具 `audit_paper.py`，通过正则解析 LaTeX 源码中的学术指标，并与原始 `detections.json` 及 `performance_stats.json` 进行交叉校验，确保论文结论与底层数据的高度严谨性。",
+        "deliverable": {
+          "bullets": [
+            "核心审计脚本 (audit_paper.py)：利用 Python `re` 模块实现对 LaTeX 变量定义（如 \\newcommand）及三线表单元格数值的自动化提取。",
+            "指标映射协议：定义了 LaTeX 占位符与数据源的映射关系，包括：`{{TOTAL_COUNT}}` 对应 `detections.json` 长度；`{{MAP_50}}` 对应 `performance_stats.json` 字段；`{{MAE_VAL}}` 对应验证集误差。",
+            "双重校验逻辑：支持“精确匹配”与“容差匹配（Tolerance Check）”，有效处理因四舍五入（如 0.7081 vs 0.708）导致的伪一致性异常。",
+            "结构化审计报告：脚本输出包含 `status: pass|fail`、`target_metric`、`latex_value`、`raw_value` 及 `delta` 的 JSON 报告，自动标注差异显著的指标。",
+            "自动化修复辅助：当检测到轻微数值漂移（如重新训练模型后数据更新）时，脚本支持生成待更新的 LaTeX 宏定义片段，辅助人工快速订正论文。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "LaTeX 源码中若存在复杂的宏嵌套或非标准数值格式（如科学计数法 1.2e-3），正则表达式可能发生解析偏移。",
+          "不同统计口径（如全量数据 vs 过滤后数据）可能导致审计工具与论文作者的预期逻辑不一致。"
+        ],
+        "next_hint": "建议将此审计脚本集成至 GitHub Actions CI 流程中，在每次代码或模型权重更新并重新生成论文时，自动触发一致性核查。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "交付物详尽且高度契合任务需求，不仅实现了正则解析与多源比对，还前瞻性地考虑了浮点数容差匹配及自动化修复逻辑。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
