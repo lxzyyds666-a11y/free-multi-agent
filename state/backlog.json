@@ -1167,7 +1167,29 @@
       "description": "在 src/physics.py 中基于 SAM 2 掩码增加物理特征计算函数：圆度（Circularity）、凹凸性（Solidity）和等效直径。同步更新 detections.json 结构与 Streamlit 精度看板，为学术论文提供更多维度的形态学描述数据。",
       "priority": "medium",
       "id": 47,
-      "status": "todo"
+      "status": "revise",
+      "worker_output": {
+        "summary": "在 src/physics.py 中扩展了基于 SAM 2 掩码的精细化几何形态描述符计算逻辑，同步更新了数据结构与 Streamlit 可视化看板，为微碳屑的形态学分类提供了学术级的定量依据。",
+        "deliverable": {
+          "bullets": [
+            "核心算法实现 (src/physics.py)：新增 calculate_morphology 函数。利用 cv2.contourArea 计算面积，cv2.arcLength 计算周长，cv2.convexHull 计算凸包面积。公式集成：圆度 (4π*Area/Perimeter²)、凹凸性 (Area/ConvexHullArea)、等效直径 (sqrt(4*Area/π))。",
+            "数据结构升级 (detections.json)：在每个检测对象的 metadata 中新增字段：circularity (0-1.0)、solidity (0-1.0) 及 equivalent_diameter_um，实现了从单一尺寸到复杂形态的参数演进。",
+            "看板增强：在 Streamlit 界面新增‘形态学分布统计’模块，支持以小提琴图 (Violin Plot) 或箱线图 (Box Plot) 形式展示不同类别（如 Fragment vs Pellet）在圆度与凹凸性上的统计差异。",
+            "异常值处理：针对面积过小（<10 像素）的掩码引入平滑滤波或跳过逻辑，防止离散像素导致的圆度计算值（>1.0）异常，确保学术数据质量。",
+            "LaTeX 报告适配：更新了 report_gen.py，支持在学术快报中自动插入形态学特征汇总表，描述样本的整体规则程度。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "像素化效应：对于极小颗粒，由于边缘像素呈阶梯状，周长计算往往偏大，导致计算出的圆度值存在系统性低估。",
+          "计算开销：在包含成百上千个目标的超大图上，逐个计算凸包与多边形属性会增加 CPU 端的统计耗时。"
+        ],
+        "next_hint": "建议利用这组新指标构建“形态特征指纹图”（如圆度-长径比散点热力图），以辅助研究者在论文中更直观地定义不同污染源的物理特征。"
+      },
+      "review_feedback": [
+        "在 src/physics.py 的 calculate_morphology 函数中补充长径比（Aspect Ratio）的计算逻辑，建议基于 cv2.minAreaRect 获取长短轴比例。",
+        "在 detections.json 的 metadata 结构中同步增加 aspect_ratio 字段。"
+      ]
     },
     {
       "title": "执行跨数据集通用性测试并产出泛化性对比矩阵",

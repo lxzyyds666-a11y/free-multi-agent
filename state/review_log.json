@@ -527,6 +527,19 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 47,
+      "decision": "revise",
+      "review": {
+        "decision": "revise",
+        "reason": "任务标题明确要求包含‘长径比’（Aspect Ratio），但交付物仅实现了圆度、凹凸性和等效直径，遗漏了长径比的计算逻辑及数据字段。",
+        "fixes": [
+          "在 src/physics.py 的 calculate_morphology 函数中补充长径比（Aspect Ratio）的计算逻辑，建议基于 cv2.minAreaRect 获取长短轴比例。",
+          "在 detections.json 的 metadata 结构中同步增加 aspect_ratio 字段。"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

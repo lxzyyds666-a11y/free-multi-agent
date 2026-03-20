@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-20T14:31:31.377865+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 47,
+    "summary": "在 src/physics.py 中扩展了基于 SAM 2 掩码的精细化几何形态描述符计算逻辑，同步更新了数据结构与 Streamlit 可视化看板，为微碳屑的形态学分类提供了学术级的定量依据。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 47,
+    "decision": "revise"
+  }
+}
