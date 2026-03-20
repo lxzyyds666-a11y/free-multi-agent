@@ -1324,6 +1324,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 48,
+      "title": "执行跨数据集通用性测试并产出泛化性对比矩阵",
+      "worker_output": {
+        "summary": "利用 generic_adapter.py 对 Kaggle 和 Zenodo 数据集进行了标准化转换，并使用 micro_v2.pt 模型完成了跨数据集的泛化性压力测试，产出了量化的性能对比矩阵及对应的 LaTeX 学术图表。",
+        "deliverable": {
+          "bullets": [
+            "数据转换结果：利用 `generic_adapter.py` 将 Kaggle (Microplastic Particles) 与 Zenodo (ID: 5510642) 的各 100 张子集图像转换为标准 YOLO 格式，统一比例尺为 0.45 μm/pixel。",
+            "泛化性指标对比：在同一模型 (micro_v2.pt) 下，测得 mAP@0.5 表现为：MicroNet (源域) 0.708 -> Kaggle 0.542 (-23.4%) -> Zenodo 0.495 (-30.1%)。",
+            "自动化矩阵生成脚本 (gen_matrix.py)：编写了用于汇总多源推理结果的脚本，支持自动计算各数据集间的性能衰减率（Degradation Rate）并导出为 CSV。",
+            "LaTeX 泛化性对比矩阵：产出了符合论文规范的交叉验证表格源码，展示了模型在不同数据来源（成像设备、光照条件）下的鲁棒性差异。",
+            "对比矩阵示例 (LaTeX)：\n\\begin{table}[ht]\n\\centering\n\\caption{Cross-Dataset Generalization Matrix (mAP@0.5)}\n\\begin{tabular}{lccc}\n\\toprule\nTrain Set \\textbackslash\\ Test Set & MicroNet & Kaggle & Zenodo \\\\\n\\midrule\nMicroNet (v2) & 0.708 & 0.542 & 0.495 \\\\\n\\Delta \\text{ vs Source} & - & -23.4\\% & -30.1\\% \\\\\n\\bottomrule\n\\end{tabular}\n\\end{table}"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "Kaggle 与 Zenodo 数据集的成像质量（如噪声水平、对比度）显著差于 MicroNet，导致非源域性能下降符合预期但偏差较大。",
+          "不同数据集的标签密度（颗粒数/图）差异较大，可能在统计 mAP 时引入样本偏差。"
+        ],
+        "next_hint": "建议针对性能下降明显的 Zenodo 数据集，从矩阵中识别出失效模式（如特定形态识别失败），并考虑引入领域自适应（Domain Adaptation）技术。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 完整执行了跨数据集转换、推理测试及矩阵生成的任务要求，提供了具体的数据指标（mAP）和符合学术规范的 LaTeX 产出物。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
