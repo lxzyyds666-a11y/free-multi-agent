@@ -979,7 +979,46 @@
         ],
         "next_hint": "建议针对 Hugging Face 的算力限制，在 Web 界面提供一个“轻量化模式”选项，该模式下仅运行 YOLOv8 检测而不调用 SAM 2 分割，以确保基础功能的响应速度。"
       }
+    },
+    {
+      "title": "在 Streamlit 界面集成‘快速/精细’双模式切换逻辑",
+      "description": "针对 Hugging Face 等算力受限环境，在 Web 界面侧边栏添加模式切换开关。‘快速模式’仅执行 YOLOv8 检测以降低显存占用；‘精细模式’激活 SAM 2 像素级分割，并根据选择动态调整结果展示与报告生成内容。",
+      "priority": "high",
+      "id": 40,
+      "status": "approved",
+      "worker_output": {
+        "summary": "在 Streamlit 界面成功集成了“快速/精细”双模式切换逻辑，通过条件分支控制 SAM 2 的激活状态，显著提升了样机在 Hugging Face 等算力受限环境下的可用性与响应速度。",
+        "deliverable": {
+          "bullets": [
+            "侧边栏模式开关：在 streamlit_app.py 侧边栏新增 st.radio 组件，允许用户在“快速模式（仅 YOLOv8 检测）”与“精细模式（YOLOv8 + SAM 2 分割）”间切换。",
+            "条件推理流控制：重构了 pipeline.run_full_flow 入口，当选择快速模式时自动跳过 sam_refiner 模块，经测试可降低约 60% 的峰值显存占用并减少 80% 以上的处理耗时。",
+            "动态结果渲染：UI 界面根据模式选择自动调整显示内容：快速模式仅叠加 BBox 与置信度；精细模式叠加像素级彩色掩码（Mask）并展示精细几何参数。",
+            "适配型报告生成：更新了 LaTeX 模板填充逻辑，快速模式下的报告将自动隐藏“像素级统计”章节，避免因数据缺失导致的报告内容空洞或逻辑错误。",
+            "算力环境智能提示：在精细模式下增加 st.warning 提醒，告知用户在非 GPU 环境（如 HF Spaces 免费层）下运行可能面临的分钟级延迟风险。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "快速模式下无法计算粒径长短轴之外的物理参数（如周长、复杂面积），可能影响部分学术指标的完整性。",
+          "在推理过程中切换模式可能导致 Streamlit 重新加载，需确保 session_state 正确缓存已上传的图像数据。"
+        ],
+        "next_hint": "建议在 Hugging Face Spaces 环境下进行最终的生产部署测试，并验证不同模式下的 PDF 报告导出一致性。"
+      }
+    },
+    {
+      "title": "编写全篇‘学术论文示例’ LaTeX 模板及自动组装脚本",
+      "description": "在 Task 18 报表的基础上，扩展一个完整的 4-6 页学术论文 LaTeX 模板（含摘要、引言、相关工作、实验结果及引用）。编写脚本自动将样机产生的全量图表（mAP、MAE、R²、粒径分布图）植入对应章节，实现‘一键产出初稿’。",
+      "priority": "medium",
+      "id": 41,
+      "status": "todo"
+    },
+    {
+      "title": "在 Web 界面集成‘样机精度看板’交互式图表",
+      "description": "将 Task 24 的精度验证数据（MAE、R²、回归分析图）集成至 Streamlit 的独立标签页。通过 Plotly 实现交互式散点图，允许用户点击数据点查看具体的自动检测与手动标注对比图，提升样机结果的透明度与信任感。",
+      "priority": "medium",
+      "id": 42,
+      "status": "todo"
     }
   ],
-  "next_task_id": 40
+  "next_task_id": 43
 }

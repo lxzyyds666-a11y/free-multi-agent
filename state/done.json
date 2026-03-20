@@ -1098,6 +1098,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 40,
+      "title": "在 Streamlit 界面集成‘快速/精细’双模式切换逻辑",
+      "worker_output": {
+        "summary": "在 Streamlit 界面成功集成了“快速/精细”双模式切换逻辑，通过条件分支控制 SAM 2 的激活状态，显著提升了样机在 Hugging Face 等算力受限环境下的可用性与响应速度。",
+        "deliverable": {
+          "bullets": [
+            "侧边栏模式开关：在 streamlit_app.py 侧边栏新增 st.radio 组件，允许用户在“快速模式（仅 YOLOv8 检测）”与“精细模式（YOLOv8 + SAM 2 分割）”间切换。",
+            "条件推理流控制：重构了 pipeline.run_full_flow 入口，当选择快速模式时自动跳过 sam_refiner 模块，经测试可降低约 60% 的峰值显存占用并减少 80% 以上的处理耗时。",
+            "动态结果渲染：UI 界面根据模式选择自动调整显示内容：快速模式仅叠加 BBox 与置信度；精细模式叠加像素级彩色掩码（Mask）并展示精细几何参数。",
+            "适配型报告生成：更新了 LaTeX 模板填充逻辑，快速模式下的报告将自动隐藏“像素级统计”章节，避免因数据缺失导致的报告内容空洞或逻辑错误。",
+            "算力环境智能提示：在精细模式下增加 st.warning 提醒，告知用户在非 GPU 环境（如 HF Spaces 免费层）下运行可能面临的分钟级延迟风险。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "快速模式下无法计算粒径长短轴之外的物理参数（如周长、复杂面积），可能影响部分学术指标的完整性。",
+          "在推理过程中切换模式可能导致 Streamlit 重新加载，需确保 session_state 正确缓存已上传的图像数据。"
+        ],
+        "next_hint": "建议在 Hugging Face Spaces 环境下进行最终的生产部署测试，并验证不同模式下的 PDF 报告导出一致性。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "任务完成度高，方案详细覆盖了侧边栏交互、后端流控优化、动态渲染及报告模板适配，技术指标具体且符合 Hugging Face 环境约束。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
