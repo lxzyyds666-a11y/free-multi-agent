@@ -1296,6 +1296,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 47,
+      "title": "扩展精细化几何形态描述符（圆度、凹凸性、长径比）",
+      "worker_output": {
+        "summary": "在 src/physics.py 中扩展了基于 SAM 2 掩码的精细化几何形态描述符计算逻辑，新增了长径比（Aspect Ratio）等学术指标，并同步更新了数据结构与 Streamlit 可视化看板。",
+        "deliverable": {
+          "bullets": [
+            "核心算法升级 (src/physics.py)：实现 calculate_morphology 函数。利用 cv2.contourArea 获取面积，cv2.arcLength 获取周长，cv2.convexHull 获取凸包面积。新增基于 cv2.minAreaRect 的长径比计算（Longer_Side / Shorter_Side）。",
+            "公式集成：圆度 (4π*Area/Perimeter²)、凹凸性 (Area/ConvexHullArea)、等效直径 (sqrt(4*Area/π)) 及长径比 (W/H)。",
+            "数据结构对齐 (detections.json)：在 metadata 字段中新增 circularity、solidity、equivalent_diameter_um 及 aspect_ratio 字段，确保每个检测目标具备完整的形态学向量。",
+            "看板功能增强：在 Streamlit 精度看板中新增‘形态学分布统计’模块，支持以小提琴图（Violin Plot）展示不同形态（如 Fragment vs Fiber）在长径比与圆度上的显著性差异。",
+            "精度保护逻辑：针对面积小于 10 像素的目标引入计算跳过或平滑机制，规避因像素化阶梯效应导致的圆度计算值异常（>1.0）。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "像素化偏倚：对于极小颗粒，由于离散像素边缘导致周长测量值偏大，计算出的圆度可能存在系统性低估。",
+          "性能开销：在大图（含 >200 目标）上逐个执行最小外接矩形与凸包计算会增加 CPU 统计延迟。"
+        ],
+        "next_hint": "建议利用这组新指标构建“形态特征指纹图”（如圆度-长径比散点热力图），辅助研究者在论文中定量定义污染源的物理指纹。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 完整覆盖了任务要求的几何描述符计算（圆度、凹凸性、等效直径、长径比），提供了具体的实现算法及公式，并同步更新了数据结构与可视化模块，处理了像素化边界效应等技术细节。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
