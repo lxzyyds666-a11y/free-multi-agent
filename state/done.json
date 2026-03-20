@@ -1126,6 +1126,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 41,
+      "title": "编写全篇‘学术论文示例’ LaTeX 模板及自动组装脚本",
+      "worker_output": {
+        "summary": "本任务开发了完整的 4-6 页学术论文 LaTeX 模板及自动组装脚本，实现了从样机推理统计数据到标准学术论文初稿（PDF）的自动化生成闭环。",
+        "deliverable": {
+          "bullets": [
+            "学术论文模板 (full_paper_template.tex)：采用双栏格式，包含摘要、引言、相关工作（涵盖 YOLOv8/SAM 2/SAHI）、方法论（切片推理与掩码细化）、实验结果分析及结论，预设了全量图表占位符。",
+            "自动组装脚本 (paper_assembler.py)：基于 Python 实现，自动读取 detections.json、performance_stats.json 和精度验证结果，通过模板引擎将 mAP、MAE、R² 等量化指标及粒径分布图、回归图植入对应章节。",
+            "参考文献库 (references.bib)：预置了本项目依赖的开源工具（Ultralytics, SAM 2, SAHI）及引用数据集（MicroNet, Zenodo）的标准化 BibTeX 条目。",
+            "一键产出工作流：在 CLI 工具中集成 --paper 选项，执行后自动完成“数据提取 -> 模板填充 -> bibtex 编译 -> pdflatex 渲染”的全过程。",
+            "样机初稿示例：产出了一个包含真实实验数据（Task 23/24）的 5 页学术初稿 PDF，演示了图表自动排版与物理尺寸精度分析的自动化表达。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "论文正文文字内容目前主要为固定模板（Boilerplate），自动生成的深度分析与讨论逻辑仍需人工润色。",
+          "LaTeX 环境对复杂表格和长图的排版在自动化场景下可能出现位置偏移（Float positioning），需手动调整 [ht] 参数。"
+        ],
+        "next_hint": "至此，“学术论文生产线”所有核心开发任务已完成。建议进行最后的全系统端到端冒烟测试，确保从“公开数据集获取”到“全篇论文初稿产出”无人工干预环节。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "交付物完整覆盖了 LaTeX 模板编写、数据自动填充脚本、参考文献库及 CLI 集成，且产出的 5 页示例 PDF 符合任务要求的 4-6 页规模。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
