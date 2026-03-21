@@ -1472,7 +1472,25 @@
       "description": "基于 Task 56 的定标结果，在 Web 界面侧边栏新增“干扰物过滤强度”滑块。允许用户动态调整 LAB 空间和 L-std 纹理的过滤阈值，实时查看气泡或有机碎屑被剔除的效果。",
       "priority": "medium",
       "id": 59,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "在 Streamlit 界面侧边栏集成了“干扰物过滤强度”动态滑块，实现了基于 Task 56 定标结果的 LAB 色彩与 L-std 纹理阈值实时调节功能，使用户能够动态筛选气泡与有机碎屑。",
+        "deliverable": {
+          "bullets": [
+            "侧边栏交互组件：在 `streamlit_app.py` 侧边栏新增 `st.sidebar.slider('干扰物过滤强度', 0.0, 2.0, 1.0)`，作为全局过滤系数控制逻辑。",
+            "阈值动态映射逻辑：将滑块系数 $k$ 映射至核心阈值：$T1 (色彩偏离) = 5.2 \times k$，$T2 (边缘对比度) = 43.5 / k$。当 $k=0$ 时自动禁用过滤模块。",
+            "实时过滤视图更新：利用 Streamlit 的 Rerun 机制，在用户拖动滑块时，仅重新执行轻量级的 `check_outlier` 逻辑，无需重新运行耗时的 YOLO/SAM 推理。",
+            "可视化反馈增强：在结果展示区通过颜色区分“已识别目标”与“已过滤干扰物”，过滤后的目标在图像上以半透明或灰色框显示，并实时更新统计表中的有效颗粒计数。",
+            "核心代码片段：\npython\n# 侧边栏动态控制\nfilter_k = st.sidebar.slider('干扰物过滤强度', 0.0, 2.0, 1.0)\n\nif filter_k > 0:\n    t1_dynamic = 5.2 * filter_k\n    t2_dynamic = 43.5 / filter_k\n    # 仅对已缓存的推理结果进行二次筛选\n    for obj in st.session_state.raw_results:\n        obj['is_outlier'] = pipeline.filter.check_outlier(\n            obj['lab_stats'], t1=t1_dynamic, t2=t2_dynamic\n        )\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "交互延迟：在高分辨率大图（检测目标 > 200个）上频繁拖动滑块可能导致 UI 渲染短时间卡顿。",
+          "过度过滤风险：若用户设置强度过高，可能导致边缘较淡的透明薄膜（Film）或浅色碎片被误识别为离群点而剔除。"
+        ],
+        "next_hint": "建议针对“快速模式”和“精细模式”分别优化过滤后的统计报表导出逻辑，确保 PDF 报告中体现当前选择的过滤强度参数。"
+      }
     },
     {
       "title": "更新技术白皮书与论文模板以包含领域自适应(DA)实验结论",
