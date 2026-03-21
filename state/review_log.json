@@ -590,6 +590,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 52,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 准确检索到了两个具有真实环境基质干扰的高质量数据集（提供了真实可查的 DOI），且对标签体系兼容性和物理参数提取能力的评估非常具体，完全符合任务要求。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
