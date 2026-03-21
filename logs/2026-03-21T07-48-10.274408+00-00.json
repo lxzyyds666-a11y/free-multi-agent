@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-21T07:48:10.274408+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 53,
+    "summary": "开发并验证了基于微碳屑识别权重 micro_v2.pt 的伪标签自动标注工具，实现了对无标注复杂背景图像的高置信度自动化筛选与 YOLO 格式标注生成，为半监督学习提供“银牌”数据支持。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 53,
+    "decision": "approve"
+  }
+}

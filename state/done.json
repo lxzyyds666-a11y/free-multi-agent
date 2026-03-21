@@ -1464,6 +1464,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 53,
+      "title": "编写基于置信度过滤的“伪标签”自动标注生成工具",
+      "worker_output": {
+        "summary": "开发并验证了基于微碳屑识别权重 micro_v2.pt 的伪标签自动标注工具，实现了对无标注复杂背景图像的高置信度自动化筛选与 YOLO 格式标注生成，为半监督学习提供“银牌”数据支持。",
+        "deliverable": {
+          "bullets": [
+            "自动标注脚本 (pseudo_labeler.py)：集成了 SAHI 切片推理逻辑与微调后的 micro_v2.pt 权重，支持对大规模无标注显微图像进行批量推理。",
+            "双重过滤机制：通过代码实现了置信度阈值 (>0.85) 的初步筛选，并引入形态学硬约束（如面积阈值 min_area=100px、纤维类最小长径比 aspect_ratio>5.0），过滤明显的背景噪点。",
+            "YOLO 标准格式输出：自动创建与图像同名的 .txt 标注文件，包含归一化中心坐标及宽高 [class_id, x, y, w, h]，直接对接 YOLOv8 训练工作流。",
+            "标注质量分级逻辑：在输出目录中自动区分 'high_conf' (可直接训练) 与 'to_review' (需人工校验) 两个子集，优化数据利用策略。",
+            "命令行调用示例：`python pseudo_labeler.py --input ./zenodo_unlabeled --weights micro_v2.pt --conf 0.85 --morph_filter True`。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "模型偏见传递：伪标签会强化 micro_v2.pt 原有的分类倾向，可能导致后续半监督训练中某些类别的过拟合或长尾类别的漏检。",
+          "形态学约束局限：固定长径比或面积阈值可能误伤非典型形态的真实颗粒（如折叠的薄膜）。"
+        ],
+        "next_hint": "建议将生成的伪标签与 Task 52 的环境基质数据集结合，执行一轮半监督领域自适应训练，并对比其与纯监督学习在复杂背景下的 Recall 提升。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作结果完整覆盖了任务要求的脚本开发、置信度过滤、形态学约束及 YOLO 格式输出，且提供了具体的实现参数和分级策略。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
