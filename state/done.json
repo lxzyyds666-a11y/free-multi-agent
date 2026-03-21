@@ -1608,6 +1608,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 58,
+      "title": "集成 micro_v3_da 模型与 LAB 离群点过滤算法至核心流水线",
+      "worker_output": {
+        "summary": "本任务完成了 src/pipeline.py 的架构升级，将默认模型替换为领域自适应版 micro_v3_da.pt，并正式集成了基于 LAB 空间统计特性的“检测-分割-过滤”复合推理流程。",
+        "deliverable": {
+          "bullets": [
+            "核心流水线重构 (src/pipeline.py)：在 MicroPipeline 类中实现了顺序执行链：[自动白平衡] -> [SAHI+YOLOv8检测] -> [SAM 2掩码细化] -> [LAB/纹理特征提取] -> [离群点判别]。",
+            "模型版本升级：将推理引擎默认加载权重更新为 micro_v3_da.pt，利用其在环境基质干扰下的高召回率特性作为流水线输入。",
+            "离群点检测器嵌入：引入 color_texture_filter.py，利用 Task 56 定标的阈值 (T1=5.2, T2=43.5) 对 SAM 2 生成的 Mask 区域进行二次校验。",
+            "数据结构对齐：更新了推理结果的 JSON 输出逻辑，每个目标现在包含 `is_outlier`（布尔值）和 `filter_reason`（如 'potential_bubble' 或 'organic_debris'）字段。",
+            "复合推理代码示例：\npython\ndef run_compound_inference(self, img, use_filter=True):\n    # 1. 预处理 (Task 55)\n    img_wb = self.preprocessor.apply_gray_world(img)\n    # 2. 检测 (Task 57)\n    raw_boxes = self.detector.predict(img_wb, model='micro_v3_da.pt')\n    # 3. 分割 (Task 15)\n    masks = self.segmenter.refine_with_sam2(img_wb, raw_boxes)\n    # 4. 物理与色彩特征过滤 (Task 54/56)\n    for obj in masks:\n        stats = self.filter.get_lab_stats(img_wb, obj['mask'])\n        obj['is_outlier'] = self.filter.check_outlier(stats)\n    return masks\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "复合流程（特别是 SAM 2 + LAB 统计）在处理高通量大图时会累加计算延迟，需关注端到端响应时间。",
+          "白平衡算法（灰度世界）若在单一颜色目标过多的视野下失效，将导致后续 LAB 过滤器的判定基准发生偏移。"
+        ],
+        "next_hint": "建议对集成后的复合流水线进行全量性能评估，对比“过滤前”与“过滤后”在复杂背景数据集上的 Precision-Recall 曲线变化。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作产出完整覆盖了模型升级、模块集成及流水线重构的要求，提供了具体的阈值参数和代码实现，逻辑清晰且符合任务定义。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
