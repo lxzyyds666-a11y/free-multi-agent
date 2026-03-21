@@ -1408,6 +1408,35 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 51,
+      "title": "编写《从原始图像到学术发表》全流程实操案例教程",
+      "worker_output": {
+        "summary": "编写了《从原始图像到学术发表》全流程实操案例教程（v1.0 用户指引），系统性地串联了样机生产线从数据获取、推理、审计到论文生成的六大核心技术环节。",
+        "deliverable": {
+          "bullets": [
+            "环境一键部署：详细记录了利用 Docker (docker-compose.yaml) 或 Google Colab 镜像快速构建包含 GPU 加速、LaTeX 编译环境及核心依赖的标准化开发环境。",
+            "公开数据闭环获取：以 Zenodo (Record ID: 5510642) 为例，演示了利用 fetch_public_data.py 进行自动化流式下载、MD5 校验及目录结构对齐的完整流程。",
+            "全参数化推理实操：详细说明了 micro_cli.py 的使用，包含 --use_clahe 领域对齐、--mode fine（SAM 2 掩码细化）及自定义 --scale 比例尺的核心参数配置。",
+            "精细化指标解析：指导用户从生成的 detections.json 中提取圆度、等效直径、长径比及物理面积等 8 类学术级几何描述符，并演示了利用 Streamlit 看板进行交互式验证。",
+            "数值一致性自动化审计：演示了利用 audit_paper.py 扫描 LaTeX 源码与原始检测 JSON 之间的偏差，确保论文中呈现的 mAP、MAE 等指标具备学术严谨性。",
+            "学术论文自动组装：提供了利用 paper_assembler.py 自动填充 full_paper_template.tex 模板的实操步骤，实现了从统计图表生成到 5 页标准学术初稿 PDF 产出的全自动闭环。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "对于非容器化用户，由于 LaTeX 宏包及 CUDA 环境复杂，教程中的一键脚本可能存在路径或依赖冲突。",
+          "教程中自动生成的论文初稿仅包含实验数据与方法论模板，深度学术讨论环节仍需人工基于业务背景润色。"
+        ],
+        "next_hint": "本样机 v1.0 开发任务已全部闭环。建议正式发布 GitHub Release 并附带此教程，随后可启动 v2.0 阶段，重点攻克领域自适应（Domain Adaptation）提升复杂自然水样识别率。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作产出完整覆盖了从环境部署、数据获取到论文自动生成的全流程，且包含了具体的脚本名称、参数配置及第三方数据集 ID，具备极高的实操指导价值。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

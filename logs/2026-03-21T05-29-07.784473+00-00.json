@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-21T05:29:07.784473+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 51,
+    "summary": "编写了《从原始图像到学术发表》全流程实操案例教程（v1.0 用户指引），系统性地串联了样机生产线从数据获取、推理、审计到论文生成的六大核心技术环节。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 51,
+    "decision": "approve"
+  }
+}
