@@ -1697,7 +1697,25 @@
       "description": "将 Task 57 产出的 micro_v3_da.pt 权重及 Task 58-59 的复合流水线（包含白平衡、CLAHE 开关、LAB 离群点过滤）同步部署至 Hugging Face Spaces。更新在线演示示例，使其默认支持处理环境基质复杂的公开样本。",
       "priority": "high",
       "id": 68,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务完成了 Hugging Face Space 演示样机向 v1.1 (DA 版) 的全面升级。通过同步领域自适应权重 micro_v3_da.pt 并集成复合推理流水线（白平衡、CLAHE、LAB 过滤），提升了在线演示对复杂环境背景公开样本的识别鲁棒性。",
+        "deliverable": {
+          "bullets": [
+            "权重同步与更新：将 Task 57 产出的领域自适应权重 micro_v3_da.pt 部署至 HF Space，作为默认检测引擎以应对环境基质干扰。",
+            "交互逻辑升级：在 Streamlit 界面新增“预处理增强”模块，集成自动白平衡（Task 55）与 CLAHE 局部对比度增强（Task 50）开关。",
+            "离群点动态过滤：引入“干扰物过滤强度”滑块（Task 59），支持基于 LAB 统计特征（Task 54/56）实时剔除气泡与有机碎屑假阳性。",
+            "演示示例更新：将默认加载的演示图像替换为 Zenodo/Figshare 来源的复杂背景样本（包含生物膜与泥沙），展示样机在‘非受控’环境下的闭环处理能力。",
+            "配置环境对齐：更新了 Space 端的 requirements.txt，确保其包含最新的领域自适应相关依赖，并优化了精细模式下的异步进度条反馈机制。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "Hugging Face 免费层算力瓶颈：在精细模式（SAM 2 掩码细化）下开启全套过滤逻辑，可能导致 CPU 推理时间超过 30 秒，存在连接超时风险。",
+          "显存管理：micro_v3_da 配合复合流水线在处理 4K 大图时，瞬时内存占用可能接近 16GB RAM 的上限。"
+        ],
+        "next_hint": "样机在线演示版已具备处理真实复杂样本的能力。建议下一步启动 v2.0 规划，重点研究针对超高通量（>1000 目标/图）的计算效率优化或轻量化模型蒸馏。"
+      }
     },
     {
       "title": "撰写 Release v1.1（领域自适应版）正式更新日志",
