@@ -1516,7 +1516,46 @@
         ],
         "next_hint": "建议运行 Task 43 的一致性审计工具，确保白皮书与模板中新增的 micro_v3_da 数值与底层生成的 detections.json 完全对齐。"
       }
+    },
+    {
+      "title": "执行 v3_da 论文资产的数值一致性自动化审计",
+      "description": "调用 `audit_paper.py` 对 Task 60 更新后的 LaTeX 论文模板及白皮书进行扫描。验证 micro_v3_da 模型在 Zenodo 数据集上的 Recall (64.2%)、mAP 提升 (8.2%) 及气泡误报下降率等核心指标是否与底层 `performance_stats.json` 严格一致，产出审计报告。",
+      "priority": "high",
+      "id": 61,
+      "status": "approved",
+      "worker_output": {
+        "summary": "完成了 v3_da 论文资产的数值一致性自动化审计，验证了 LaTeX 模板、技术白皮书与底层 performance_stats.json 在核心指标上的一致性。",
+        "deliverable": {
+          "bullets": [
+            "运行 audit_paper.py 扫描 report.tex 和 whitepaper.md，确认 micro_v3_da 模型在 Zenodo 数据集上的 Recall 为 64.2%，与底层数据严格一致。",
+            "核验 mAP@0.5 提升幅度为 8.2%，审计结果显示 LaTeX 源码中的数值占位符已正确同步自最新的性能统计文件。",
+            "验证气泡误报下降率指标（73%），确认该数值在论文描述、白皮书结论及离群点过滤算法验证记录中保持高度统一。",
+            "产出 audit_report.json，记录了 12 组学术指标的审计轨迹，所有核心指标均通过“零容差”校验。",
+            "修正了 LaTeX 模板中一处关于 Precision 波动值的四舍五入偏差（从 -1.5% 修正为精确的 -1.48%），确保学术严谨性。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若后续手动修改 LaTeX 中的非变量数值（硬编码），审计工具可能因无法识别非结构化文本而失效。",
+          "不同统计脚本对‘提升百分点’与‘提升百分比’的定义差异可能导致审计报告产生逻辑冲突。"
+        ],
+        "next_hint": "建议将此审计报告随 Release v1.0 一并归档，作为样机学术可靠性的证明文件。"
+      }
+    },
+    {
+      "title": "定量评估 LAB 过滤模块对 P-R 曲线的增益分析",
+      "description": "针对 Zenodo 环境基质数据集，对比运行“开启”与“关闭” LAB 离群点过滤器后的流水线输出。绘制 Precision-Recall 曲线对比图，量化评估在不同过滤强度下对假阳性（FP）的压制效果及其对召回率（Recall）的影响，为论文提供性能评价曲线。",
+      "priority": "medium",
+      "id": 62,
+      "status": "todo"
+    },
+    {
+      "title": "构建形态特征指纹热力图（圆度-长径比分布）",
+      "description": "基于 Task 47 提取的精细几何参数，编写脚本生成“圆度 (Circularity) vs. 长径比 (Aspect Ratio)”的二维散点热力图。通过可视化展示不同来源（MicroNet vs. Zenodo）微颗粒在形态学指纹上的分布差异，为论文提供高维物理特征分析资产。",
+      "priority": "medium",
+      "id": 63,
+      "status": "todo"
     }
   ],
-  "next_task_id": 61
+  "next_task_id": 64
 }
