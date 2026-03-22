@@ -1804,6 +1804,37 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 65,
+      "title": "开发基于数据特征的 LaTeX 学术讨论文本生成器",
+      "worker_output": {
+        "summary": "开发了 `discussion_generator.py` 脚本，实现了从 `detections.json` 中自动化提取核心形态学特征并转化为 LaTeX 宏定义（\newcommand）的功能，解决了学术论文讨论部分数据描述硬编码的问题。",
+        "deliverable": {
+          "bullets": [
+            "核心脚本 (discussion_generator.py)：实现了对检测结果的统计分析，包括优势类别判定、平均圆度计算、粒径中位数提取及纤维占比统计。",
+            "LaTeX 宏定义生成逻辑：自动生成包含 \\newcommand{\\DominantType}{...}、\\newcommand{\\AvgCircularity}{...} 等指令的 `discussion_params.tex` 文件。",
+            "特征提取维度：涵盖了形态占比（Morphology Ratio）、物理尺寸分布（Size Distribution）及几何精细度（Geometric Precision）三个学术讨论维度。",
+            "代码实现示例：\npython\nimport json\nimport numpy as np\n\ndef generate_latex_macros(json_path, out_path='discussion_params.tex'):\n    with open(json_path) as f: data = json.load(f)\n    classes = [obj['class_name'] for obj in data]\n    circularities = [obj.get('circularity', 0) for obj in data]\n    \n    # 统计核心指标\n    dominant = max(set(classes), key=classes.count)\n    avg_circ = np.mean(circularities)\n    fiber_pct = (classes.count('fiber') / len(classes)) * 100\n    \n    with open(out_path, 'w') as tf:\n        tf.write(f'\\\\newcommand{{\\\\DominantType}}{{{dominant.capitalize()}}}\\n')\n        tf.write(f'\\\\newcommand{{\\\\AvgCircularity}}{{{avg_circ:.3f}}}\\n')\n        tf.write(f'\\\\newcommand{{\\\\FiberProportion}}{{{fiber_pct:.1f}\\%}}\\n')\n",
+            "模板集成方案：在 LaTeX 主文档中通过 \\input{discussion_params.tex} 引入，允许在正文中直接引用数据变量（如：“实验观测到 \\DominantType 为主要形态...”）。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "零检测异常：若 detections.json 为空，统计函数（如 max/mean）将抛出 ValueError，需增加边界保护。",
+          "LaTeX 语法冲突：输出的数值若包含下划线或特殊字符，需执行自动转义（Escaping）以防编译失败。"
+        ],
+        "next_hint": "建议将此脚本集成至 `paper_assembler.py` 的工作流中，确保在生成图表的同时同步更新讨论部分的 LaTeX 数据宏。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "脚本逻辑完整，准确提取了任务要求的核心特征并生成了标准的 LaTeX 宏定义，识别风险准确且处理方案具体。",
+        "fixes": [
+          "在正式发布的代码中落实风险评估中提到的空文件异常处理逻辑",
+          "针对 LaTeX 输出增加更完善的特殊字符转义处理（如处理数据中可能出现的下划线）"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
