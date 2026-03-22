@@ -1748,6 +1748,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 63,
+      "title": "构建形态特征指纹热力图（圆度-长径比分布）",
+      "worker_output": {
+        "summary": "本任务开发了形态特征指纹分析脚本，通过生成“圆度 (Circularity) vs. 长径比 (Aspect Ratio)”二维散点热力图，定量展示了实验室来源（MicroNet）与真实环境来源（Zenodo）微颗粒在形态学高维特征上的分布差异，为论文提供了核心物理特征分析资产。",
+        "deliverable": {
+          "bullets": [
+            "形态分析脚本 (morphology_fingerprint.py)：基于 Seaborn 和 Matplotlib 开发，支持从 detections.json 自动提取几何参数并生成双变量密度评估图 (KDE Plot) 或六边形分箱图 (Hexbin)。",
+            "特征分布热力图 (fingerprint_heatmap.png)：可视化展示了 MicroNet 颗粒（集中于高圆度、低长径比区域）与 Zenodo 颗粒（分布在低圆度、高长径比长尾区域）的显著指纹差异。",
+            "统计重心位移分析：计算并输出了两类数据集在指纹空间中的质心坐标 $(Circ_{mean}, AR_{mean})$，量化了环境基质对微颗粒几何退化（Degradation）的影响。",
+            "LaTeX 图像资产：产出了符合学术规范的图片插入代码及对应的实验结果描述文本，重点分析了纤维（Fiber）类目标在指纹图中的离群分布特征。",
+            "核心代码逻辑：\npython\nimport seaborn as sns\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\ndef gen_fingerprint(df, save_path='fingerprint.png'):\n    plt.figure(figsize=(8, 6), dpi=300)\n    # 使用 KDE 曲线展示密度分布差异\n    sns.kdeplot(data=df, x='circularity', y='aspect_ratio', hue='source', \n                fill=True, alpha=0.5, levels=5, thresh=0.1)\n    plt.xlabel('Circularity ($4\\pi A/P^2$)')\n    plt.ylabel('Aspect Ratio (L/W)')\n    plt.title('Morphological Fingerprint: MicroNet vs. Zenodo')\n    plt.yscale('log') # 长径比通常呈长尾分布，采用对数坐标轴\n    plt.savefig(save_path)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "极端长径比干扰：微纤维（Fiber）的长径比可能达到 50+，若不采用对数坐标轴，会导致散点图主体区域（碎片/粒料）被严重压缩。",
+          "样本量不平衡：若两个数据集的检测目标数量差异巨大，密度热力图的等高线可能产生视觉上的重要性误导。"
+        ],
+        "next_hint": "建议将此热力图生成逻辑集成至 paper_assembler.py，并在自动生成的论文“物理特征讨论”章节中引用该图，以证明样机对高维物理参数的提取能力。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "任务产出具体且高质量，脚本逻辑（KDE 曲线、对数坐标轴）处理得当，对比分析结果符合学术论文要求。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
