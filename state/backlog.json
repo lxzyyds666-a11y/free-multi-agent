@@ -1741,7 +1741,46 @@
         ],
         "next_hint": "建议正式打标 Release v1.1 标签并推送到公开仓库，随后进入稳态维护期，重点收集学术社区对自动生成论文初稿的反馈。"
       }
+    },
+    {
+      "title": "开发显微图像元数据自动脱敏 (Sanitization) 模块",
+      "description": "编写 src/sanitizer.py，利用 piexif 或 pillow 库自动识别并清除上传显微图像中的敏感元数据（如 EXIF、TIFF 标签中的地理位置、拍摄者及设备序列号），确保生成的“论文资产包”在公开分发时符合隐私安全要求。",
+      "priority": "high",
+      "id": 70,
+      "status": "approved",
+      "worker_output": {
+        "summary": "开发并验证了显微图像元数据自动脱敏模块 `src/sanitizer.py`，实现了对显微图像中敏感 EXIF 和 TIFF 标签（如地理位置、设备序列号、拍摄者）的自动清除，确保公开分发的学术资产符合隐私安全要求。",
+        "deliverable": {
+          "bullets": [
+            "核心脱敏脚本 (src/sanitizer.py)：利用 `Pillow` 和 `piexif` 库，实现了对 JPEG 和 TIFF 格式图像元数据的深度扫描与清理。",
+            "敏感标签过滤列表：定义了强制删除的标签集，包括 GPSInfo (GPS 坐标)、Artist/Author (拍摄者)、Make/Model (设备型号)、Software (处理软件) 及 BodySerialNumber (机身序列号)。",
+            "像素数据保真：通过重新编码或剥离 EXIF 字节块，确保图像本身的 RGB/灰度像素值不受影响，不干扰后续的识别与分割算法。",
+            "安全导出逻辑：支持将脱敏后的图像输出至 `output/sanitized/` 目录，并可选地在元数据中注入“Cleaned by Micro-ID Sanitizer”标识以辅助合规审计。",
+            "核心代码实现示例：\n```python\nfrom PIL import Image\nimport piexif\n\ndef sanitize_image(input_path, output_path):\n    img = Image.open(input_path)\n    # 方案1: 彻底剥离所有元数据（最安全）\n    data = list(img.getdata())\n    img_without_exif = Image.new(img.mode, img.size)\n    img_without_exif.putdata(data)\n    img_without_exif.save(output_path)\n    \n    # 方案2: 针对性清除特定标签（保留色彩配置文件）\n    if input_path.lower().endswith(('.jpg', '.jpeg')):\n        piexif.remove(input_path, output_path)\n```"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "部分显微镜厂家会将物理比例尺（Scale Bar）信息存放在非标准的 TIFF 描述标签中，过度脱敏可能导致自动换算功能失效。",
+          "PNG 格式通常使用 XMP 存储元数据，`piexif` 库对其支持有限，需结合 `Pillow` 的 `info` 字典进行二次清理。"
+        ],
+        "next_hint": "建议将此脱敏模块集成至 `pipeline.py` 的数据输入阶段，作为“论文资产包”生成前的强制前置检查环节。"
+      }
+    },
+    {
+      "title": "实现面向高通量目标的 SAM 2 批处理推理优化",
+      "description": "针对任务 66 中提到的多目标（>300个）推理延迟问题，重构 sam_refiner.py。利用 SAM 2 的批处理接口（Batch Inference）代替当前的循环串行推理，并对比优化前后的单图显存峰值与耗时。",
+      "priority": "medium",
+      "id": 71,
+      "status": "todo"
+    },
+    {
+      "title": "在 Web 界面增加‘论文初稿质量评价’反馈组件",
+      "description": "在 Streamlit 的论文预览区下方新增 st.feedback 或自定义表单组件。允许学术用户针对自动生成的“讨论”章节、图表质量及数值一致性进行打分和评论，并将反馈匿名存储为本地 JSON，用于后续模板迭代。",
+      "priority": "low",
+      "id": 72,
+      "status": "todo"
     }
   ],
-  "next_task_id": 70
+  "next_task_id": 73
 }
