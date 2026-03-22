@@ -1591,7 +1591,46 @@
         ],
         "next_hint": "建议将此热力图生成逻辑集成至 paper_assembler.py，并在自动生成的论文“物理特征讨论”章节中引用该图，以证明样机对高维物理参数的提取能力。"
       }
+    },
+    {
+      "title": "集成形态学指纹图至论文自动组装流程",
+      "description": "修改 `paper_assembler.py` 以调用 Task 63 的 `morphology_fingerprint.py`。确保生成的“圆度-长径比”热力图被正确移动至输出目录，并在 `full_paper_template.tex` 的“物理特征讨论”章节中建立对应的图片引用与 Caption 占位符。",
+      "priority": "high",
+      "id": 64,
+      "status": "approved",
+      "worker_output": {
+        "summary": "成功将形态学指纹图生成逻辑集成至 `paper_assembler.py`，实现了从检测数据到论文“物理特征讨论”章节图表引用的自动化闭环。",
+        "deliverable": {
+          "bullets": [
+            "修改了 `paper_assembler.py`：新增对 `morphology_fingerprint.py` 的调用接口，在组装流程中自动读取 `detections.json` 并生成形态学热力图。",
+            "资源路径标准化：确立了 `output/figures/fingerprint_heatmap.png` 为标准输出路径，确保 LaTeX 编译器能稳定定位图片资产。",
+            "更新 `full_paper_template.tex`：在“物理特征讨论（Physical Feature Discussion）”章节插入了 `figure` 环境占位符，配置了针对圆度与长径比分布的学术 Caption。",
+            "自动化文本注入：脚本现在能自动提取形态指纹的质心坐标 $(Circ_{mean}, AR_{mean})$，并将其作为数值变量填入论文正文的讨论段落中。",
+            "代码集成示例：\npython\n# paper_assembler.py 核心修改点\nfrom morphology_fingerprint import gen_fingerprint\n\ndef assemble_physical_section(results_df, fig_dir):\n    heatmap_path = os.path.join(fig_dir, 'fingerprint_heatmap.png')\n    # 调用 Task 63 模块生成指纹图\n    gen_fingerprint(results_df, save_path=heatmap_path)\n    return \"\\\\input{sections/physical_discussion.tex}\"\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若 `detections.json` 中某些样本缺失 `aspect_ratio` 或 `circularity` 字段（如 Task 47 未运行），集成脚本将抛出 KeyError。",
+          "LaTeX 图片占位符若未正确配置 `[htbp]` 参数，可能导致自动化生成的 5 页论文中图片排版错位。"
+        ],
+        "next_hint": "建议执行一次端到端全流程冒烟测试，重点检查生成的 PDF 中“物理特征讨论”章节的图片显示及对应的数值变量是否准确。"
+      }
+    },
+    {
+      "title": "开发基于数据特征的 LaTeX 学术讨论文本生成器",
+      "description": "编写 `discussion_generator.py`，从 `detections.json` 提取优势形态比例、平均圆度等核心特征，生成对应的 LaTeX 宏定义（如 \\newcommand{\\DominantType}{Fragment}）。该脚本用于自动替换论文模板中的硬编码描述，实现数据驱动的文本更新。",
+      "priority": "medium",
+      "id": 65,
+      "status": "todo"
+    },
+    {
+      "title": "执行‘复杂环境基质’全流程生产线闭环验证",
+      "description": "针对 Task 52 整合的包含生物膜和泥沙干扰的公开数据集，运行 micro_v3_da 复合流水线（含白平衡、CLAHE、SAM2、LAB 过滤）。生成包含全套 JSON、热力图及 5 页学术初稿的资产包，量化生产线在真实复杂样本下的可靠性。",
+      "priority": "high",
+      "id": 66,
+      "status": "todo"
     }
   ],
-  "next_task_id": 64
+  "next_task_id": 67
 }
