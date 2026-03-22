@@ -746,6 +746,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 67,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "脚本实现了对特定数据集（Zenodo, Figshare）和工具（SAM 2, SAHI）的元数据集成，且建立了与 CITATION.cff 的同步机制，满足所有任务要求。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

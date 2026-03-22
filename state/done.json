@@ -1863,6 +1863,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 67,
+      "title": "自动同步引用元数据至 LaTeX 参考文献库",
+      "worker_output": {
+        "summary": "开发并验证了 `sync_refs.py` 脚本，实现了从 `CITATION.cff` 及外部数据集/工具元数据向 `references.bib` 的自动化同步，确保了学术初稿引用的时效性与格式一致性。",
+        "deliverable": {
+          "bullets": [
+            "自动同步脚本 (sync_refs.py)：基于 Python 实现，支持解析项目根目录的 `CITATION.cff` (YAML 格式)，并将其自动转换为标准的 BibTeX `@software` 引用条目。",
+            "元数据集成库：针对任务要求的 Zenodo (7348408)、Figshare (14545191) 复杂背景数据集，以及核心算法工具 (SAM 2, SAHI, YOLOv8) 预置了完整的 BibTeX 条目模板。",
+            "引用一致性校验：脚本内置逻辑，确保 `references.bib` 中的 `year`、`version` 和 `doi` 字段与 `CITATION.cff` 及 Task 37 注册的正式元数据严格同步。",
+            "自动化更新流：在 `paper_assembler.py` 中新增了前置触发钩子，在执行论文组装前自动扫描并补全缺失的参考文献条目，避免 LaTeX 编译时出现 'Citation undefined' 警告。",
+            " BibTeX 条目示例：实现了包含 `doi`, `url`, `publisher`, `author` 等关键字段的结构化输出，适配 `natbib` 与 `biblatex` 等主流 LaTeX 宏包。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若 `CITATION.cff` 格式不规范（如缺少必填字段），解析器可能抛出异常，需增强脚本的容错处理。",
+          "重复键名风险：若手动添加的条目与自动生成的条目 Key 值冲突，可能导致 LaTeX 引用指向错误，需建立全局唯一键名生成规则。"
+        ],
+        "next_hint": "建议将此同步脚本集成至 GitHub Actions CI 流程，确保在每次 Release 发布或 PDF 自动化构建前，参考文献库始终保持最新状态。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "脚本实现了对特定数据集（Zenodo, Figshare）和工具（SAM 2, SAHI）的元数据集成，且建立了与 CITATION.cff 的同步机制，满足所有任务要求。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

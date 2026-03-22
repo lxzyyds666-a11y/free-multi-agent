@@ -1666,7 +1666,46 @@
         ],
         "next_hint": "生产线闭环验证已完成。建议将此资产包作为样机 v1.0 的最终演示附件，并正式执行 GitHub Release 的发布操作。"
       }
+    },
+    {
+      "title": "自动同步引用元数据至 LaTeX 参考文献库",
+      "description": "编写脚本实现 references.bib 的自动化动态更新。确保在 Task 66 生成学术初稿时，所有新引入的公开数据集（如 Zenodo 7348408, Figshare 14545191）及开源工具（SAM 2, SAHI）均具备完整的 BibTeX 条目，并与 CITATION.cff 保持一致。",
+      "priority": "medium",
+      "id": 67,
+      "status": "approved",
+      "worker_output": {
+        "summary": "开发并验证了 `sync_refs.py` 脚本，实现了从 `CITATION.cff` 及外部数据集/工具元数据向 `references.bib` 的自动化同步，确保了学术初稿引用的时效性与格式一致性。",
+        "deliverable": {
+          "bullets": [
+            "自动同步脚本 (sync_refs.py)：基于 Python 实现，支持解析项目根目录的 `CITATION.cff` (YAML 格式)，并将其自动转换为标准的 BibTeX `@software` 引用条目。",
+            "元数据集成库：针对任务要求的 Zenodo (7348408)、Figshare (14545191) 复杂背景数据集，以及核心算法工具 (SAM 2, SAHI, YOLOv8) 预置了完整的 BibTeX 条目模板。",
+            "引用一致性校验：脚本内置逻辑，确保 `references.bib` 中的 `year`、`version` 和 `doi` 字段与 `CITATION.cff` 及 Task 37 注册的正式元数据严格同步。",
+            "自动化更新流：在 `paper_assembler.py` 中新增了前置触发钩子，在执行论文组装前自动扫描并补全缺失的参考文献条目，避免 LaTeX 编译时出现 'Citation undefined' 警告。",
+            " BibTeX 条目示例：实现了包含 `doi`, `url`, `publisher`, `author` 等关键字段的结构化输出，适配 `natbib` 与 `biblatex` 等主流 LaTeX 宏包。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若 `CITATION.cff` 格式不规范（如缺少必填字段），解析器可能抛出异常，需增强脚本的容错处理。",
+          "重复键名风险：若手动添加的条目与自动生成的条目 Key 值冲突，可能导致 LaTeX 引用指向错误，需建立全局唯一键名生成规则。"
+        ],
+        "next_hint": "建议将此同步脚本集成至 GitHub Actions CI 流程，确保在每次 Release 发布或 PDF 自动化构建前，参考文献库始终保持最新状态。"
+      }
+    },
+    {
+      "title": "升级 Hugging Face Space 权重与交互逻辑至 v1.1 (DA 版)",
+      "description": "将 Task 57 产出的 micro_v3_da.pt 权重及 Task 58-59 的复合流水线（包含白平衡、CLAHE 开关、LAB 离群点过滤）同步部署至 Hugging Face Spaces。更新在线演示示例，使其默认支持处理环境基质复杂的公开样本。",
+      "priority": "high",
+      "id": 68,
+      "status": "todo"
+    },
+    {
+      "title": "撰写 Release v1.1（领域自适应版）正式更新日志",
+      "description": "汇总从 Task 29 到 Task 66 的全量技术增益。重点量化描述领域自适应（DA）与 LAB 过滤对复杂环境基质识别率的提升（Recall +14.7%），并更新样机架构图与资产包说明，标志着“学术论文生产线”样机进入稳态维护期。",
+      "priority": "high",
+      "id": 69,
+      "status": "todo"
     }
   ],
-  "next_task_id": 67
+  "next_task_id": 70
 }
