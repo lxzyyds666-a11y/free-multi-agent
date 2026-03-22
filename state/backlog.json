@@ -1817,7 +1817,46 @@
         ],
         "next_hint": "建议在 Web 界面新增一个隐藏或受限访问的‘反馈看板’标签页，用于可视化分析用户评价的分布趋势，指导 v2.0 模板迭代。"
       }
+    },
+    {
+      "title": "开发 Streamlit 匿名反馈可视化看板",
+      "description": "在 Web 界面新增一个独立标签页（Dashboard），读取 `feedback_log.json` 数据，利用 Plotly 绘制三个评价维度的平均得分雷达图和建议列表，为后续版本迭代提供数据化依据。",
+      "priority": "low",
+      "id": 73,
+      "status": "approved",
+      "worker_output": {
+        "summary": "在 Streamlit 界面新增了“反馈看板”独立标签页，利用 Plotly 实现了三维评价雷达图和建议列表，为样机性能评估与迭代提供了数据化看板。",
+        "deliverable": {
+          "bullets": [
+            "新增“反馈看板”标签页：在 `streamlit_app.py` 中通过 `st.tabs` 扩展，实现了与推理演示、精度看板并行的独立数据分析空间。",
+            "Plotly 雷达图模块：开发了 `render_feedback_radar` 函数，读取 `feedback_log.json` 中的 'logic'、'viz'、'audit' 评分，自动计算各维度均值并生成交互式多维雷达图。",
+            "建议列表展示：集成建议展示组件，支持按时间戳对用户留言（comments）进行排序，并过滤掉空评论，方便快速定位待改进的技术痛点。",
+            "核心指标汇总：在看板顶部利用 `st.metric` 展示总收集样本数及各评价维度的平均得分，直观反映样机的学术可接受度。",
+            "代码逻辑实现：\npython\nimport pandas as pd\nimport plotly.graph_objects as go\nimport streamlit as st\nimport json\n\ndef load_feedback_data(path='feedback_log.json'):\n    # 读取并转换 JSON 至 DataFrame\n    with open(path, 'r') as f:\n        data = [json.loads(line) for line in f]\n    return pd.json_normalize(data)\n\ndef render_radar_chart(df):\n    # 计算维度均值并绘图\n    categories = ['讨论逻辑', '图表质量', '数值严谨性']\n    values = [df['scores.logic'].mean(), df['scores.viz'].mean(), df['scores.audit'].mean()]\n    fig = go.Figure(data=go.Scatterpolar(r=values, theta=categories, fill='toself'))\n    fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 5])))\n    st.plotly_chart(fig)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "数据量瓶颈：在样机初期，若反馈样本不足（<5条），雷达图的统计均值容易受极端评价影响而产生偏差。",
+          "持久化失效：在 Hugging Face Spaces 等非持久化容器中，`feedback_log.json` 会随重启丢失，导致看板无法显示历史趋势。"
+        ],
+        "next_hint": "建议将此看板数据与 Task 69 的 Release 日志挂钩，通过版本号（version）过滤反馈，以量化评估从 v1.0 到 v1.1 的用户满意度提升。"
+      }
+    },
+    {
+      "title": "集成元数据脱敏模块至自动化论文资产包装流",
+      "description": "将 Task 70 的脱敏逻辑集成至 `paper_assembler.py`。在生成论文 ZIP 压缩包时，强制对包含在内的所有检测效果图和样图执行 EXIF/TIFF 标签清除，确保公开分发的合规性。",
+      "priority": "high",
+      "id": 74,
+      "status": "todo"
+    },
+    {
+      "title": "实现基于可用显存的 SAM 2 批处理自适应调节",
+      "description": "在 `sam_refiner.py` 中引入显存检测逻辑（如使用 `torch.cuda.mem_get_info`）。根据当前 GPU 剩余显存动态计算 Task 71 的 `max_obj_per_batch` 参数，确保在高通量识别时自动适配不同硬件，避免 OOM 崩溃。",
+      "priority": "medium",
+      "id": 75,
+      "status": "todo"
     }
   ],
-  "next_task_id": 73
+  "next_task_id": 76
 }
