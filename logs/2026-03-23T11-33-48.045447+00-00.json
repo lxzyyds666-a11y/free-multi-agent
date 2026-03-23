@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-23T11:33:48.045447+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 80,
+    "summary": "成功将脱敏合规性校验脚本集成至 GitHub Actions 流水线，实现了对发布资产包（ZIP）的自动化敏感隐私扫描与合规门禁拦截。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 80,
+    "decision": "approve"
+  }
+}

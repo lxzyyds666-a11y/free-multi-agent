@@ -2000,7 +2000,25 @@
       "description": "更新 `.github/workflows/smoke-test.yml`，在资产包生成步骤后接入 Task 77 开发的 `verify_sanitization.py` 脚本。配置 CI 流程：若 ZIP 包内检测到任何残留的敏感 EXIF/TIFF 标签，则自动中断流水线并报错，确保发布资产的绝对合规。",
       "priority": "high",
       "id": 80,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "成功将脱敏合规性校验脚本集成至 GitHub Actions 流水线，实现了对发布资产包（ZIP）的自动化敏感隐私扫描与合规门禁拦截。",
+        "deliverable": {
+          "bullets": [
+            "更新了 `.github/workflows/smoke-test.yml`：在冒烟测试产出学术资产包后，新增了 'Asset Sanitization Check' 核心步骤。",
+            "流水线配置片段：\nyaml\n      - name: Verify Sanitization Compliance\n        run: |\n          # 安装校验依赖\n          pip install exifread\n          # 执行 Task 77 开发的校验脚本，目标为冒烟测试生成的 ZIP 包\n          python verify_sanitization.py --zip test_output/academic_assets.zip\n        # 脚本非零退出码将自动导致整个 Workflow 报错中断\n",
+            "合规门禁机制：若 `verify_sanitization.py` 在 ZIP 内检测到残留的 GPS、设备序列号或拍摄者等黑名单标签，CI 将立即失败，阻止不合规资产发布。",
+            "依赖补全：在 CI 环境的 `pip install` 步骤中明确增加了 `exifread`，确保校验逻辑具备运行环境。",
+            "路径对齐：确保校验脚本指向的任务路径与 `paper_assembler.py` 默认输出的资产包路径一致。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若 `smoke_test.sh` 生成的 ZIP 文件名发生变更，需同步更新 YAML 中的路径参数，否则会报文件未找到错误。",
+          "GitHub Actions 默认 Runner 的 Python 环境若缺失特定的图像处理库，可能导致脚本执行异常。"
+        ],
+        "next_hint": "至此，公开资料样机的开发、封装、合规性校验及 CI 自动化已全部闭环。建议进行最终的 Release 发布测试，验证合规门禁在真实违规情况下的拦截能力。"
+      }
     },
     {
       "title": "执行高通量端到端“论文工厂”压力测试",
