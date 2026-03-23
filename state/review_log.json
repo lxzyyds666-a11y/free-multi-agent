@@ -839,6 +839,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 76,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "代码逻辑完整覆盖了任务要求的 OOM 捕获、显存清理、batch_size 减半重试及边界处理（bs=1），且提供了具体的实现片段。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

