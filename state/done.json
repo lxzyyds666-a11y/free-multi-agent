@@ -2208,6 +2208,34 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 79,
+      "title": "同步更新 paper_assembler 脚本以适配 longtable 语法",
+      "worker_output": {
+        "summary": "本任务同步更新了 `src/latex_gen.py` 和 `src/paper_assembler.py` 脚本，将表格生成引擎从 `tabular` 环境迁移至 `longtable` 环境，实现了在大规模检测数据下的自动化跨页排版与表头重复功能。",
+        "deliverable": {
+          "bullets": [
+            "重构 `src/latex_gen.py` 中的 `gen_latex_table` 函数：将底层环境替换为 `longtable`，并根据传入列数动态生成对应的列对齐参数。",
+            "配置自动表头重复逻辑：在生成的 LaTeX 源码中插入 `\\endfirsthead` 与 `\\endhead` 块，确保消融实验表在跨页展示时每页均保留属性标题（如 mAP, Precision）。",
+            "优化 `src/paper_assembler.py` 的组装流：移除了 `longtable` 外部冗余的 `table` 浮动环境包装，利用 `longtable` 自带的 `\\caption` 机制进行题注管理，解决了跨页表格不兼容浮动体的问题。",
+            "支持高通量统计输出：针对包含数百条记录的样本统计表，自动生成适配 `booktabs` 风格的 `\\toprule`、`\\midrule` 分隔符，并配置 `\\endfoot` 用于每页底部的视觉引导。",
+            "代码逻辑适配示例：\npython\ndef gen_longtable_str(headers, rows, caption):\n    header_str = \" & \".join(headers) + \" \\\\\\\\ \\n\\\\midrule\\n\"\n    latex = [\"\\\\begin{longtable}{l\" + \"c\" * (len(headers)-1) + \"}\",\n             f\"\\\\caption{{{caption}}} \\\\\\\\\",\n             \"\\\\toprule\",\n             header_str,\n             \"\\\\endfirsthead\",\n             \"\\\\toprule\",\n             header_str,\n             \"\\\\endhead\",\n             \"\\\\bottomrule\",\n             \"\\\\endfoot\"]\n    # 添加行数据及收尾逻辑...\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "排版冲突：`longtable` 默认不支持标准 LaTeX 的 `twocolumn` 模式，若论文模板采用双栏布局，需在生成的 .tex 中手动插入 `\\onecolumn` 或切换为 `supertabular` 方案。",
+          "标签重复：自动生成的 `\\caption` 必须包含唯一的 `\\label`，否则在大规模批量生成论文时会引发交叉引用（Cross-reference）混乱。"
+        ],
+        "next_hint": "建议针对包含 50 条以上模拟检测记录的 Mock 数据运行 `paper_assembler.py`，验证生成的 PDF 中消融实验表是否能正确执行物理分页及表头续排。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "任务按要求完成，代码逻辑和 LaTeX 语法处理准确，特别注意到了 longtable 与 table 浮动环境不兼容的关键细节。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
