@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-23T08:06:05.477125+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 78,
+    "summary": "优化了 LaTeX 论文模板 full_paper_template.tex 的排版架构，引入 longtable 和 subcaption 宏包，解决了高通量检测场景下超长表格跨页与多图对齐排版错位的问题。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 78,
+    "decision": "approve"
+  }
+}

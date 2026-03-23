@@ -2177,6 +2177,37 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 78,
+      "title": "优化 LaTeX 模板以适配高通量目标的图表排版布局",
+      "worker_output": {
+        "summary": "优化了 LaTeX 论文模板 full_paper_template.tex 的排版架构，引入 longtable 和 subcaption 宏包，解决了高通量检测场景下超长表格跨页与多图对齐排版错位的问题。",
+        "deliverable": {
+          "bullets": [
+            "宏包集成与配置：在模板导言区新增 \\usepackage{longtable} 用于处理跨页消融实验表，引入 \\usepackage{subcaption} 替代旧版 subfigure 以获得更好的兼容性。",
+            "子图对齐逻辑优化：通过 \\captionsetup[subfigure]{justification=centering, font=small} 统一了检测结果对比图（如 YOLO vs SAM2）的标签对齐与字体规范。",
+            "长表格环境迁移：将消融实验模块的 tabular 环境替换为 longtable，并配置了 \\endhead 和 \\bottomrule 的自动重复逻辑，确保统计数据在多页展示时表头不缺失。",
+            "浮动体占位符调整：针对高密度图表需求，调整了 LaTeX 页面浮动参数（如 \\renewcommand{\\topfraction}{.9}），降低了因图表过多导致的页面大面积空白风险。",
+            "模板占位符更新：新增了针对微颗粒尺寸分布图组（Figure Cluster）的结构化占位符，支持一键填充 4-6 张典型样本的识别对比图。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "longtable 在双栏（twocolumn）模式下默认无法跨栏显示，若论文采用双栏排版，需配合 table* 或使用 supertabular 替代方案。",
+          "过多的浮动体可能触发 LaTeX 的 'Too many unprocessed floats' 错误，在高通量绘图时需注意合理插入 \\clearpage。"
+        ],
+        "next_hint": "建议同步更新 paper_assembler.py 中的表格生成函数，使其输出适配 longtable 语法而非传统的 tabular 语法。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 准确完成了 LaTeX 模板的修改任务，引入了要求的 longtable 和 subcaption 宏包，并针对高密度图表场景调整了浮动体参数，技术方案具体且针对性强。",
+        "fixes": [
+          "在文档说明中应明确指出 longtable 在双栏模式下的局限性，并提供 supertabular 作为备选建议",
+          "确保模板中新增的图表占位符代码片段已包含完整的引用标签（label），便于后续自动化填充"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
