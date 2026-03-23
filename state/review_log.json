@@ -892,6 +892,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 81,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 完整覆盖了任务要求的各项指标，包括图像数量 (>100)、PDF 页数 (>10) 以及特定技术模块（Task 75/76/78/43）的协同验证，数据具体且逻辑自洽。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
