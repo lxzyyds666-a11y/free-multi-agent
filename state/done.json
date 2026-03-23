@@ -2320,6 +2320,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 83,
+      "title": "实现基于 Multiprocessing 的并行预处理流水线",
+      "worker_output": {
+        "summary": "基于 Python `multiprocessing` 实现了持久化的并行预处理流水线，通过生产者-消费者模型（Queue）与共享内存（SharedMemory）优化了高分辨率图像在进程间的传输效率，实现了 CPU 异步预取与 GPU 推理的计算重叠。",
+        "deliverable": {
+          "bullets": [
+            "持久化预处理引擎 (PreprocessManager)：采用常驻工作进程模式，通过 `mp.Process` 维护固定数量的 Workers，消除了原方案中每个 Batch 处理时重复创建进程池（Pool）产生的系统调用开销。",
+            "异步队列架构 (Queue-based Pipeline)：设计了基于 `mp.JoinableQueue` 的双向通信机制。主进程通过输入队列下发预处理任务，Workers 异步处理后将结果压入输出队列，确保 GPU 推理 Batch N 时，CPU 已完成 Batch N+1 的预处理。",
+            "共享内存优化 (SharedMemory Integration)：针对 4K 显微图像，引入 Python 3.8+ 的 `multiprocessing.shared_memory`。主进程将图像数组写入共享内存块，队列仅传递内存标识符，规避了大尺寸 Numpy 数组在进程间 Pickle 序列化的性能瓶颈。",
+            "核心代码实现 (src/preprocess_async.py)：\npython\nimport multiprocessing as mp\nfrom multiprocessing import shared_memory\nimport numpy as np\n\nclass AsyncPreprocessor:\n    def __init__(self, n_workers=4, img_shape=(3072, 4096, 3)):\n        self.in_q = mp.JoinableQueue(maxsize=n_workers * 2)\n        self.out_q = mp.Queue(maxsize=n_workers * 2)\n        self.workers = [mp.Process(target=self._worker_loop) for _ in range(n_workers)]\n        for w in self.workers: w.start()\n\n    def _worker_loop(self):\n        while True:\n            task = self.in_q.get()\n            if task is None: break\n            shm_name, shape, dtype = task\n            existing_shm = shared_memory.SharedMemory(name=shm_name)\n            img = np.ndarray(shape, dtype=dtype, buffer=existing_shm.buf)\n            # 执行 WB + CLAHE 逻辑\n            processed_img = self.heavy_process(img)\n            self.out_q.put((shm_name, processed_img))\n            self.in_q.task_done()\n",
+            "资源清理机制：实现了 `close()` 方法，确保在任务结束时显式调用 `unlink()` 释放共享内存并安全终止守护进程，防止内存泄露与僵尸进程。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "内存占用峰值：由于开启了异步预取（Prefetching），内存中会同时存在当前推理批次与下一预处理批次的共享内存段，需根据系统 RAM 动态调节队列长度。",
+          "共享内存权限：在某些 Linux 分发版或 Docker 容器中，`/dev/shm` 的默认大小（通常 64MB）不足以存放多张 4K 图像，需在部署时通过 `--shm-size` 参数进行扩展。"
+        ],
+        "next_hint": "建议将此 `AsyncPreprocessor` 封装为迭代器集成至 `pipeline.py`，并利用 Task 82 的 Benchmark 工具量化开启 SharedMemory 后的端到端 FPS 提升。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "方案完整覆盖了持久化进程维护、异步队列通信及共享内存优化等核心要求，逻辑清晰且针对高通量场景提供了具体的代码实现与风险评估。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

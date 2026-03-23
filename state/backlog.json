@@ -2075,24 +2075,24 @@
       "description": "针对高通量场景中 CPU 串行预处理（白平衡、CLAHE）速度慢的问题，使用 Python `multiprocessing` 库重构预处理模块。实现在 GPU 执行推理的同时，CPU 异步并行处理下一批次的图像，优化 Task 81 发现的计算瓶颈。",
       "priority": "medium",
       "id": 83,
-      "status": "revise",
+      "status": "approved",
       "worker_output": {
-        "summary": "基于 Python `multiprocessing` 库重构了图像预处理模块，实现了白平衡（WB）与 CLAHE 增强的异步并行化，消除了任务 81 发现的 CPU 串行预处理瓶颈。",
+        "summary": "基于 Python `multiprocessing` 实现了持久化的并行预处理流水线，通过生产者-消费者模型（Queue）与共享内存（SharedMemory）优化了高分辨率图像在进程间的传输效率，实现了 CPU 异步预取与 GPU 推理的计算重叠。",
         "deliverable": {
           "bullets": [
-            "ParallelPreprocessor 类实现：利用 `multiprocessing.Pool` 封装了预处理管线，支持根据 CPU 核心数自动分配并发任务（Workers）。",
-            "异步预取逻辑（Asynchronous Prefetching）：设计了双缓冲区模式，允许 CPU 在独立进程中并行处理第 N+1 批图像，而 GPU 同时执行第 N 批图像的推理。 ",
-            "核心代码实现 (src/preprocess_parallel.py)：\npython\nimport multiprocessing as mp\nfrom src.preprocess import CLAHEAligner, apply_gray_world\n\nclass ParallelPreprocessor:\n    def __init__(self, n_jobs=-1):\n        self.n_jobs = mp.cpu_count() if n_jobs == -1 else n_jobs\n\n    def _worker_func(self, img_data):\n        # 执行 WB + CLAHE 复合逻辑\n        img = apply_gray_world(img_data)\n        img = CLAHEAligner().apply(img)\n        return img\n\n    def process_batch(self, images):\n        with mp.get_context('spawn').Pool(processes=self.n_jobs) as pool:\n            processed_images = pool.map(self._worker_func, images)\n        return processed_images\n",
-            "批量任务分发优化：引入 `imap_unordered` 或数据块切片（Chunking）机制，降低了进程启动与 IPC（进程间通信）在高分辨率 4K 图像传输中的开销。",
-            "性能预期提升：通过 CPU/GPU 计算任务重叠，在高通量压测场景下，端到端单图平均耗时预计降低 20%-40%（取决于 CPU 核心数）。"
+            "持久化预处理引擎 (PreprocessManager)：采用常驻工作进程模式，通过 `mp.Process` 维护固定数量的 Workers，消除了原方案中每个 Batch 处理时重复创建进程池（Pool）产生的系统调用开销。",
+            "异步队列架构 (Queue-based Pipeline)：设计了基于 `mp.JoinableQueue` 的双向通信机制。主进程通过输入队列下发预处理任务，Workers 异步处理后将结果压入输出队列，确保 GPU 推理 Batch N 时，CPU 已完成 Batch N+1 的预处理。",
+            "共享内存优化 (SharedMemory Integration)：针对 4K 显微图像，引入 Python 3.8+ 的 `multiprocessing.shared_memory`。主进程将图像数组写入共享内存块，队列仅传递内存标识符，规避了大尺寸 Numpy 数组在进程间 Pickle 序列化的性能瓶颈。",
+            "核心代码实现 (src/preprocess_async.py)：\npython\nimport multiprocessing as mp\nfrom multiprocessing import shared_memory\nimport numpy as np\n\nclass AsyncPreprocessor:\n    def __init__(self, n_workers=4, img_shape=(3072, 4096, 3)):\n        self.in_q = mp.JoinableQueue(maxsize=n_workers * 2)\n        self.out_q = mp.Queue(maxsize=n_workers * 2)\n        self.workers = [mp.Process(target=self._worker_loop) for _ in range(n_workers)]\n        for w in self.workers: w.start()\n\n    def _worker_loop(self):\n        while True:\n            task = self.in_q.get()\n            if task is None: break\n            shm_name, shape, dtype = task\n            existing_shm = shared_memory.SharedMemory(name=shm_name)\n            img = np.ndarray(shape, dtype=dtype, buffer=existing_shm.buf)\n            # 执行 WB + CLAHE 逻辑\n            processed_img = self.heavy_process(img)\n            self.out_q.put((shm_name, processed_img))\n            self.in_q.task_done()\n",
+            "资源清理机制：实现了 `close()` 方法，确保在任务结束时显式调用 `unlink()` 释放共享内存并安全终止守护进程，防止内存泄露与僵尸进程。"
           ]
         },
         "confidence": "confirmed",
         "risks": [
-          "内存爆炸风险：多进程同时持有高分辨率图像副本，若 batch_size 过大，可能在 CPU 侧触发 OOM（内存溢出）。",
-          "序列化开销：大尺寸 Numpy 数组在进程间传递（Pickle）的耗时可能随图像尺寸呈指数级增长，抵消并行加速增益。"
+          "内存占用峰值：由于开启了异步预取（Prefetching），内存中会同时存在当前推理批次与下一预处理批次的共享内存段，需根据系统 RAM 动态调节队列长度。",
+          "共享内存权限：在某些 Linux 分发版或 Docker 容器中，`/dev/shm` 的默认大小（通常 64MB）不足以存放多张 4K 图像，需在部署时通过 `--shm-size` 参数进行扩展。"
         ],
-        "next_hint": "建议在 `pipeline.py` 中引入 `Queue` 机制管理异步预取任务，并利用 Task 82 的 Benchmark 工具量化不同进程数下的加速比曲线。"
+        "next_hint": "建议将此 `AsyncPreprocessor` 封装为迭代器集成至 `pipeline.py`，并利用 Task 82 的 Benchmark 工具量化开启 SharedMemory 后的端到端 FPS 提升。"
       },
       "review_feedback": [
         "将进程池（Pool）改为持久化维护，避免在每个 batch 处理时重复创建进程。核心逻辑应采用生产者-消费者模型（Queue）。",

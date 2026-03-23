@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-23T17:39:32.051282+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 83,
+    "summary": "基于 Python `multiprocessing` 实现了持久化的并行预处理流水线，通过生产者-消费者模型（Queue）与共享内存（SharedMemory）优化了高分辨率图像在进程间的传输效率，实现了 CPU 异步预取与 GPU 推理的计算重叠。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 83,
+    "decision": "approve"
+  }
+}
