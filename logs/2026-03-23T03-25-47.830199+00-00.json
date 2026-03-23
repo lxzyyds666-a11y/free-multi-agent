@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-23T03:25:47.830199+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 75,
+    "summary": "本任务在 `sam_refiner.py` 中实现了基于实时显存检测的 SAM 2 批处理自适应调节逻辑，通过动态计算 `max_obj_per_batch` 参数，确保了生产线在不同硬件环境下的高通量识别稳定性与 OOM 防御能力。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 75,
+    "decision": "approve"
+  }
+}

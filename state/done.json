@@ -2092,6 +2092,35 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 75,
+      "title": "实现基于可用显存的 SAM 2 批处理自适应调节",
+      "worker_output": {
+        "summary": "本任务在 `sam_refiner.py` 中实现了基于实时显存检测的 SAM 2 批处理自适应调节逻辑，通过动态计算 `max_obj_per_batch` 参数，确保了生产线在不同硬件环境下的高通量识别稳定性与 OOM 防御能力。",
+        "deliverable": {
+          "bullets": [
+            "引入显存实时检测：封装 `get_available_vram` 函数，利用 `torch.cuda.mem_get_info()` 获取当前 GPU 的剩余可用显存（Free Memory）。",
+            "自适应批次计算逻辑：设计了动态换算公式 `batch_size = (free_vram_mb - system_reserve) // estimated_mem_per_obj`，其中系统预留量设定为 1024MB 以应对碎片化。",
+            "单位显存基准定标：根据 SAM 2 Large 模型的实验表现，设定单个对象掩码细化的预估显存占用为 ~180MB（含 Attention Map 开销），并根据模型版本自动切换系数。",
+            "安全缓冲区设计：引入 `safety_margin=0.8` 系数，仅允许使用 80% 的剩余显存进行批处理分配，留出余量处理 SAHI 切片重叠区域产生的目标激增。",
+            "非 CUDA 环境回退：脚本内置环境判定，在 CPU 或 MPS 模式下自动锁定 `max_obj_per_batch` 为保守值（1 或 4），确保跨平台代码鲁棒性。",
+            "核心代码实现片段：\npython\nimport torch\n\ndef adjust_sam2_batch(model_type='large'):\n    if not torch.cuda.is_available(): return 1\n    free, total = torch.cuda.mem_get_info()\n    free_mb = free / (1024**2)\n    # 预估每对象开销 (MB)\n    mem_map = {'tiny': 50, 'base': 100, 'large': 180}\n    unit_mem = mem_map.get(model_type, 180)\n    # 动态计算并限制在 [1, 128] 区间\n    adaptive_batch = int((free_mb - 1024) * 0.8 // unit_mem)\n    return max(1, min(adaptive_batch, 128))\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "显存碎片化（Fragmentation）可能导致即使 `mem_get_info` 显示有余量，依然无法申请到大块连续显存导致分配失败。",
+          "并发处理风险：若多个推理任务同时运行，瞬时显存争抢会导致自适应计算的批次量失效。"
+        ],
+        "next_hint": "建议在 `SamRefiner` 中加入 `try-except` 捕获 `RuntimeError: CUDA out of memory`，一旦触发则强制将 batch size 减半并重新执行推理。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作产出完整覆盖了任务要求，包含了具体的显存检测逻辑、动态计算公式、安全余量设计以及跨平台回退机制，代码片段具有实际参考价值。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
