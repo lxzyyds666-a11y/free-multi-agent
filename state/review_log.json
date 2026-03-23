@@ -912,6 +912,20 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 83,
+      "decision": "revise",
+      "review": {
+        "decision": "revise",
+        "reason": "提供的代码实现与描述中的‘异步预取’目标不符：在 process_batch 中动态创建/销毁进程池会带来巨大开销，且 pool.map 是阻塞的，无法实现 CPU 与 GPU 的并行重叠。",
+        "fixes": [
+          "将进程池（Pool）改为持久化维护，避免在每个 batch 处理时重复创建进程。核心逻辑应采用生产者-消费者模型（Queue）。",
+          "明确实现异步预取逻辑，确保在 GPU 执行推理时，后台进程已在准备下一批次数据，而非在 process_batch 中同步等待返回。",
+          "针对高分辨率图像的序列化开销，建议在代码中引入或提及使用 SharedMemory (Python 3.8+) 来优化大数组在进程间的传递效率。"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

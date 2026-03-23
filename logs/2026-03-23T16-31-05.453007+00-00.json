@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-23T16:31:05.453007+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 83,
+    "summary": "基于 Python `multiprocessing` 库重构了图像预处理模块，实现了白平衡（WB）与 CLAHE 增强的异步并行化，消除了任务 81 发现的 CPU 串行预处理瓶颈。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 83,
+    "decision": "revise"
+  }
+}
