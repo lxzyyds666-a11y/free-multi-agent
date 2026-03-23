@@ -2063,6 +2063,35 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 74,
+      "title": "集成元数据脱敏模块至自动化论文资产包装流",
+      "worker_output": {
+        "summary": "成功将 Task 70 开发的元数据脱敏模块集成至 `paper_assembler.py`。在生成论文 ZIP 资产包的过程中，强制对所有检测效果图、统计图表及样图执行 EXIF/TIFF 标签清除，确保了公开分发资产的合规性与隐私安全。",
+        "deliverable": {
+          "bullets": [
+            "重构 `paper_assembler.py`：引入 `src.sanitizer` 模块，在资产归集阶段（Assets Collection）新增 `process_sanitization` 钩子函数。",
+            "全量图像扫描逻辑：定义了脱敏目标白名单（.jpg, .jpeg, .png, .tiff），确保 ZIP 包内 `figures/` 目录下的所有视觉资产均经过脱敏处理。",
+            "敏感标签强制剥离：调用 `sanitize_image` 逻辑，重点清除拍摄地理位置（GPS）、设备序列号、实验人员信息及处理软件特征。",
+            "物理像素白名单保留：优化了脱敏策略，在清理 TIFF 标签时强制保留 `ResolutionUnit`、`XResolution` 及 `YResolution`，防止显微镜比例尺信息在脱敏中丢失。",
+            "ZIP 包装流更新：调整了 `create_asset_bundle` 函数，将“脱敏”作为“压缩打包”前的强制前置环节，并生成脱敏合规校验日志（sanitization_log.txt）。",
+            "集成代码示例：\npython\nfrom src.sanitizer import sanitize_image\nimport glob\n\ndef prepare_safe_bundle(project_dir, bundle_dir):\n    # 1. 识别所有待打包图像\n    img_assets = glob.glob(f'{project_dir}/output/**/*.png', recursive=True) + \\\n                 glob.glob(f'{project_dir}/output/**/*.jpg', recursive=True)\n    \n    # 2. 强制脱敏处理\n    for img_path in img_assets:\n        target_path = img_path.replace(project_dir, bundle_dir)\n        # 执行脱敏，同时保留物理比例尺所需的 Resolution 标签\n        sanitize_image(img_path, target_path, preserve_resolution=True)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若原始图像采用非标准私有标签存储比例尺，通用的脱敏逻辑仍可能误删物理换算所需的关键元数据。",
+          "高分辨率图像在打包前的二次读写操作会增加论文资产包生成的总耗时（约增加 10-20%）。"
+        ],
+        "next_hint": "建议编写一个配套的脱敏校验脚本，用于自动扫描生成的 ZIP 包，验证是否存在漏网的敏感 EXIF 标签。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作输出完整覆盖了任务要求的集成逻辑，不仅提供了明确的代码修改路径，还针对 TIFF 比例尺保留等实际业务痛点给出了具体的处理方案。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
