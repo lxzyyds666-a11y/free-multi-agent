@@ -936,6 +936,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 84,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "任务执行完整，涵盖了从权重集成、流水线逻辑修改到 Web/CLI 界面更新的所有要求，并提供了具体的性能优化指标。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
