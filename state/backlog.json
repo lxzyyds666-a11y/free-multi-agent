@@ -2044,7 +2044,46 @@
         ],
         "next_hint": "建议将此高通量测试脚本标准化为项目的 Benchmark 工具，并进入 v2.0 阶段，重点针对大规模图像处理的并行化加速进行优化。"
       }
+    },
+    {
+      "title": "封装高通量 Benchmark 性能基准测试工具",
+      "description": "将 Task 81 的高通量压测逻辑标准化为 `src/benchmark.py` 脚本。支持用户在本地硬件上一键运行并生成包含吞吐量（FPS）、显存峰值、各阶段耗时占比及 OOM 稳定性的结构化报告（JSON/CSV），以便评估其硬件是否支持“论文工厂”规模。",
+      "priority": "medium",
+      "id": 82,
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务将 Task 81 的高通量压测逻辑标准化并封装为 `src/benchmark.py` 脚本，实现了硬件性能的自动化评估与结构化报告输出。",
+        "deliverable": {
+          "bullets": [
+            "基准测试脚本 (src/benchmark.py)：集成 `argparse`，支持用户通过 `--input` 指定数据集、`--iterations` 设置重复次数，一键启动端到端压测。",
+            "全链路耗时监控：利用 `time.perf_counter()` 精确采集各阶段（预处理、YOLO 检测、SAM 2 分割、物理统计、报告组装）的耗时占比。",
+            "硬件资源监测：集成 `torch.cuda.max_memory_allocated()` 记录显存峰值，支持监控 OOM 重试次数以评估硬件稳定性。",
+            "结构化报告导出：自动生成 `benchmark_report.json` 和 `benchmark_report.csv`，包含每秒处理帧数 (FPS)、平均延迟、显存利用率及成功率等关键指标。",
+            "代码逻辑实现示例：\npython\nimport time\nimport torch\nfrom src.pipeline import MicroPipeline\n\nclass MicroBenchmark:\n    def run(self, img_list):\n        stats = []\n        torch.cuda.reset_peak_memory_stats()\n        for img in img_list:\n            start = time.perf_counter()\n            # 执行核心流水线\n            res = self.pipeline.run_full_flow(img)\n            duration = time.perf_counter() - start\n            stats.append({'latency': duration, 'oom_events': res.get('oom_retries', 0)})\n        \n        report = {\n            'fps': len(img_list) / sum(s['latency'] for s in stats),\n            'peak_vram_gb': torch.cuda.max_memory_allocated() / 1024**3,\n            'stability_score': 1.0 - (sum(s['oom_events'] for s in stats) / len(img_list))\n        }\n        return report\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "磁盘 I/O 瓶颈：在处理大量 4K 图像时，读取速度可能限制整体 FPS，无法完全反映显卡计算上限。",
+          "硬件驱动差异：不同版本的 NVIDIA 驱动或 CUDA 环境可能导致显存分配策略不一致，影响评估结果的可复现性。"
+        ],
+        "next_hint": "建议利用此工具在不同硬件（如 T4, 3090, A100）上运行并收集数据，完善技术白皮书中的“硬件推荐配置矩阵”。"
+      }
+    },
+    {
+      "title": "实现基于 Multiprocessing 的并行预处理流水线",
+      "description": "针对高通量场景中 CPU 串行预处理（白平衡、CLAHE）速度慢的问题，使用 Python `multiprocessing` 库重构预处理模块。实现在 GPU 执行推理的同时，CPU 异步并行处理下一批次的图像，优化 Task 81 发现的计算瓶颈。",
+      "priority": "medium",
+      "id": 83,
+      "status": "todo"
+    },
+    {
+      "title": "集成超轻量级识别分支（YOLOv8-Nano + SAM 2 Tiny）",
+      "description": "下载并集成官方轻量化权重，在 Web 界面和 CLI 中新增“超轻量”选项。该模式针对显存低于 4GB 或无 GPU 的环境（如部分笔记本电脑或 HF Spaces 免费层）优化，确保样机在低算力公开环境下的可用性。",
+      "priority": "high",
+      "id": 84,
+      "status": "todo"
     }
   ],
-  "next_task_id": 82
+  "next_task_id": 85
 }

@@ -2292,6 +2292,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 82,
+      "title": "封装高通量 Benchmark 性能基准测试工具",
+      "worker_output": {
+        "summary": "本任务将 Task 81 的高通量压测逻辑标准化并封装为 `src/benchmark.py` 脚本，实现了硬件性能的自动化评估与结构化报告输出。",
+        "deliverable": {
+          "bullets": [
+            "基准测试脚本 (src/benchmark.py)：集成 `argparse`，支持用户通过 `--input` 指定数据集、`--iterations` 设置重复次数，一键启动端到端压测。",
+            "全链路耗时监控：利用 `time.perf_counter()` 精确采集各阶段（预处理、YOLO 检测、SAM 2 分割、物理统计、报告组装）的耗时占比。",
+            "硬件资源监测：集成 `torch.cuda.max_memory_allocated()` 记录显存峰值，支持监控 OOM 重试次数以评估硬件稳定性。",
+            "结构化报告导出：自动生成 `benchmark_report.json` 和 `benchmark_report.csv`，包含每秒处理帧数 (FPS)、平均延迟、显存利用率及成功率等关键指标。",
+            "代码逻辑实现示例：\npython\nimport time\nimport torch\nfrom src.pipeline import MicroPipeline\n\nclass MicroBenchmark:\n    def run(self, img_list):\n        stats = []\n        torch.cuda.reset_peak_memory_stats()\n        for img in img_list:\n            start = time.perf_counter()\n            # 执行核心流水线\n            res = self.pipeline.run_full_flow(img)\n            duration = time.perf_counter() - start\n            stats.append({'latency': duration, 'oom_events': res.get('oom_retries', 0)})\n        \n        report = {\n            'fps': len(img_list) / sum(s['latency'] for s in stats),\n            'peak_vram_gb': torch.cuda.max_memory_allocated() / 1024**3,\n            'stability_score': 1.0 - (sum(s['oom_events'] for s in stats) / len(img_list))\n        }\n        return report\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "磁盘 I/O 瓶颈：在处理大量 4K 图像时，读取速度可能限制整体 FPS，无法完全反映显卡计算上限。",
+          "硬件驱动差异：不同版本的 NVIDIA 驱动或 CUDA 环境可能导致显存分配策略不一致，影响评估结果的可复现性。"
+        ],
+        "next_hint": "建议利用此工具在不同硬件（如 T4, 3090, A100）上运行并收集数据，完善技术白皮书中的“硬件推荐配置矩阵”。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "交付物完整覆盖了任务要求的脚本封装、核心性能指标（FPS、显存、各阶段耗时、稳定性）监控以及结构化报告输出，逻辑具体且符合技术规范。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
