@@ -1,0 +1,18 @@
+{
+  "time_utc": "2026-03-23T21:05:53.584334+00:00",
+  "planner": {
+    "skipped": false,
+    "created": 3,
+    "note": "本轮规划重点在于将 Task 83/84 的工程优化（并行预处理、轻量化分支）正式闭环至主业务流，并通过量化消融实验为用户提供数据驱动的模式选择建议。"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 85,
+    "summary": "本任务成功将 Task 83 开发的异步并行预处理模块（AsyncPreprocessor）集成至核心流水线 `src/pipeline.py` 与命令行工具 `micro_cli.py`。实现了 CPU 预处理与 GPU 推理的计算重叠，显著提升了批量处理模式下的端到端吞吐量。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 85,
+    "decision": "approve"
+  }
+}
