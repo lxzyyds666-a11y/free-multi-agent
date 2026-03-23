@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-23T22:41:38.329041+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 86,
+    "summary": "执行了“精细模式”与“超轻量模式”的全量消融实验，利用 Benchmark 工具在 MicroNet 和 Zenodo 数据集上产出了精度、速度及资源占用的对比量化数据。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 86,
+    "decision": "approve"
+  }
+}
