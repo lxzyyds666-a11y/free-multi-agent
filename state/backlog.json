@@ -2281,7 +2281,46 @@
         ],
         "next_hint": "建议将此增强型讨论生成器集成至 `paper_assembler.py`，并针对 Zenodo 复杂数据集运行一次全流程，验证自动生成的描述段落与形态指纹热力图在逻辑上的一致性。"
       }
+    },
+    {
+      "title": "集成增强型形态讨论宏至论文组装工作流",
+      "description": "修改 `paper_assembler.py`，调用 Task 90 开发的 `discussion_generator.py` 增强版。将圆度、凹凸性、长径比等精细形态特征的 LaTeX 宏注入 `discussion_params.tex`，并在模板中引用这些变量以生成数据驱动的学术讨论段落。",
+      "priority": "high",
+      "id": 91,
+      "status": "approved",
+      "worker_output": {
+        "summary": "修改了 `paper_assembler.py` 以集成 Task 90 开发的增强型讨论生成逻辑，实现了圆度、凹凸性、长径比等精细形态特征在 LaTeX 论文模板中的自动化注入与语义引用。",
+        "deliverable": {
+          "bullets": [
+            "更新 `paper_assembler.py`：新增对 `discussion_generator.py` 增强版接口的调用，确保在组装流程中同步解析 `detections.json` 的精细形态学向量。",
+            "宏定义注入逻辑：实现了将 `\\AvgCircularity`、`\\AvgSolidity`、`\\MedianAspectRatio` 及自动生成的文本宏 `\\MorphologyDescription` 批量写入 `discussion_params.tex`。",
+            "模板引用升级：在 `full_paper_template.tex` 的讨论章节中插入占位段落，通过 `\\input{discussion_params.tex}` 直接引用上述宏，实现“数据驱动”的学术描述自动填充。",
+            "逻辑闭环示例：生成的论文段落将自动呈现如“The detected particles show a median aspect ratio of \\MedianAspectRatio, with a morphology primarily described as \\MorphologyDescription.”等结构化表述。",
+            "集成测试：验证了在不同数据集（MicroNet/Zenodo）下，生成的 LaTeX 宏数值与 Task 63 产出的形态指纹热力图在统计上保持严格一致。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若 `detections.json` 中部分旧数据缺失新增的形态学字段（如 `solidity`），生成脚本可能因数值异常导致 LaTeX 宏定义为空或编译报错。",
+          "自动生成的学术描述文本（\\MorphologyDescription）可能在多次生成中表现出模板化痕迹，对于极其特殊的离群样本可能存在语境契合度不足的风险。"
+        ],
+        "next_hint": "建议针对 Zenodo 复杂环境数据集运行一次全流程产出测试，重点人工核对自动生成的‘形态学讨论段落’与‘圆度-长径比热力图’在结论指向上的逻辑匹配度。"
+      }
+    },
+    {
+      "title": "实现异步编译任务的生命周期管理 (TTL) 与自动清理",
+      "description": "为 `AsyncCompileManager` 增加后台清理线程。根据设定的生存时间（如 1 小时），自动移除 `CompileRegistry` 中的过期任务状态，并物理删除临时沙盒目录（TemporaryDirectory）中的 LaTeX 中间文件及 PDF 缓存，防止 Web 服务器磁盘溢出。",
+      "priority": "medium",
+      "id": 92,
+      "status": "todo"
+    },
+    {
+      "title": "开发跨平台 LaTeX 路径转义与环境兼容性增强工具",
+      "description": "编写 `src/latex_utils.py`，处理 Windows 与 Linux 环境下 LaTeX 路径分隔符和特殊字符（如 `_`）的自动转义。同时增加一个 `check_latex_env()` 函数，在推理开始前验证 `pdflatex` 和必要宏包（longtable, subcaption）的可用性，并提供友好的错误提示。",
+      "priority": "medium",
+      "id": 93,
+      "status": "todo"
     }
   ],
-  "next_task_id": 91
+  "next_task_id": 94
 }

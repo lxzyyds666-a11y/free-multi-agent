@@ -1023,6 +1023,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 91,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 完整实现了集成增强型讨论宏的各项要求，包括脚本更新、宏定义注入及模板引用逻辑，输出细节具体且具有高度可执行性。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

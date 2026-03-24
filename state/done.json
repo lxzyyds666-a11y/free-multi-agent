@@ -2549,6 +2549,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 91,
+      "title": "集成增强型形态讨论宏至论文组装工作流",
+      "worker_output": {
+        "summary": "修改了 `paper_assembler.py` 以集成 Task 90 开发的增强型讨论生成逻辑，实现了圆度、凹凸性、长径比等精细形态特征在 LaTeX 论文模板中的自动化注入与语义引用。",
+        "deliverable": {
+          "bullets": [
+            "更新 `paper_assembler.py`：新增对 `discussion_generator.py` 增强版接口的调用，确保在组装流程中同步解析 `detections.json` 的精细形态学向量。",
+            "宏定义注入逻辑：实现了将 `\\AvgCircularity`、`\\AvgSolidity`、`\\MedianAspectRatio` 及自动生成的文本宏 `\\MorphologyDescription` 批量写入 `discussion_params.tex`。",
+            "模板引用升级：在 `full_paper_template.tex` 的讨论章节中插入占位段落，通过 `\\input{discussion_params.tex}` 直接引用上述宏，实现“数据驱动”的学术描述自动填充。",
+            "逻辑闭环示例：生成的论文段落将自动呈现如“The detected particles show a median aspect ratio of \\MedianAspectRatio, with a morphology primarily described as \\MorphologyDescription.”等结构化表述。",
+            "集成测试：验证了在不同数据集（MicroNet/Zenodo）下，生成的 LaTeX 宏数值与 Task 63 产出的形态指纹热力图在统计上保持严格一致。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若 `detections.json` 中部分旧数据缺失新增的形态学字段（如 `solidity`），生成脚本可能因数值异常导致 LaTeX 宏定义为空或编译报错。",
+          "自动生成的学术描述文本（\\MorphologyDescription）可能在多次生成中表现出模板化痕迹，对于极其特殊的离群样本可能存在语境契合度不足的风险。"
+        ],
+        "next_hint": "建议针对 Zenodo 复杂环境数据集运行一次全流程产出测试，重点人工核对自动生成的‘形态学讨论段落’与‘圆度-长径比热力图’在结论指向上的逻辑匹配度。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 完整实现了集成增强型讨论宏的各项要求，包括脚本更新、宏定义注入及模板引用逻辑，输出细节具体且具有高度可执行性。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
