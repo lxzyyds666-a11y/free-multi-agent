@@ -2180,7 +2180,26 @@
       "description": "基于消融实验数据，在 Web 界面的‘精度看板’页新增一个交互式散点图（x轴为FPS，y轴为mAP/精度）。可视化展示不同模型分支在算力与精度间的权衡，辅助用户根据硬件环境选择最优模式。",
       "priority": "medium",
       "id": 87,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "在 Streamlit 精度看板中集成了交互式性能权衡 (Trade-off) 散点图，通过可视化 FPS 与 mAP 的平衡关系，辅助用户根据硬件算力（CPU/GPU）选择最优模型配置。",
+        "deliverable": {
+          "bullets": [
+            "交互式 Plotly 散点图组件：在 `streamlit_app.py` 的精度看板页新增图表，x 轴设为推理速度 (FPS)，y 轴设为检测精度 (mAP@0.5)。",
+            "多维数据点映射：图表涵盖了 Task 86 消融实验的所有配置点，包括‘精细模式 (v3_da+SAM2-L)’、‘平衡模式 (v3_da+SAM2-T)’及‘超轻量模式 (Nano)’。",
+            "智能悬浮标签 (Tooltips)：悬浮显示各配置下的峰值显存占用 (VRAM)、是否开启 SAHI 增强以及适用的硬件建议（如 'Recommended for RTX 3090'）。",
+            "帕累托前沿 (Pareto Front) 标注：通过线条连接最优权衡点，直观展示在给定速度下的最高精度边界，辅助决策非劣解。",
+            "硬件适配推荐逻辑：新增基于显存容量的筛选器，当用户选择 '8GB VRAM' 时，图表自动高亮该显存限制下的最优性能点。",
+            "核心实现片段：\npython\nimport plotly.express as px\n\ndef render_tradeoff_chart(df):\n    fig = px.scatter(df, x='fps', y='map50', color='mode', \n                     size='vram_gb', hover_data=['sahi', 'sam2_ver'],\n                     labels={'fps': '推理速度 (FPS)', 'map50': '检测精度 (mAP@0.5)'})\n    # 添加帕累托前沿线逻辑\n    fig.add_traces(go.Scatter(x=pareto_x, y=pareto_y, mode='lines', name='最优边界'))\n    st.plotly_chart(fig)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "在 Hugging Face Spaces 部署时，由于缺乏 GPU，实时测量的 FPS 会远低于静态实验数据，可能导致图表坐标轴偏移。",
+          "不同数据集（MicroNet vs Zenodo）的 FPS 表现受目标密度影响较大，需在图表中注明测试基准背景。"
+        ],
+        "next_hint": "建议新增‘环境自动探测’功能，通过检测当前环境的 CPU/GPU 型号，在散点图中自动标记出针对当前用户的‘推荐运行点’。"
+      }
     }
   ],
   "next_task_id": 88

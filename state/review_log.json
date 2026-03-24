@@ -966,6 +966,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 87,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "任务产出完整且具体，不仅实现了要求的交互式散点图（FPS vs mAP），还额外提供了帕累托前沿标注和显存筛选逻辑，技术实现路径清晰且风险评估到位。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

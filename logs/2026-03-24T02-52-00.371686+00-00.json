@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-24T02:52:00.371686+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 87,
+    "summary": "在 Streamlit 精度看板中集成了交互式性能权衡 (Trade-off) 散点图，通过可视化 FPS 与 mAP 的平衡关系，辅助用户根据硬件算力（CPU/GPU）选择最优模型配置。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 87,
+    "decision": "approve"
+  }
+}
