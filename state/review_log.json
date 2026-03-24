@@ -989,6 +989,20 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 89,
+      "decision": "revise",
+      "review": {
+        "decision": "revise",
+        "reason": "代码实现中的轮询逻辑存在死循环风险，且线程间状态同步的实现方式在 Streamlit 环境下不稳健。",
+        "fixes": [
+          "优化轮询机制：直接在 `if PROCESSING` 分支调用 `st.rerun()` 会导致脚本极高频率重绘（死循环），应加入 `time.sleep()` 延迟或建议使用 `st_autorefresh` 等组件。",
+          "解决线程上下文问题：Streamlit 线程无法直接操作 `st.session_state`，代码示例应明确通过外部可变对象（如全局字典或类实例）而非直接引用 session_state 传递状态。",
+          "完善异常处理：代码中虽然有 try-except，但建议在风险提示中补充关于多线程环境下 PDF 引擎（如 pdflatex）的并发锁处理建议。"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

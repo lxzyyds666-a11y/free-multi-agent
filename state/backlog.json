@@ -2232,7 +2232,30 @@
       "description": "针对高通量模式下 PDF 编译耗时较长的问题，利用 Python `threading` 将 LaTeX 编译逻辑异步化。在 Streamlit 界面提供“报告生成中”的实时状态提示，编译完成后自动激活下载按钮，避免阻塞用户查看识别结果。",
       "priority": "medium",
       "id": 89,
-      "status": "todo"
+      "status": "revise",
+      "worker_output": {
+        "summary": "实现了基于 Python `threading` 的 Web 端异步 LaTeX 编译架构。通过 `st.session_state` 维护编译状态，解决了高通量模式下 PDF 生成耗时较长导致的 UI 阻塞问题，实现了“后台生成-前端轮询-自动激活下载”的交互闭环。",
+        "deliverable": {
+          "bullets": [
+            "AsyncReportManager 模块：利用 Python `threading.Thread` 封装了 LaTeX 编译逻辑，支持在后台调用 `pdflatex` 进程而不阻塞 Streamlit 主线程。",
+            "状态机管理：定义了 `[IDLE, PROCESSING, COMPLETED, ERROR]` 四种编译状态，利用 `st.session_state` 跨 Rerun 周期持久化任务进度。",
+            "实时交互 UI 逻辑：在界面提供“报告生成中...”的 `st.spinner` 提示，并在后台线程结束时通过状态位触发 UI 自动刷新。",
+            "条件激活下载按钮：实现了基于状态锁的按钮逻辑，仅在 PDF 文件确认落盘且编译状态为 `COMPLETED` 时，动态渲染 `st.download_button`。",
+            "核心代码实现片段：\npython\nimport threading\nimport streamlit as st\n\ndef async_compile(pipe_data, state_dict):\n    try:\n        pdf_path = report_gen.generate(pipe_data)\n        state_dict['status'] = 'COMPLETED'\n        state_dict['path'] = pdf_path\n    except Exception as e:\n        state_dict['status'] = 'ERROR'\n        state_dict['error'] = str(e)\n\n# UI 侧轮询逻辑\nif st.button('生成 PDF 报告'):\n    st.session_state.report = {'status': 'PROCESSING', 'path': None}\n    thread = threading.Thread(target=async_compile, args=(data, st.session_state.report))\n    thread.start()\n\nif st.session_state.report['status'] == 'PROCESSING':\n    st.info('学术快报生成中，请稍候...')\n    st.rerun() # 触发轮询\nelif st.session_state.report['status'] == 'COMPLETED':\n    st.download_button('下载 PDF 报告', data=open(st.session_state.report['path'], 'rb'))\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "Streamlit 线程同步风险：在非主线程中修改 `st.session_state` 存在上下文失效可能，需确保使用稳定的外部状态对象或回调机制。",
+          "并发资源冲突：多用户同时触发高通量 PDF 编译时，若临时文件夹命名不隔离，可能导致文件覆盖或 LaTeX 锁定冲突。"
+        ],
+        "next_hint": "建议引入 `tempfile` 模块为每个异步任务创建独立的编译沙盒路径，并结合 `st.empty()` 优化轮询提示的视觉连贯性。"
+      },
+      "review_feedback": [
+        "优化轮询机制：直接在 `if PROCESSING` 分支调用 `st.rerun()` 会导致脚本极高频率重绘（死循环），应加入 `time.sleep()` 延迟或建议使用 `st_autorefresh` 等组件。",
+        "解决线程上下文问题：Streamlit 线程无法直接操作 `st.session_state`，代码示例应明确通过外部可变对象（如全局字典或类实例）而非直接引用 session_state 传递状态。",
+        "完善异常处理：代码中虽然有 try-except，但建议在风险提示中补充关于多线程环境下 PDF 引擎（如 pdflatex）的并发锁处理建议。"
+      ]
     },
     {
       "title": "完善数据驱动的学术讨论生成逻辑（形态特征多维描述）",
