@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-24T12:36:06.584165+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 92,
+    "summary": "为 `AsyncCompileManager` 实现了异步编译任务的生命周期管理 (TTL) 与后台自动清理机制。通过在 `CompileRegistry` 中引入时间戳记录与后台守护线程，实现了对过期任务状态的自动剔除及临时沙盒目录的物理删除，有效防止了 Web 服务器磁盘溢出。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 92,
+    "decision": "approve"
+  }
+}

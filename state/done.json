@@ -2577,6 +2577,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 92,
+      "title": "实现异步编译任务的生命周期管理 (TTL) 与自动清理",
+      "worker_output": {
+        "summary": "为 `AsyncCompileManager` 实现了异步编译任务的生命周期管理 (TTL) 与后台自动清理机制。通过在 `CompileRegistry` 中引入时间戳记录与后台守护线程，实现了对过期任务状态的自动剔除及临时沙盒目录的物理删除，有效防止了 Web 服务器磁盘溢出。",
+        "deliverable": {
+          "bullets": [
+            "升级版 `CompileRegistry`：在任务注册表中新增 `timestamp`（创建时间）与 `temp_dir_obj`（临时目录对象句柄）字段，用于精准追踪任务生命周期。",
+            "后台清理线程 (Cleanup Daemon)：在 `AsyncCompileManager` 初始化时启动一个低优先级的守护线程，每隔 10 分钟自动扫描一次全局注册表。",
+            "TTL 策略实现：定义了默认 3600 秒（1 小时）的生存时间。脚本会自动识别 `current_time - timestamp > TTL` 的任务，并执行软硬件双重清理。",
+            "物理资源回收逻辑：通过显式调用 `TemporaryDirectory.cleanup()` 确保 LaTeX 编译产生的中间文件（.aux, .log, .tex）及生成的 PDF 缓存被物理移除。",
+            "核心清理代码片段：\npython\ndef _cleanup_loop(self, ttl=3600):\n    while True:\n        now = time.time()\n        expired_ids = [tid for tid, task in self._instances.items() \n                       if now - task['timestamp'] > ttl]\n        for tid in expired_ids:\n            task = self._instances.pop(tid)\n            if 'temp_dir_obj' in task:\n                task['temp_dir_obj'].cleanup() # 物理删除临时沙盒\n        time.sleep(600) # 每10分钟扫描一次"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若 TTL 设置过短，用户在生成报告后若未及时点击下载，可能会遇到链接失效或文件已删除的错误。",
+          "在极高并发环境下，后台清理线程与主编译线程对注册表的操作需严格保证线程安全，防止 Key 冲突。"
+        ],
+        "next_hint": "建议在 Web 界面增加“下载链接有效期”提示，并在后端引入简单的清理日志审计，记录每次清理释放的磁盘空间。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "交付物完整覆盖了后台清理线程实现、TTL 策略逻辑以及物理文件回收等核心要求，方案具体且具备代码参考。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
