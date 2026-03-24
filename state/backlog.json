@@ -2200,7 +2200,47 @@
         ],
         "next_hint": "建议新增‘环境自动探测’功能，通过检测当前环境的 CPU/GPU 型号，在散点图中自动标记出针对当前用户的‘推荐运行点’。"
       }
+    },
+    {
+      "title": "开发基于硬件探测的“智能配置推荐”逻辑",
+      "description": "在 `streamlit_app.py` 中引入 `psutil` 和 `torch.cuda` 检测逻辑。自动识别当前运行环境的可用显存 (VRAM) 和内存 (RAM)，并在精度看板的 Trade-off 图表中高亮显示适合当前硬件的“推荐运行点”（例如：显存 < 6GB 自动推荐超轻量模式）。",
+      "priority": "medium",
+      "id": 88,
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务在 `streamlit_app.py` 中实现了基于硬件实时探测的“智能配置推荐”逻辑。通过 `psutil` 和 `torch.cuda` 自动识别运行环境的内存 (RAM) 与显存 (VRAM)，并在精度看板的 Trade-off 图表中动态高亮最匹配当前算力的模型运行点。",
+        "deliverable": {
+          "bullets": [
+            "硬件探测模块 (hardware_probe.py)：集成了 `psutil.virtual_memory()` 获取系统总内存，以及 `torch.cuda.get_device_properties()` 获取 GPU 型号与可用显存 (VRAM)。",
+            "智能推荐算法逻辑：建立了“算力-模式”映射矩阵：VRAM < 4GB 推荐“超轻量模式”；4GB ≤ VRAM < 10GB 推荐“平衡模式”；VRAM ≥ 10GB 且为本地环境推荐“精细模式”。",
+            "Streamlit UI 增强：在侧边栏新增“系统环境看板”，实时显示当前硬件状态（如：Detected RTX 3060, 12GB VRAM）及自动锁定的建议模式。",
+            "交互式图表高亮：在 Plotly 性能权衡图中，利用 `add_annotation` 逻辑在推荐点位置标注“黄金星标”或高亮光晕，并辅以“Recommended for You”标签。",
+            "Hugging Face 适配优化：针对无 GPU 的容器环境，逻辑自动回退至“CPU 密集型超轻量模式”，并提示用户由于缺乏 VRAM 禁用 SAM 2 精细分割以防崩溃。",
+            "核心实现代码：\npython\nimport psutil\nimport torch\n\ndef get_recommendation():\n    vram = torch.cuda.get_device_properties(0).total_memory / 1e9 if torch.cuda.is_available() else 0\n    ram = psutil.virtual_memory().total / 1e9\n    \n    if vram >= 10: return 'Fine (v3_da + SAM2-L)'\n    elif vram >= 4: return 'Balanced (v3_da + SAM2-T)'\n    else: return 'Ultra-Light (Nano)'\n\n# 在 Plotly 图中注入高亮项\nfig.add_trace(go.Scatter(x=[rec_fps], y=[rec_map], mode='markers', \n                         marker=dict(symbol='star', size=15, color='gold')))\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "多显卡环境识别风险：当前逻辑默认探测 `cuda:0`，若用户有多张显卡或使用共享显存（如集成显卡），VRAM 数值可能存在误判。",
+          "动态显存占用：若后台有其他高负载进程，探测到的‘总显存’不等于‘可用显存’，可能导致推荐点在运行时依然触发 OOM。"
+        ],
+        "next_hint": "建议将此智能推荐逻辑与 Task 75 的自适应批处理深度耦合，实现“硬件探测 -> 模式推荐 -> 批次自适应”的一键式全自动性能调优。"
+      }
+    },
+    {
+      "title": "实现 Web 端异步 LaTeX 编译与状态轮询机制",
+      "description": "针对高通量模式下 PDF 编译耗时较长的问题，利用 Python `threading` 将 LaTeX 编译逻辑异步化。在 Streamlit 界面提供“报告生成中”的实时状态提示，编译完成后自动激活下载按钮，避免阻塞用户查看识别结果。",
+      "priority": "medium",
+      "id": 89,
+      "status": "todo"
+    },
+    {
+      "title": "完善数据驱动的学术讨论生成逻辑（形态特征多维描述）",
+      "description": "扩展 `discussion_generator.py`，将 Task 47 引入的圆度、凹凸性和长径比分布特征整合进 LaTeX 宏定义。自动生成如“样本呈现显著的[低/高]圆度特征”等描述性文本段落，提升自动产出论文初稿的学术深度。",
+      "priority": "medium",
+      "id": 90,
+      "status": "todo"
     }
   ],
-  "next_task_id": 88
+  "next_task_id": 91
 }
