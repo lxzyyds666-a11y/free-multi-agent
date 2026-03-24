@@ -2262,7 +2262,25 @@
       "description": "扩展 `discussion_generator.py`，将 Task 47 引入的圆度、凹凸性和长径比分布特征整合进 LaTeX 宏定义。自动生成如“样本呈现显著的[低/高]圆度特征”等描述性文本段落，提升自动产出论文初稿的学术深度。",
       "priority": "medium",
       "id": 90,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务扩展了 `discussion_generator.py` 脚本，将形态学精细特征（圆度、凹凸性、长径比）整合进 LaTeX 宏定义系统，并实现了基于统计分布的学术描述文本自动生成逻辑，显著增强了自动产出论文的讨论深度。",
+        "deliverable": {
+          "bullets": [
+            "扩展版 `discussion_generator.py`：新增了对 `circularity` (圆度)、`solidity` (凹凸性) 和 `aspect_ratio` (长径比) 的聚合统计逻辑，支持计算均值、标准差及分布倾向。",
+            "形态学 LaTeX 宏集：定义了 `\\AvgSolidity`、`\\AvgCircularity`、`\\MedianAspectRatio` 等数值宏，以及动态生成的描述宏 `\\MorphologyDescription`。",
+            "自动文本生成引擎：实现了基于阈值的描述逻辑，自动产出如“样本呈现显著的低圆度特征（均值 0.xx），暗示其经历了长期的物理磨损”等符合学术语境的段落。",
+            "描述符判定矩阵：建立了判定逻辑（例如：圆度 > 0.8 判定为 'Spherical'，长径比 > 5 判定为 'Elongated/Fiber-like'），确保描述文本与物理数据严谨对应。",
+            "代码实现示例：\npython\ndef generate_morph_text(data):\n    circs = [obj['circularity'] for obj in data]\n    avg_circ = np.mean(circs)\n    if avg_circ > 0.75:\n        desc = \"呈现高圆度特征，形态趋于规则球形\"\n    else:\n        desc = \"圆度较低，表现出明显的不规则碎片化特征\"\n    return f'\\\\newcommand{{\\\\MorphologyDescription}}{{{desc}}}'"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "学术语义的单一性：自动生成的描述文本目前基于固定模板，在大规模生成不同论文时可能存在语言重复度高的问题。",
+          "阈值的主观性：‘高/低’圆度的界定标准在不同研究背景下可能存在争议，需允许用户自定义判定阈值。"
+        ],
+        "next_hint": "建议将此增强型讨论生成器集成至 `paper_assembler.py`，并针对 Zenodo 复杂数据集运行一次全流程，验证自动生成的描述段落与形态指纹热力图在逻辑上的一致性。"
+      }
     }
   ],
   "next_task_id": 91
