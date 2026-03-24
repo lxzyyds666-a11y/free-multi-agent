@@ -1066,6 +1066,19 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 95,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 完整实现了任务要求的硬件自适应逻辑，提供了具体的显存阈值划分与模型映射方案，且逻辑具体、无明显幻觉。",
+        "fixes": [
+          "在正式文档中明确 MODEL_REGISTRY 的定义，确保代码片段中的变量引用完整",
+          "建议在 CLI 帮助信息（--help）中补充说明自动配置的生效条件与优先级"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

@@ -2386,7 +2386,25 @@
       "description": "将 Task 88 的硬件探测与推荐逻辑移植至 `micro_cli.py`。实现当用户未显式指定 `--model` 或 `--sam2_batch` 时，自动根据探测到的可用显存 (VRAM) 选择最优权重（如 4GB 以下自动切至 Nano）和批次大小，提升 CLI 工具的开箱即用性。",
       "priority": "medium",
       "id": 95,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "将 Task 88 的硬件探测与 Task 75 的批次自适应逻辑移植至 `micro_cli.py`，实现了在用户未显式指定参数时，根据显存 (VRAM) 自动选择最优模型权重与 SAM 2 推理批次的智能配置功能。",
+        "deliverable": {
+          "bullets": [
+            "集成 `hardware_probe` 模块：在 CLI 启动逻辑中引入硬件扫描，实时获取可用显存 (Free VRAM) 与设备架构信息。",
+            "模型权重自动映射：实现当 `--model` 为空时的自动路由：显存 < 4GB 自动切换至 `yolov8n.pt` (Nano)；4GB-10GB 选用 `sam2_hiera_tiny.pt` (Balanced)；>10GB 选用 `micro_v3_da.pt` (Fine)。",
+            "SAM 2 批次自适应配置：当 `--sam2_batch` 未指定时，调用 `adjust_sam2_batch` 逻辑，基于剩余显存动态计算最优 Batch Size，平衡推理吞吐量与 OOM 风险。",
+            "透明化配置输出：在 CLI 初始化界面新增“硬件自适应看板”，向用户反馈探测到的显存值及最终选用的模型版本与批次参数。",
+            "核心逻辑集成片段：\npython\nif args.model is None:\n    recommendation = hardware_probe.get_recommendation()\n    args.model = MODEL_REGISTRY[recommendation]\n    print(f'[AutoConfig] Detect VRAM: {vram_mb}MB. Model set to: {args.model}')\n\nif args.sam2_batch is None and 'sam2' in args.mode:\n    args.sam2_batch = sam_refiner.calculate_adaptive_batch(args.model_type)\n    print(f'[AutoConfig] SAM2 Batch adjusted to: {args.sam2_batch}')"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "在多进程并发环境下，硬件探测时的“可用显存”可能在推理瞬间被抢占，导致自适应参数失效。",
+          "CPU 模式下 hardware_probe 无法获取显存，需确保回退至针对内存 (RAM) 的保守型配置（如 Nano 分支）。"
+        ],
+        "next_hint": "建议在 CLI 中增加 `--show-config` 参数，允许用户在不启动推理的情况下查看针对当前硬件的“智能推荐方案”。"
+      }
     },
     {
       "title": "开发样机全系统一键式环境诊断工具 (--diagnose)",

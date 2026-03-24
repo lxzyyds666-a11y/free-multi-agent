@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-24T23:57:20.846423+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 95,
+    "summary": "将 Task 88 的硬件探测与 Task 75 的批次自适应逻辑移植至 `micro_cli.py`，实现了在用户未显式指定参数时，根据显存 (VRAM) 自动选择最优模型权重与 SAM 2 推理批次的智能配置功能。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 95,
+    "decision": "approve"
+  }
+}
