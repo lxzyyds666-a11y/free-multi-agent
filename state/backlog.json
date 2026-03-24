@@ -2356,7 +2356,45 @@
         ],
         "next_hint": "建议将 `check_latex_env()` 集成至 `micro_cli.py` 的启动预检流程中，并针对 Windows 用户增加自动将 `pdflatex` 所在目录添加至当前进程 PATH 的补丁逻辑。"
       }
+    },
+    {
+      "title": "集成 LaTeX 环境预检至 CLI 启动逻辑",
+      "description": "修改 `micro_cli.py`，在启动带有 `--report` 或 `--paper` 参数的任务前，调用 `src/latex_utils.py` 中的 `check_latex_env()`。若检测到 `pdflatex` 缺失或核心宏包（如 longtable）未安装，则提前终止程序并给出安装指引，避免无效推理。",
+      "priority": "high",
+      "id": 94,
+      "status": "approved",
+      "worker_output": {
+        "summary": "完成了 micro_cli.py 的启动逻辑升级，集成了对 LaTeX 编译环境的强制预检，确保在执行报表生成任务前环境可用，避免无效的计算资源浪费。",
+        "deliverable": {
+          "bullets": [
+            "修改 micro_cli.py：在解析命令行参数后、正式启动推理逻辑前，新增了对 --report 和 --paper 参数的条件判定。",
+            "环境预检集成：调用 src/latex_utils.py 中的 check_latex_env() 函数。若 pdflatex 缺失或 longtable、booktabs 等核心宏包未安装，程序将记录详细错误日志。",
+            "提前终止机制：实现 Sys.exit(1) 逻辑，当检测到 LaTeX 环境不完整时立即中断程序，并向控制台输出针对性安装指引（如：'Please install TeX Live or MiKTeX'）。",
+            "核心代码实现逻辑：\npython\nimport sys\nfrom src.latex_utils import check_latex_env\n\n# 在 main 逻辑中解析 args 后\nif args.report or args.paper:\n    check_res = check_latex_env()\n    if isinstance(check_res, str) or not check_res.get('pdflatex'):\n        print(f\"[Error] LaTeX Environment Missing: {check_res}\")\n        print(\"Installation Hint: sudo apt-get install texlive-xetex texlive-latex-extra\")\n        sys.exit(1)\n    \n    # 校验缺失的宏包\n    missing_pkgs = [p for p, found in check_res['packages'].items() if not found]\n    if missing_pkgs:\n        print(f\"[Error] Missing LaTeX packages: {', '.join(missing_pkgs)}\")\n        sys.exit(1)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "用户若仅需 JSON 结果但误开了 --report 开关，会导致程序因 LaTeX 缺失而无法运行，虽符合逻辑但可能造成误解。",
+          "不同操作系统的 pdflatex 报错信息可能存在编码差异，需确保 sys.exit 前的 print 兼容性。"
+        ],
+        "next_hint": "建议在 Docker GPU 镜像中执行一次包含 --paper 参数的完整流程测试，验证预检逻辑在容器环境下的准确性。"
+      }
+    },
+    {
+      "title": "为 CLI 增加基于硬件探测的自动参数配置功能",
+      "description": "将 Task 88 的硬件探测与推荐逻辑移植至 `micro_cli.py`。实现当用户未显式指定 `--model` 或 `--sam2_batch` 时，自动根据探测到的可用显存 (VRAM) 选择最优权重（如 4GB 以下自动切至 Nano）和批次大小，提升 CLI 工具的开箱即用性。",
+      "priority": "medium",
+      "id": 95,
+      "status": "todo"
+    },
+    {
+      "title": "开发样机全系统一键式环境诊断工具 (--diagnose)",
+      "description": "在 CLI 工具中新增 `--diagnose` 标志位。集成硬件探测（Task 88）、LaTeX 兼容性检查（Task 93）和目录读写权限校验，输出一份结构化的环境诊断报告，帮助用户在部署样机前快速定位潜在的配置风险。",
+      "priority": "medium",
+      "id": 96,
+      "status": "todo"
     }
   ],
-  "next_task_id": 94
+  "next_task_id": 97
 }
