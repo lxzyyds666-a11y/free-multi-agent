@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-24T14:08:12.715019+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 93,
+    "summary": "开发了 `src/latex_utils.py` 工具库，解决了跨平台路径分隔符不一致与 LaTeX 特殊字符转义问题，并实现了 LaTeX 编译环境与核心宏包的自动化预检逻辑，提升了生产线的环境兼容性。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 93,
+    "decision": "approve"
+  }
+}

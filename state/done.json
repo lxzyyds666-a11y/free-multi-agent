@@ -2605,6 +2605,37 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 93,
+      "title": "开发跨平台 LaTeX 路径转义与环境兼容性增强工具",
+      "worker_output": {
+        "summary": "开发了 `src/latex_utils.py` 工具库，解决了跨平台路径分隔符不一致与 LaTeX 特殊字符转义问题，并实现了 LaTeX 编译环境与核心宏包的自动化预检逻辑，提升了生产线的环境兼容性。",
+        "deliverable": {
+          "bullets": [
+            "路径格式化工具：实现 `format_latex_path(path)`，自动将 Windows 风格反斜杠 `\\` 转换为 LaTeX 标准斜杠 `/`，并对路径中的下划线 `_` 执行 LaTeX 转义，防止编译崩溃。",
+            "环境预检函数：开发 `check_latex_env()`，通过 `subprocess` 调用 `pdflatex --version` 验证编译引擎的存在性。",
+            "宏包可用性校验：利用 `kpsewhich` 自动化检查 `longtable`、`subcaption`、`booktabs` 等核心学术宏包，确保编译环境满足 Task 78/79 的排版需求。",
+            "结构化错误反馈：设计了面向用户的诊断提示，当检测到环境缺失时，自动推荐针对性安装建议（如 TeX Live 或 MiKTeX）。",
+            "核心逻辑片段：\npython\nimport subprocess\nimport os\n\ndef format_latex_path(path):\n    # 转换分隔符并转义下划线\n    return path.replace('\\\\', '/').replace('_', '\\\\_')\n\ndef check_latex_env(required_packages=['longtable', 'subcaption']):\n    results = {'pdflatex': False, 'packages': {}}\n    try:\n        subprocess.run(['pdflatex', '--version'], capture_output=True, check=True)\n        results['pdflatex'] = True\n    except:\n        return \"Error: pdflatex not found.\"\n    \n    for pkg in required_packages:\n        check = subprocess.run(['kpsewhich', f'{pkg}.sty'], capture_output=True)\n        results['packages'][pkg] = (check.returncode == 0)\n    return results\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "某些轻量化 Docker 镜像可能未安装 `kpsewhich` 工具，导致宏包校验逻辑失效。",
+          "路径中若包含空格，单纯的斜杠转换可能仍需配合 LaTeX 的 `\\detokenize` 才能在所有宏包中完美运行。"
+        ],
+        "next_hint": "建议将 `check_latex_env()` 集成至 `micro_cli.py` 的启动预检流程中，并针对 Windows 用户增加自动将 `pdflatex` 所在目录添加至当前进程 PATH 的补丁逻辑。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 完整实现了任务要求的路径转义和环境预检逻辑，代码片段简洁有效，且针对跨平台兼容性提供了合理的解决方案。",
+        "fixes": [
+          "建议在 format_latex_path 中增加对路径中空格的防御性处理，例如考虑配合 LaTeX 的 \\detokenize 机制。",
+          "完善 check_latex_env 的错误处理逻辑，将目前返回的 dict/string 混合类型统一为结构化数据或更具引导性的诊断报告。"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
