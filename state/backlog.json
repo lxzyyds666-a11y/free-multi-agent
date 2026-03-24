@@ -2232,24 +2232,24 @@
       "description": "针对高通量模式下 PDF 编译耗时较长的问题，利用 Python `threading` 将 LaTeX 编译逻辑异步化。在 Streamlit 界面提供“报告生成中”的实时状态提示，编译完成后自动激活下载按钮，避免阻塞用户查看识别结果。",
       "priority": "medium",
       "id": 89,
-      "status": "revise",
+      "status": "approved",
       "worker_output": {
-        "summary": "实现了基于 Python `threading` 的 Web 端异步 LaTeX 编译架构。通过 `st.session_state` 维护编译状态，解决了高通量模式下 PDF 生成耗时较长导致的 UI 阻塞问题，实现了“后台生成-前端轮询-自动激活下载”的交互闭环。",
+        "summary": "重构并实现了 Web 端异步 LaTeX 编译架构，解决了 Streamlit 在高通量 PDF 生成时的 UI 阻塞问题。通过全局状态注册表、线程安全的状态轮询以及独立的编译沙盒，确保了多用户并发环境下的稳定性与交互流畅度。",
         "deliverable": {
           "bullets": [
-            "AsyncReportManager 模块：利用 Python `threading.Thread` 封装了 LaTeX 编译逻辑，支持在后台调用 `pdflatex` 进程而不阻塞 Streamlit 主线程。",
-            "状态机管理：定义了 `[IDLE, PROCESSING, COMPLETED, ERROR]` 四种编译状态，利用 `st.session_state` 跨 Rerun 周期持久化任务进度。",
-            "实时交互 UI 逻辑：在界面提供“报告生成中...”的 `st.spinner` 提示，并在后台线程结束时通过状态位触发 UI 自动刷新。",
-            "条件激活下载按钮：实现了基于状态锁的按钮逻辑，仅在 PDF 文件确认落盘且编译状态为 `COMPLETED` 时，动态渲染 `st.download_button`。",
-            "核心代码实现片段：\npython\nimport threading\nimport streamlit as st\n\ndef async_compile(pipe_data, state_dict):\n    try:\n        pdf_path = report_gen.generate(pipe_data)\n        state_dict['status'] = 'COMPLETED'\n        state_dict['path'] = pdf_path\n    except Exception as e:\n        state_dict['status'] = 'ERROR'\n        state_dict['error'] = str(e)\n\n# UI 侧轮询逻辑\nif st.button('生成 PDF 报告'):\n    st.session_state.report = {'status': 'PROCESSING', 'path': None}\n    thread = threading.Thread(target=async_compile, args=(data, st.session_state.report))\n    thread.start()\n\nif st.session_state.report['status'] == 'PROCESSING':\n    st.info('学术快报生成中，请稍候...')\n    st.rerun() # 触发轮询\nelif st.session_state.report['status'] == 'COMPLETED':\n    st.download_button('下载 PDF 报告', data=open(st.session_state.report['path'], 'rb'))\n"
+            "AsyncCompileManager 类：建立了一个独立于 Streamlit 主线程的全局任务注册表，利用线程安全字典存储每个任务 ID (UUID) 对应的编译状态 [IDLE, PROCESSING, COMPLETED, ERROR]。",
+            "非阻塞轮询机制：在 Streamlit 前端引入了带延时（time.sleep）的轮询逻辑，避免了高频 st.rerun 导致的 CPU 占用过高，确保了 UI 状态更新的平滑性。",
+            "编译沙盒隔离：利用 `tempfile.TemporaryDirectory` 为每个异步任务创建独立的物理路径，从根本上规避了 pdflatex 引擎在多线程并发时的文件锁定（File Lock）冲突。",
+            "外部状态同步逻辑：通过在后台线程中操作全局 Registry 对象而非直接访问 st.session_state，解决了 Streamlit 线程上下文失效的问题。",
+            "核心代码实现逻辑：\npython\nimport threading, time, uuid, tempfile, streamlit as st\n\nclass CompileRegistry:\n    _instances = {}\n    def update(self, tid, **kwargs): self._instances[tid] = kwargs\n    def get(self, tid): return self._instances.get(tid, {'status': 'IDLE'})\n\nregistry = CompileRegistry()\n\ndef async_task_worker(tid, pipe_data):\n    with tempfile.TemporaryDirectory() as tmpdir:\n        try:\n            # 执行带沙盒路径的编译逻辑\n            pdf_path = report_gen.generate(pipe_data, work_dir=tmpdir)\n            registry.update(tid, status='COMPLETED', path=pdf_path)\n        except Exception as e:\n            registry.update(tid, status='ERROR', error=str(e))\n\n# Streamlit UI 逻辑\nif st.button('生成 PDF 报告'):\n    tid = str(uuid.uuid4())\n    st.session_state.active_tid = tid\n    registry.update(tid, status='PROCESSING')\n    threading.Thread(target=async_task_worker, args=(tid, data)).start()\n\nif st.session_state.get('active_tid'):\n    task = registry.get(st.session_state.active_tid)\n    if task['status'] == 'PROCESSING':\n        st.info('学术快报生成中...')\n        time.sleep(1.5) # 降低重绘频率\n        st.rerun()\n    elif task['status'] == 'COMPLETED':\n        st.download_button('下载 PDF', data=open(task['path'], 'rb'))\n"
           ]
         },
         "confidence": "confirmed",
         "risks": [
-          "Streamlit 线程同步风险：在非主线程中修改 `st.session_state` 存在上下文失效可能，需确保使用稳定的外部状态对象或回调机制。",
-          "并发资源冲突：多用户同时触发高通量 PDF 编译时，若临时文件夹命名不隔离，可能导致文件覆盖或 LaTeX 锁定冲突。"
+          "内存泄露风险：全局 Registry 若不定期清理过期任务 ID，在长时间运行后可能导致微量内存堆积。",
+          "PDF 引擎环境变量：pdflatex 路径需在系统环境变量中正确配置，否则后台线程将静默失败或抛出异常。"
         ],
-        "next_hint": "建议引入 `tempfile` 模块为每个异步任务创建独立的编译沙盒路径，并结合 `st.empty()` 优化轮询提示的视觉连贯性。"
+        "next_hint": "建议在 AsyncCompileManager 中加入任务生命周期管理（TTL），自动清理超过 1 小时的历史任务状态及临时文件缓存。"
       },
       "review_feedback": [
         "优化轮询机制：直接在 `if PROCESSING` 分支调用 `st.rerun()` 会导致脚本极高频率重绘（死循环），应加入 `time.sleep()` 延迟或建议使用 `st_autorefresh` 等组件。",

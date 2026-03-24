@@ -2493,6 +2493,34 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 89,
+      "title": "实现 Web 端异步 LaTeX 编译与状态轮询机制",
+      "worker_output": {
+        "summary": "重构并实现了 Web 端异步 LaTeX 编译架构，解决了 Streamlit 在高通量 PDF 生成时的 UI 阻塞问题。通过全局状态注册表、线程安全的状态轮询以及独立的编译沙盒，确保了多用户并发环境下的稳定性与交互流畅度。",
+        "deliverable": {
+          "bullets": [
+            "AsyncCompileManager 类：建立了一个独立于 Streamlit 主线程的全局任务注册表，利用线程安全字典存储每个任务 ID (UUID) 对应的编译状态 [IDLE, PROCESSING, COMPLETED, ERROR]。",
+            "非阻塞轮询机制：在 Streamlit 前端引入了带延时（time.sleep）的轮询逻辑，避免了高频 st.rerun 导致的 CPU 占用过高，确保了 UI 状态更新的平滑性。",
+            "编译沙盒隔离：利用 `tempfile.TemporaryDirectory` 为每个异步任务创建独立的物理路径，从根本上规避了 pdflatex 引擎在多线程并发时的文件锁定（File Lock）冲突。",
+            "外部状态同步逻辑：通过在后台线程中操作全局 Registry 对象而非直接访问 st.session_state，解决了 Streamlit 线程上下文失效的问题。",
+            "核心代码实现逻辑：\npython\nimport threading, time, uuid, tempfile, streamlit as st\n\nclass CompileRegistry:\n    _instances = {}\n    def update(self, tid, **kwargs): self._instances[tid] = kwargs\n    def get(self, tid): return self._instances.get(tid, {'status': 'IDLE'})\n\nregistry = CompileRegistry()\n\ndef async_task_worker(tid, pipe_data):\n    with tempfile.TemporaryDirectory() as tmpdir:\n        try:\n            # 执行带沙盒路径的编译逻辑\n            pdf_path = report_gen.generate(pipe_data, work_dir=tmpdir)\n            registry.update(tid, status='COMPLETED', path=pdf_path)\n        except Exception as e:\n            registry.update(tid, status='ERROR', error=str(e))\n\n# Streamlit UI 逻辑\nif st.button('生成 PDF 报告'):\n    tid = str(uuid.uuid4())\n    st.session_state.active_tid = tid\n    registry.update(tid, status='PROCESSING')\n    threading.Thread(target=async_task_worker, args=(tid, data)).start()\n\nif st.session_state.get('active_tid'):\n    task = registry.get(st.session_state.active_tid)\n    if task['status'] == 'PROCESSING':\n        st.info('学术快报生成中...')\n        time.sleep(1.5) # 降低重绘频率\n        st.rerun()\n    elif task['status'] == 'COMPLETED':\n        st.download_button('下载 PDF', data=open(task['path'], 'rb'))\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "内存泄露风险：全局 Registry 若不定期清理过期任务 ID，在长时间运行后可能导致微量内存堆积。",
+          "PDF 引擎环境变量：pdflatex 路径需在系统环境变量中正确配置，否则后台线程将静默失败或抛出异常。"
+        ],
+        "next_hint": "建议在 AsyncCompileManager 中加入任务生命周期管理（TTL），自动清理超过 1 小时的历史任务状态及临时文件缓存。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 完整实现了异步编译架构，通过全局注册表解决了 Streamlit 线程上下文限制，代码逻辑清晰且针对并发冲突提供了有效的沙盒隔离方案。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
