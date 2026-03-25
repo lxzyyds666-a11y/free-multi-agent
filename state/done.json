@@ -2694,6 +2694,35 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 96,
+      "title": "开发样机全系统一键式环境诊断工具 (--diagnose)",
+      "worker_output": {
+        "summary": "在 CLI 工具中集成了全系统一键式环境诊断工具 (`--diagnose`)，实现了硬件资源、LaTeX 编译环境及文件系统权限的自动化校验与结构化报告输出。",
+        "deliverable": {
+          "bullets": [
+            "CLI 标志位集成：在 `micro_cli.py` 中新增 `--diagnose` 参数，支持用户在不启动推理的情况下独立运行系统环境检查。",
+            "硬件资源探测：集成 Task 88 逻辑，实时检测 CPU 核心数、系统可用内存 (RAM) 及 NVIDIA GPU 显存 (VRAM)，并对比不同模式（精细/轻量）的最小需求。",
+            "LaTeX 环境深度检查：集成 Task 93/94 逻辑，校验 `pdflatex` 路径及 `longtable`、`booktabs`、`subcaption` 等核心学术宏包的可用性。",
+            "文件系统权限校验：新增对 `input/`、`output/`、`weights/` 目录的读写权限自动测试，识别 Docker 挂载常见的 UID/GID 权限冲突风险。",
+            "结构化诊断报告：设计了包含 'Hardware'、'LaTeX'、'Filesystem' 三大板块的终端可视化报告，针对 Fail 项自动关联 Task 94 提到的安装建议。",
+            "诊断逻辑实现片段：\npython\ndef run_full_diagnosis():\n    results = {\"hardware\": probe_hw(), \"latex\": check_latex_env(), \"fs\": check_permissions()}\n    print(\"=== Environment Diagnostic Report ===\")\n    for category, status in results.items():\n        icon = \"✅\" if is_passed(status) else \"❌\"\n        print(f\"{icon} {category.upper()}: {format_status(status)}\")\n    if not is_passed(results): \n        sys.exit(1)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "在多显卡或虚拟显存环境下，硬件探测模块可能无法准确获取容器内实际可调度的 VRAM 配额。",
+          "诊断时的瞬时可用内存（RAM）充足并不代表在处理 4K 大图批处理时不会触发 OOM。"
+        ],
+        "next_hint": "建议将此诊断报告导出为 `diagnose_log.json` 并包含在论文资产包中，作为实验环境可复现性的证明材料。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作结果完全符合任务要求，成功集成了硬件探测、LaTeX 环境检查及目录权限校验，并提供了清晰的结构化报告逻辑。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

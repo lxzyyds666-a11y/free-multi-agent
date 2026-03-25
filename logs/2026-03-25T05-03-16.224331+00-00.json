@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-25T05:03:16.224331+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 96,
+    "summary": "在 CLI 工具中集成了全系统一键式环境诊断工具 (`--diagnose`)，实现了硬件资源、LaTeX 编译环境及文件系统权限的自动化校验与结构化报告输出。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 96,
+    "decision": "approve"
+  }
+}
