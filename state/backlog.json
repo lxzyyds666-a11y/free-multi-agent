@@ -2562,7 +2562,26 @@
       "description": "编写 `src/bib_pruner.py`。通过正则扫描生成的 LaTeX 源码中实际存在的 `\\cite` 标签，比对 `references.bib` 库，自动剔除未被引用的冗余 BibTeX 条目。该工具需集成至 `paper_assembler.py`，确保最终交付的“论文资产包”中的参考文献列表精准且符合投稿规范。",
       "priority": "medium",
       "id": 102,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "开发并集成了 LaTeX 参考文献自动精简工具 `src/bib_pruner.py`，实现了基于 `\\cite` 标签扫描的冗余 BibTeX 条目清理功能，确保论文资产包的引用列表精准且符合投稿规范。",
+        "deliverable": {
+          "bullets": [
+            "核心脚本 (src/bib_pruner.py)：利用正则表达式 `\\\\cite\\{([^}]+)\\}` 深度扫描生成的 LaTeX 源码，提取所有被实际引用的 BibTeX 键值（Citation Keys）。",
+            "BibTeX 条目过滤逻辑：实现了对 `.bib` 文件的结构化解析，通过比对提取的键值，自动剔除未在正文中出现的冗余条目，保留有效的文献元数据。",
+            "多键值解析支持：支持单条 `\\cite{key1,key2}` 命令中逗号分隔的多个引用解析，并能自动处理引用键值前后的空格及换行符。",
+            "paper_assembler.py 流程集成：在资产打包前的归集阶段新增‘文献精简’钩子，确保交付的 `references.bib` 经过瘦身，降低资产包体积并规避审稿环节的引用冗余报错。",
+            "核心代码实现逻辑：\n```python\nimport re\n\ndef prune_bib(tex_content, bib_content):\n    # 1. 提取所有被引用的 key\n    cited_keys = set()\n    matches = re.findall(r'\\\\cite\\{([^}]+)\\}', tex_content)\n    for match in matches:\n        keys = [k.strip() for k in match.split(',')]\n        cited_keys.update(keys)\n    \n    # 2. 匹配并保留 BibTeX 条目\n    # 正则解释：匹配 @类型{key, 内容 }\n    pattern = r'@\\w+\\{([^,]+),[\\s\\S]*?\\n\\}'\n    entries = re.findall(r'(@\\w+\\{[^,]+,[\\s\\S]*?\\n\\})', bib_content)\n    \n    pruned_bib = []\n    for entry in entries:\n        key_match = re.search(r'@\\w+\\{([^,]+),', entry)\n        if key_match and key_match.group(1).strip() in cited_keys:\n            pruned_bib.append(entry)\n    \n    return '\\n\\n'.join(pruned_bib)\n```"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "复杂宏包兼容性：若用户使用 `biblatex` 或自定义宏包装了引用指令，简单正则可能无法覆盖所有引用变体。",
+          "BibTeX 解析边界：对于条目内部嵌套多层大括号或包含特殊注释的 `.bib` 文件，正则提取可能出现截断风险。",
+          "\\nocite 风险：若论文使用了 `\\nocite{*}` 引用所有文献，精简脚本将无法识别正文之外的引用需求。"
+        ],
+        "next_hint": "建议为 `bib_pruner.py` 增加一个‘精简统计’输出（如：'Removed 42 unused entries'），并在 `paper_assembler.py` 中增加对 `\\nocite` 标签的兼容性扫描。"
+      }
     }
   ],
   "next_task_id": 103
