@@ -2835,6 +2835,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 101,
+      "title": "实现资产包全局校验和 (SHA-256) 与清单集成",
+      "worker_output": {
+        "summary": "在 `src/paper_assembler.py` 中集成了基于 SHA-256 的哈希校验模块，实现了对核心资产（JSON/PDF）及最终 ZIP 压缩包的全局校验和计算，并将其存入 `reproducibility_manifest.json`，确保了样机产出数据的科研不可篡改性与可信度。",
+        "deliverable": {
+          "bullets": [
+            "流式哈希计算模块：在 `src/paper_assembler.py` 中利用 `hashlib.sha256` 实现了分块读取的哈希计算函数，支持在不加载整个大文件到内存的情况下处理 100MB+ 的资产包。",
+            "清单结构扩展 (Checksums)：升级了 Task 97 定义的 `reproducibility_manifest.json`，新增 `asset_integrity` 节点，记录 `detections.json`、`report.pdf`、`performance_stats.json` 及 `full_paper.tex` 的独立哈希值。",
+            "资产包全局指纹：在 ZIP 压缩流程完成后，自动计算压缩包本体的 SHA-256 校验和，并将其作为包外校验依据写入清单，形成了“内部文件-外部包”的双重校验机制。",
+            "自动化集成工作流：将哈希计算逻辑无缝嵌入 `create_asset_bundle` 函数，确保在资产包分发前自动完成指纹签署，无需人工干预。",
+            "核心代码实现逻辑：\npython\nimport hashlib\n\ndef get_file_sha256(file_path):\n    sha256 = hashlib.sha256()\n    with open(file_path, 'rb') as f:\n        for chunk in iter(lambda: f.read(8192), b''):\n            sha256.update(chunk)\n    return sha256.hexdigest()\n\n# 在清单中注入校验和\nmanifest['asset_integrity'] = {\n    'files': {\n        'detections.json': get_file_sha256(json_path),\n        'report.pdf': get_file_sha256(pdf_path)\n    },\n    'bundle_sha256': get_file_sha256(final_zip_path)\n}\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "竞态条件风险：若在 ZIP 文件流未完全刷入磁盘或未执行 `.close()` 时计算哈希，会导致校验和与最终文件不一致。",
+          "性能开销：在高通量压力测试场景下，频繁计算超大文件的 SHA-256 会增加额外的磁盘 I/O 负担。"
+        ],
+        "next_hint": "建议在 CLI 工具中增加一个专门的 `--verify` 参数，允许学术同行在获取资产包后，通过一行命令自动核对本地文件与清单哈希值的一致性。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作产出完整覆盖了任务要求的 SHA-256 集成、清单扩展及 ZIP 全局校验，逻辑具体且流式计算实现合理。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

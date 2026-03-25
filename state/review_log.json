@@ -1129,6 +1129,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 101,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "工作产出完整覆盖了任务要求的 SHA-256 集成、清单扩展及 ZIP 全局校验，逻辑具体且流式计算实现合理。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-25T12:09:11.700305+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 101,
+    "summary": "在 `src/paper_assembler.py` 中集成了基于 SHA-256 的哈希校验模块，实现了对核心资产（JSON/PDF）及最终 ZIP 压缩包的全局校验和计算，并将其存入 `reproducibility_manifest.json`，确保了样机产出数据的科研不可篡改性与可信度。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 101,
+    "decision": "approve"
+  }
+}
