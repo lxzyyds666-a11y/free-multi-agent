@@ -2751,6 +2751,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 98,
+      "title": "自动将 Benchmark 性能数据注入论文‘计算效率’章节",
+      "worker_output": {
+        "summary": "本任务实现了 Benchmark 性能数据向论文‘计算效率’章节的自动化注入流程。通过更新 `discussion_generator.py` 和 `paper_assembler.py`，系统可自动读取 Task 82 产出的 `benchmark_report.json` 并将其转化为 LaTeX 宏变量，确保论文实验结论与硬件实测表现严格同步。",
+        "deliverable": {
+          "bullets": [
+            "升级 `src/discussion_generator.py`：新增 `inject_benchmark_metrics` 函数，支持解析 `benchmark_report.json` 并计算 FPS、显存峰值及系统稳定性指标。",
+            "更新 `src/paper_assembler.py`：在论文组装阶段新增 `performance_params.tex` 生成逻辑，并将其通过 `\\input` 指令集成至 LaTeX 主模板。",
+            "定义标准性能宏：实现了 `\\SystemFPS`（每秒处理帧数）、`\\PeakVRAM`（显存峰值 GB）、`\\StabilityScore`（OOM 防御稳定性评分）等 LaTeX 动态占位符。",
+            "数值自动化格式化：脚本内置单位转换逻辑（如 B 到 GB）与精度控制（保留 2 位小数），确保学术表达符合规范。",
+            "核心实现代码片段：\npython\ndef inject_benchmark_metrics(json_path, tex_out):\n    with open(json_path) as f: data = json.load(f)\n    with open(tex_out, 'a') as tf:\n        tf.write(f'\\\\newcommand{{\\\\SystemFPS}}{{{data[\"fps\"]:.2f}}}\\n')\n        tf.write(f'\\\\newcommand{{\\\\PeakVRAM}}{{{data[\"peak_vram_gb\"]:.2f} GB}}\\n')\n        tf.write(f'\\\\newcommand{{\\\\StabilityScore}}{{{data[\"stability_score\"]*100:.1f}\\%}}\\n')\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若 `benchmark_report.json` 文件缺失（如未运行压测工具），组装流程可能因宏定义缺失导致 LaTeX 编译失败。",
+          "不同硬件环境下的 FPS 差异巨大，若论文正文中存在对性能的定性描述（如‘极速’），需确保文字逻辑与数值变量的一致性。"
+        ],
+        "next_hint": "建议执行端到端全量测试，验证从运行 `benchmark.py` 到生成 PDF 论文中性能数值的实时更新效果，并启动 Task 43 审计工具进行数值核验。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作内容完全符合任务要求，实现了指定脚本的更新、LaTeX 宏定义的自动化生成以及数据的格式化处理，逻辑清晰且具体。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
