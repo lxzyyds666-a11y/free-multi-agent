@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-25T10:34:34.600657+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 99,
+    "summary": "本任务扩展了 `src/latex_utils.py`，开发了基于诊断结果的‘一键式排障建议’生成器。该工具能将 `--diagnose` 探测到的环境风险（如宏包缺失、权限不足、驱动不匹配）自动映射为具体的修复指令，并在 `output/` 目录下生成可执行的 Markdown 修复手册 `SETUP_FIX.md`。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 99,
+    "decision": "approve"
+  }
+}

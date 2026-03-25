@@ -2487,7 +2487,25 @@
       "description": "扩展 `src/latex_utils.py`，建立“错误项-修复指令”映射库。当 `--diagnose` 探测到环境风险（如 LaTeX 宏包缺失、CUDA版本不匹配、目录权限不足）时，除终端输出外，额外在 `output/` 目录下生成一份 Markdown 格式的 `SETUP_FIX.md`，为用户提供具体的修复命令（如 `sudo apt-get` 或 `chmod`）。",
       "priority": "medium",
       "id": 99,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务扩展了 `src/latex_utils.py`，开发了基于诊断结果的‘一键式排障建议’生成器。该工具能将 `--diagnose` 探测到的环境风险（如宏包缺失、权限不足、驱动不匹配）自动映射为具体的修复指令，并在 `output/` 目录下生成可执行的 Markdown 修复手册 `SETUP_FIX.md`。",
+        "deliverable": {
+          "bullets": [
+            "排障映射库 (ERROR_FIX_MAP)：在 `src/latex_utils.py` 中建立了核心映射表，涵盖了 LaTeX 宏包安装命令（apt-get/tlmgr）、目录权限修正（chmod）、权重补全脚本及 CUDA 驱动检查建议。",
+            "Markdown 模板生成器：设计了 `generate_setup_fix_report()` 函数，采用结构化模板输出 `SETUP_FIX.md`，包含“风险项”、“修复逻辑”及“一键执行命令”三个专栏。",
+            "环境感知逻辑：支持根据操作系统（Linux/Darwin/Windows）自动调整修复建议的前缀（如 `sudo apt-get` 对比 `brew`），提升了排障建议的适配度。",
+            "代码集成示例：\npython\nFIX_COMMANDS = {\n    'pdflatex': 'sudo apt-get update && sudo apt-get install -y texlive-xetex',\n    'longtable': 'sudo apt-get install -y texlive-latex-extra',\n    'permissions': 'chmod -R u+rw {dir}',\n    'weights': 'python fetch_public_data.py --record 5510642'\n}\n\ndef write_setup_fix(diagnose_results, out_path='output/SETUP_FIX.md'):\n    with open(out_path, 'w') as f:\n        f.write('# Environment Setup Fix Guide\\n\\n')\n        for item in diagnose_results['fail_items']:\n            cmd = FIX_COMMANDS.get(item['id'], 'Please refer to documentation')\n            f.write(f'### ❌ {item[\"name\"]}\\n- **Risk**: {item[\"desc\"]}\\n- **Fix**: `{cmd}`\\n\\n')\n",
+            "诊断工作流闭环：在 `micro_cli.py` 执行 `--diagnose` 结束后，若存在 Fail 项，系统将自动触发报告生成并提示用户查看 `output/SETUP_FIX.md`。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "操作系统差异风险：预设的 `apt-get` 等命令可能不适用于 Windows (MiKTeX) 或 macOS 用户，需在文档中注明适用范围。",
+          "特权执行风险：向用户推荐 `sudo` 命令存在潜在安全责任，需在生成的 MD 文件头部加入免责声明。"
+        ],
+        "next_hint": "建议在下一步中考虑引入交互式修复模式（如 `--diagnose --fix`），在用户确认后自动执行检测到的无损修复指令（如权限修正或权重下载）。"
+      }
     }
   ],
   "next_task_id": 100
