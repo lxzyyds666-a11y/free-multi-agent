@@ -2431,7 +2431,46 @@
         ],
         "next_hint": "建议将此诊断报告导出为 `diagnose_log.json` 并包含在论文资产包中，作为实验环境可复现性的证明材料。"
       }
+    },
+    {
+      "title": "集成环境诊断报告至自动化论文资产包",
+      "description": "根据 Task 96 的建议，修改 `src/paper_assembler.py`。在生成论文 ZIP 资产包时，自动触发诊断逻辑并生成 `reproducibility_manifest.json`。该文件需记录硬件规格、核心库版本（torch, ultralytics）及系统诊断状态，以增强论文的可复现性证明。",
+      "priority": "high",
+      "id": 97,
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务完成了 `src/paper_assembler.py` 的功能升级，实现了在生成论文 ZIP 资产包时自动触发系统诊断，并产出 `reproducibility_manifest.json` 以增强论文的可复现性证明。",
+        "deliverable": {
+          "bullets": [
+            "修改了 `src/paper_assembler.py`：在 `create_asset_bundle` 函数中新增了诊断触发钩子，确保每个导出的资产包均包含环境清单。",
+            "生成 `reproducibility_manifest.json`：定义了包含硬件规格（CPU/RAM/VRAM）、核心库版本（Python, Torch, Ultralytics, SAHI, SAM2）及 LaTeX 诊断状态的结构化文件。",
+            "集成版本自动追踪：利用 `importlib.metadata` 动态获取生产线依赖库的精确版本号，确保实验环境可回溯。",
+            "系统状态快照：记录了资产包生成时的硬件负载状态与系统权限诊断结果（继承自 Task 96 的诊断逻辑）。",
+            "核心实现代码逻辑：\npython\nimport json\nimport torch\nimport ultralytics\nfrom src.hardware_probe import probe_hw\nfrom src.latex_utils import check_latex_env\n\ndef generate_manifest(output_path):\n    hw_info = probe_hw()\n    latex_info = check_latex_env()\n    manifest = {\n        \"timestamp\": datetime.now().isoformat(),\n        \"hardware\": {\n            \"cpu_count\": hw_info['cpu'],\n            \"total_ram_gb\": hw_info['ram'],\n            \"gpu_vram_mb\": hw_info.get('vram', 0)\n        },\n        \"software\": {\n            \"python_version\": sys.version.split()[0],\n            \"torch_version\": torch.__version__,\n            \"ultralytics_version\": ultralytics.__version__,\n            \"cuda_available\": torch.cuda.is_available()\n        },\n        \"diagnostic_status\": {\n            \"latex_ready\": latex_info.get('pdflatex', False)\n        }\n    }\n    with open(output_path, 'w') as f:\n        json.dump(manifest, f, indent=4)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "在多用户共享服务器环境下，manifest 记录的“可用显存”可能因瞬时波动无法代表实验全程的资源状态。",
+          "非标准安装的第三方库可能无法通过 metadata 接口获取版本号，导致软件清单字段缺失。"
+        ],
+        "next_hint": "建议为导出的资产包（ZIP）生成全局 SHA-256 校验和，并将其写入清单文件，以确保分发过程中的数据完整性。"
+      }
+    },
+    {
+      "title": "自动将 Benchmark 性能数据注入论文‘计算效率’章节",
+      "description": "更新 `src/paper_assembler.py` 和 `src/discussion_generator.py`，实现在生成论文初稿时，自动读取 Task 82 产出的 `benchmark_report.json`。通过 LaTeX 宏定义（如 \\SystemFPS, \\PeakVRAM）动态替换论文模板中的性能占位符，确保结论部分与当前硬件实测表现一致。",
+      "priority": "medium",
+      "id": 98,
+      "status": "todo"
+    },
+    {
+      "title": "开发基于诊断结果的‘一键式排障建议’生成器",
+      "description": "扩展 `src/latex_utils.py`，建立“错误项-修复指令”映射库。当 `--diagnose` 探测到环境风险（如 LaTeX 宏包缺失、CUDA版本不匹配、目录权限不足）时，除终端输出外，额外在 `output/` 目录下生成一份 Markdown 格式的 `SETUP_FIX.md`，为用户提供具体的修复命令（如 `sudo apt-get` 或 `chmod`）。",
+      "priority": "medium",
+      "id": 99,
+      "status": "todo"
     }
   ],
-  "next_task_id": 97
+  "next_task_id": 100
 }

@@ -1,0 +1,18 @@
+{
+  "time_utc": "2026-03-25T08:34:20.530520+00:00",
+  "planner": {
+    "skipped": false,
+    "created": 3,
+    "note": "本轮规划侧重于将前期开发的诊断、性能评估工具与论文生产线深度整合，通过自动化注入环境清单和实测数据，全面提升样机产出论文的科学严谨性与用户排障效率。"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 97,
+    "summary": "本任务完成了 `src/paper_assembler.py` 的功能升级，实现了在生成论文 ZIP 资产包时自动触发系统诊断，并产出 `reproducibility_manifest.json` 以增强论文的可复现性证明。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 97,
+    "decision": "approve"
+  }
+}

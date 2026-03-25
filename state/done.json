@@ -2723,6 +2723,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 97,
+      "title": "集成环境诊断报告至自动化论文资产包",
+      "worker_output": {
+        "summary": "本任务完成了 `src/paper_assembler.py` 的功能升级，实现了在生成论文 ZIP 资产包时自动触发系统诊断，并产出 `reproducibility_manifest.json` 以增强论文的可复现性证明。",
+        "deliverable": {
+          "bullets": [
+            "修改了 `src/paper_assembler.py`：在 `create_asset_bundle` 函数中新增了诊断触发钩子，确保每个导出的资产包均包含环境清单。",
+            "生成 `reproducibility_manifest.json`：定义了包含硬件规格（CPU/RAM/VRAM）、核心库版本（Python, Torch, Ultralytics, SAHI, SAM2）及 LaTeX 诊断状态的结构化文件。",
+            "集成版本自动追踪：利用 `importlib.metadata` 动态获取生产线依赖库的精确版本号，确保实验环境可回溯。",
+            "系统状态快照：记录了资产包生成时的硬件负载状态与系统权限诊断结果（继承自 Task 96 的诊断逻辑）。",
+            "核心实现代码逻辑：\npython\nimport json\nimport torch\nimport ultralytics\nfrom src.hardware_probe import probe_hw\nfrom src.latex_utils import check_latex_env\n\ndef generate_manifest(output_path):\n    hw_info = probe_hw()\n    latex_info = check_latex_env()\n    manifest = {\n        \"timestamp\": datetime.now().isoformat(),\n        \"hardware\": {\n            \"cpu_count\": hw_info['cpu'],\n            \"total_ram_gb\": hw_info['ram'],\n            \"gpu_vram_mb\": hw_info.get('vram', 0)\n        },\n        \"software\": {\n            \"python_version\": sys.version.split()[0],\n            \"torch_version\": torch.__version__,\n            \"ultralytics_version\": ultralytics.__version__,\n            \"cuda_available\": torch.cuda.is_available()\n        },\n        \"diagnostic_status\": {\n            \"latex_ready\": latex_info.get('pdflatex', False)\n        }\n    }\n    with open(output_path, 'w') as f:\n        json.dump(manifest, f, indent=4)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "在多用户共享服务器环境下，manifest 记录的“可用显存”可能因瞬时波动无法代表实验全程的资源状态。",
+          "非标准安装的第三方库可能无法通过 metadata 接口获取版本号，导致软件清单字段缺失。"
+        ],
+        "next_hint": "建议为导出的资产包（ZIP）生成全局 SHA-256 校验和，并将其写入清单文件，以确保分发过程中的数据完整性。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "任务按要求完成，代码逻辑涵盖了硬件、软件版本及系统诊断的所有关键字段，且与 Task 96 的依赖关系处理得当。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

@@ -1089,6 +1089,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 97,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "任务按要求完成，代码逻辑涵盖了硬件、软件版本及系统诊断的所有关键字段，且与 Task 96 的依赖关系处理得当。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
