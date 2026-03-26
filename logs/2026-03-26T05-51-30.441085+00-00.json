@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-26T05:51:30.441085+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 104,
+    "summary": "本任务优化了 `src/bib_pruner.py` 工具，增加了对 `\\nocite{*}` 标签的自动识别与绕过功能，实现了精简过程的控制台统计输出，并改进了正则表达式以支持跨行引用键值的解析。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 104,
+    "decision": "approve"
+  }
+}
