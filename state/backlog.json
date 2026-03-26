@@ -2656,7 +2656,46 @@
         ],
         "next_hint": "建议将 `python micro_cli.py --fix-all` 写入 `Dockerfile` 的构建指令中，并配合 `Task 80` 的合规门禁，确保容器分发前环境与权限已彻底锁定。"
       }
+    },
+    {
+      "title": "优化 Dockerfile 以实现构建期自动初始化与权重预分发",
+      "description": "修改现有 Dockerfile，在构建阶段引入 `RUN python micro_cli.py --fix-all` 指令。利用 Task 105 的静默修复模式自动预载公开模型权重（micro_v3_da.pt 等）并预设目录权限，确保容器分发后达到“开箱即用”且无运行期网络依赖的状态。",
+      "priority": "high",
+      "id": 106,
+      "status": "approved",
+      "worker_output": {
+        "summary": "优化了 Dockerfile，通过在构建阶段集成 `--fix-all` 静默修复指令，实现了模型权重的预分发、环境目录自动初始化及权限预设，确保容器“开箱即用”。",
+        "deliverable": {
+          "bullets": [
+            "更新后的 Dockerfile 结构：\ndockerfile\nFROM python:3.9-slim\n# 安装 OpenCV 与系统基础依赖\nRUN apt-get update && apt-get install -y libgl1-mesa-glx libglib2.0-0 gcc wget && rm -rf /var/lib/apt/lists/*\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\nCOPY . .\n# 核心优化：构建期静默初始化。自动创建 weights/output 目录、下载 micro_v3_da.pt 权重并校验 MD5\nRUN python micro_cli.py --fix-all\n# 暴露默认输出目录权限\nRUN chmod -R 777 /app/output /app/data\nENTRYPOINT [\"python\", \"micro_cli.py\"]\n",
+            "权重预载机制：利用 Task 105 的静默模式，将 `micro_v3_da.pt` 等公开权重在镜像层中固化，彻底解决运行期因访问 Zenodo 慢导致的超时问题。",
+            "目录结构固化：构建阶段自动完成 `weights/`、`data/raw/`、`output/` 等层级的创建，确保生产线路径逻辑在容器内绝对可用。",
+            "权限一致性处理：通过 `RUN` 指令预设目录读写权限，规避了 Docker 挂载卷时常见的宿主机与容器内 UID/GID 权限冲突导致的写入失败。",
+            "分发合规性保障：在构建期同步触发 MD5 校验逻辑，确保分发的镜像作为学术样机资产，其内部模型数据具有高度的可复现性与完整性。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "镜像体积剧增：包含全量模型权重（特别是 SAM 2 各版本）后，Docker 镜像体积预计将增加 2GB-5GB，增加存储与传输成本。",
+          "构建环境网络依赖：由于 `RUN` 指令涉及大文件下载，若构建服务器位于内网或跨境访问受限，将导致 Docker Build 失败。"
+        ],
+        "next_hint": "建议针对资源敏感型用户推出一个不含权重的 `lite` 分支 Dockerfile，并配合 `docker-compose.yaml` 的卷挂载机制由用户自行按需下载。"
+      }
+    },
+    {
+      "title": "将增强型 BibTeX 精简工具正式集成至论文组装工作流",
+      "description": "在 `src/paper_assembler.py` 的资产归集逻辑中调用 Task 104 开发的 `prune_bib_enhanced` 函数。在生成最终 ZIP 资产包前，自动对 `references.bib` 执行冗余清理，确保交付的参考文献列表与正文 `\\cite` 标签严格对应。",
+      "priority": "medium",
+      "id": 107,
+      "status": "todo"
+    },
+    {
+      "title": "完善 CLI `--verify` 指令的哈希校验与诚信报告输出",
+      "description": "基于 Task 101 的清单结构，在 `micro_cli.py` 中完整实现 `--verify` 逻辑。通过流式计算资产包内文件的 SHA-256 并与 `reproducibility_manifest.json` 对比，输出包含“文件完整性”与“环境合规性”的终端诚信报告。",
+      "priority": "high",
+      "id": 108,
+      "status": "todo"
     }
   ],
-  "next_task_id": 106
+  "next_task_id": 109
 }
