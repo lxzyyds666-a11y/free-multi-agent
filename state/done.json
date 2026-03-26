@@ -3066,6 +3066,34 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 109,
+      "title": "优化资产包校验引擎的跨平台一致性与版本容差",
+      "worker_output": {
+        "summary": "本任务完成了对 `src/verifier.py` 的优化，通过引入 `pathlib` 归一化路径处理和正则表达式版本清洗，解决了跨平台路径分隔符冲突及环境特征后缀（如 +cu118）导致的校验误报问题。",
+        "deliverable": {
+          "bullets": [
+            "路径归一化：在 `IntegrityVerifier` 类中引入 `pathlib.Path`，强制将 `reproducibility_manifest.json` 中的路径转换为 POSIX 风格（`/`），消除 Windows 与 Linux 间的斜杠差异。",
+            "版本容差逻辑：在版本比对函数中增加 `re.sub(r'\\+.*', '', version)` 正则处理，自动剥离 `+cu118`、`+cpu` 或 `+pypi` 等本地编译环境后缀，实现纯净版本号比对。",
+            "增强型校验引擎：更新了 `check_env_consistency` 方法，支持对 Python、PyTorch、Ultralytics 等核心库执行容差匹配，降低了因计算环境微调导致的校验失败率。",
+            "核心代码片段：\npython\nimport re\nfrom pathlib import Path\n\ndef normalize_path(p):\n    return Path(p).as_posix()\n\ndef clean_version(v):\n    # 剥离 +cu118, +cpu 等后缀\n    return re.split(r'\\+', str(v))[0]\n\n# 校验逻辑更新示例\nif clean_version(current_v) == clean_version(manifest_v):\n    match = True\n",
+            "健壮性提升：修正了 `verify_file_hashes` 中的路径拼接逻辑，确保在不同 OS 下均能准确锁定资产包内的 detections.json 和 report.pdf。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "部分第三方库可能采用非标准版本后缀（如使用 `~` 而非 `+`），需持续补充正则匹配规则。",
+          "路径归一化仅解决分隔符问题，无法解决 Linux 与 Windows 之间文件名大小写敏感性的差异。"
+        ],
+        "next_hint": "建议将此优化的校验逻辑集成至 GitHub Actions，在 Linux 和 Windows 运行环境下同步执行发布资产包的自动化对标验证。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作结果完整覆盖了任务要求的路径归一化与版本号清洗功能，逻辑实现方案具体且符合技术规范。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

@@ -2732,7 +2732,46 @@
         ],
         "next_hint": "建议将此 `--verify` 逻辑集成至 GitHub Actions 的 Release 流程中，实现对自动生成的发布资产包进行闭环自校验。"
       }
+    },
+    {
+      "title": "优化资产包校验引擎的跨平台一致性与版本容差",
+      "description": "根据 Task 108 评审建议，修改 `src/verifier.py`。引入 `pathlib` 归一化处理 `reproducibility_manifest.json` 中的路径，消除 Windows/Linux 分隔符冲突；同时在版本比对逻辑中增加正则过滤，自动剥离如 `+cu118` 或 `+cpu` 等环境特征后缀，提升校验稳健性。",
+      "priority": "high",
+      "id": 109,
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务完成了对 `src/verifier.py` 的优化，通过引入 `pathlib` 归一化路径处理和正则表达式版本清洗，解决了跨平台路径分隔符冲突及环境特征后缀（如 +cu118）导致的校验误报问题。",
+        "deliverable": {
+          "bullets": [
+            "路径归一化：在 `IntegrityVerifier` 类中引入 `pathlib.Path`，强制将 `reproducibility_manifest.json` 中的路径转换为 POSIX 风格（`/`），消除 Windows 与 Linux 间的斜杠差异。",
+            "版本容差逻辑：在版本比对函数中增加 `re.sub(r'\\+.*', '', version)` 正则处理，自动剥离 `+cu118`、`+cpu` 或 `+pypi` 等本地编译环境后缀，实现纯净版本号比对。",
+            "增强型校验引擎：更新了 `check_env_consistency` 方法，支持对 Python、PyTorch、Ultralytics 等核心库执行容差匹配，降低了因计算环境微调导致的校验失败率。",
+            "核心代码片段：\npython\nimport re\nfrom pathlib import Path\n\ndef normalize_path(p):\n    return Path(p).as_posix()\n\ndef clean_version(v):\n    # 剥离 +cu118, +cpu 等后缀\n    return re.split(r'\\+', str(v))[0]\n\n# 校验逻辑更新示例\nif clean_version(current_v) == clean_version(manifest_v):\n    match = True\n",
+            "健壮性提升：修正了 `verify_file_hashes` 中的路径拼接逻辑，确保在不同 OS 下均能准确锁定资产包内的 detections.json 和 report.pdf。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "部分第三方库可能采用非标准版本后缀（如使用 `~` 而非 `+`），需持续补充正则匹配规则。",
+          "路径归一化仅解决分隔符问题，无法解决 Linux 与 Windows 之间文件名大小写敏感性的差异。"
+        ],
+        "next_hint": "建议将此优化的校验逻辑集成至 GitHub Actions，在 Linux 和 Windows 运行环境下同步执行发布资产包的自动化对标验证。"
+      }
+    },
+    {
+      "title": "集成资产包自动校验至 GitHub Release 自动化流水线",
+      "description": "更新 `.github/workflows/smoke-test.yml`，在学术资产包生成及脱敏校验后，新增 `Integrity Verification` 步骤。调用 `python micro_cli.py --verify` 对最终 ZIP 包执行闭环审计，确保发布给用户的资产在逻辑与物理哈希上完全合规。",
+      "priority": "high",
+      "id": 110,
+      "status": "todo"
+    },
+    {
+      "title": "编制样机生产线 v1.2 功能增量说明书与 Benchmark 指南",
+      "description": "汇总 Task 70-108 的技术演进，更新 `docs/tutorial.md`。重点补充高通量 Benchmark 性能评估工具、`--fix-all` 构建期初始化、以及基于哈希清单的科研诚信校验机制的使用说明，完成 v1.2 版本的文档对齐。",
+      "priority": "medium",
+      "id": 111,
+      "status": "todo"
     }
   ],
-  "next_task_id": 109
+  "next_task_id": 112
 }
