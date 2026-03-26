@@ -3094,6 +3094,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 110,
+      "title": "集成资产包自动校验至 GitHub Release 自动化流水线",
+      "worker_output": {
+        "summary": "在 GitHub Actions 流水线中集成了资产包诚信校验步骤，实现了对学术资产包（ZIP）哈希与逻辑一致性的闭环自动化审计。",
+        "deliverable": {
+          "bullets": [
+            "更新了 `.github/workflows/smoke-test.yml`：在 `Asset Sanitization Check` 步骤之后新增了 `Integrity Verification` 阶段。",
+            "集成 `--verify` 逻辑：配置流水线调用 `python micro_cli.py --verify test_output/academic_assets.zip`，利用 Task 108/109 的验证引擎对最终压缩包进行现场审计。",
+            "闭环审计机制：校验过程涵盖了 `reproducibility_manifest.json` 内定义的 SHA-256 物理哈希比对及基于版本容差的环境一致性检查。",
+            "流水线门禁触发：若校验发现文件损坏、哈希不匹配或环境版本漂移（超出 Task 109 定义的容差），CI 将返回 Exit Code 1 并终止后续发布流程。",
+            "YAML 关键片段示例：\nyaml\n      - name: Integrity Verification\n        run: |\n          # 调用 CLI 执行资产包闭环审计\n          python micro_cli.py --verify test_output/academic_assets.zip\n        env:\n          PYTHONPATH: .\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若 `smoke_test.sh` 脚本动态修改了 ZIP 文件名，需确保校验步骤的路径变量同步更新，否则会引发文件缺失错误。",
+          "GitHub Hosted Runner 的底层环境版本若发生不可预期的跳变，可能超出 Task 109 设计的版本清洗容差范围。"
+        ],
+        "next_hint": "建议执行一次模拟发布测试，通过手动篡改 ZIP 包内容验证 CI 诚信校验的拦截效果，确保生产线稳态闭环。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 准确完成了 GitHub Actions 流水线的更新任务，提供了具体的代码片段、校验逻辑说明以及风险评估，完全符合任务要求。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
