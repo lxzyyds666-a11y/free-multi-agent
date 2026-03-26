@@ -2950,6 +2950,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 105,
+      "title": "实现 CLI 静默修复模式 (--fix-all)",
+      "worker_output": {
+        "summary": "在 `micro_cli.py` 中实现了 CLI 静默修复模式 `--fix-all`，支持在无需人工干预的情况下自动执行目录创建、权限修正及权重下载等无损修复项，优化了 Docker 与 CI 环境的自动化初始化流程。",
+        "deliverable": {
+          "bullets": [
+            "命令行参数扩展：在 `micro_cli.py` 的 `argparse` 配置中新增 `--fix-all` 布尔开关，用于激活静默执行逻辑。",
+            "静默执行逻辑实现：重构了 `src/fixer.py` 中的修复循环，当检测到 `--fix-all` 标志时，自动跳过 `[Y/n]` 交互确认，直接调用执行函数。",
+            "安全修复项分级：明确定义了‘无损修复类’（如 `os.makedirs` 创建权重目录、`os.chmod` 修正输出目录权限、调用 `fetch_public_data.py` 下载公开权重）为静默执行目标。",
+            "自动化工作流支持：支持在 Dockerfile 构建阶段通过 `RUN python micro_cli.py --fix-all` 预先完成权重下载与环境就绪检查，避免容器启动时的网络延迟。",
+            "代码逻辑示例：\npython\n# src/fixer.py 核心修改\ndef run_repairs(fail_items, silent=False):\n    for item in fail_items:\n        if item['fixable']:\n            if silent or input(f'Execute {item[\"name\"]}? [Y/n]: ').lower() in ['y', '']:\n                execute_fix(item['id'])\n                print(f'[AutoFix] {item[\"name\"]} ... Success')\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "网络稳定性风险：在 CI 环境下静默下载数 GB 的模型权重，若网络超时可能导致构建任务长时间挂起而无交互提示。",
+          "权限越界风险：若在非预期的宿主机环境下运行 `--fix-all`，自动执行的 `chmod` 可能会改变非项目目录的权限，需严格限制修复路径范围。"
+        ],
+        "next_hint": "建议将 `python micro_cli.py --fix-all` 写入 `Dockerfile` 的构建指令中，并配合 `Task 80` 的合规门禁，确保容器分发前环境与权限已彻底锁定。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 完整实现了任务要求，明确了参数扩展、静默逻辑分支及无损修复项的定义，并提供了具体的代码逻辑参考。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
