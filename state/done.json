@@ -3006,6 +3006,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 107,
+      "title": "将增强型 BibTeX 精简工具正式集成至论文组装工作流",
+      "worker_output": {
+        "summary": "本任务将 Task 104 开发的增强型 BibTeX 精简工具正式集成至 `src/paper_assembler.py`，实现了在生成论文 ZIP 资产包前对 `references.bib` 的自动化冗余清理。",
+        "deliverable": {
+          "bullets": [
+            "重构 `src/paper_assembler.py`：在资产归集逻辑中引入 `from src.bib_pruner import prune_bib_enhanced`。",
+            "注入自动清理逻辑：在 `create_asset_bundle` 函数中，于写入 ZIP 前提取生成的 `.tex` 源码与原始 `.bib` 内容，调用精简函数生成优化后的文献列表。",
+            "实现文件覆写机制：确保打包进 ZIP 的 `references.bib` 是经过过滤的精简版，而原始全局文献库保持不变。",
+            "集成日志反馈：将 `prune_bib_enhanced` 的统计输出（总数/保留数/删除数）自动记录至生产线的组装日志中。",
+            "代码集成逻辑示例：\npython\n# src/paper_assembler.py 集成片段\nwith open(final_tex_path, 'r', encoding='utf-8') as f: tex_c = f.read()\nwith open(raw_bib_path, 'r', encoding='utf-8') as f: bib_c = f.read()\n\n# 执行增强型精简\npruned_bib_content = prune_bib_enhanced(tex_c, bib_c)\n\n# 写入待打包的资产目录\nwith open(os.path.join(bundle_dir, 'references.bib'), 'w', encoding='utf-8') as f:\n    f.write(pruned_bib_content)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若 `references.bib` 包含非 UTF-8 编码的特殊字符，读取过程可能抛出 UnicodeDecodeError。",
+          "自动生成的 LaTeX 源码若包含由宏包动态生成的引用（如 `biblatex` 的某些变体），正则提取可能存在漏网之鱼。"
+        ],
+        "next_hint": "建议针对包含大量未引用条目的 BibTeX 库运行一次端到端组装测试，核对生成的 ZIP 包中 `references.bib` 的行数缩减情况。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 准确实现了增强型 BibTeX 精简工具在工作流中的集成，逻辑清晰，代码片段具体且符合任务要求。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
