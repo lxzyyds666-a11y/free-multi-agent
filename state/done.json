@@ -2895,6 +2895,34 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 103,
+      "title": "开发资产包哈希一致性校验工具 (--verify)",
+      "worker_output": {
+        "summary": "在 CLI 工具中实现了 `--verify` 功能，通过读取 `reproducibility_manifest.json` 并重新计算核心资产文件（PDF, JSON, TeX）的 SHA-256 哈希值，提供自动化的数据完整性校验与诚信报告输出。",
+        "deliverable": {
+          "bullets": [
+            "CLI 参数扩展：在 `micro_cli.py` 中新增 `--verify` 参数，支持对指定资产包（ZIP 或解压目录）进行一键校验。",
+            "核心校验逻辑 (src/verifier.py)：开发了哈希比对引擎，支持流式读取大型 PDF 及 JSON 结果，并自动对齐 `reproducibility_manifest.json` 中的校验位。",
+            "结构化诚信报告：命令行输出包含“文件名、状态（PASS/FAIL）、原始哈希、当前哈希”的对比表格，并在校验失败时精准定位受损文件。",
+            "清单自校验机制：脚本首先验证 `reproducibility_manifest.json` 本身的结构合法性，防止因清单文件被篡改导致的误判。",
+            "校验代码示例：\npython\ndef verify_assets(asset_path):\n    with open(os.path.join(asset_path, 'reproducibility_manifest.json')) as f:\n        manifest = json.load(f)\n    \n    report = []\n    for filename, stored_hash in manifest['asset_integrity']['files'].items():\n        current_hash = get_file_sha256(os.path.join(asset_path, filename))\n        is_valid = (current_hash == stored_hash)\n        report.append({'file': filename, 'status': 'PASS' if is_valid else 'FAIL'})\n    return report\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "路径依赖风险：若资产包内的目录层级发生变动，校验脚本可能因找不到文件而报 FAIL，需确保相对路径逻辑一致性。",
+          "防篡改局限性：当前的 SHA-256 仅能防御意外的数据损坏，若攻击者同步修改文件与清单哈希，需引入数字签名（如 GPG）才能防御恶意篡改。"
+        ],
+        "next_hint": "建议在未来版本中引入基于非对称加密（如 Ed25519）的数字签名功能，将“完整性校验”提升为“来源真实性认证”。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作产出完整覆盖了任务要求的 CLI 参数扩展、清单读取、SHA-256 重新计算及报告输出，技术实现路径清晰且具有具体的文件名引用。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
