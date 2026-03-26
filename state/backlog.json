@@ -2712,7 +2712,26 @@
       "description": "基于 Task 101 的清单结构，在 `micro_cli.py` 中完整实现 `--verify` 逻辑。通过流式计算资产包内文件的 SHA-256 并与 `reproducibility_manifest.json` 对比，输出包含“文件完整性”与“环境合规性”的终端诚信报告。",
       "priority": "high",
       "id": 108,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "在 `micro_cli.py` 中完整实现了 `--verify` 指令，通过集成 `src/verifier.py` 引擎，实现了对资产包内核心文件的流式 SHA-256 校验及环境合规性审计，并输出了结构化的终端诚信报告。",
+        "deliverable": {
+          "bullets": [
+            "CLI 指令集成：在 `micro_cli.py` 中新增 `--verify [path]` 参数，支持指向资产 ZIP 包或解压后的根目录。",
+            "流式哈希校验：调用验证引擎对 `detections.json`、`report.pdf` 等文件进行现场 SHA-256 计算，并与 `reproducibility_manifest.json` 的 `asset_integrity` 节点实时对齐。",
+            "环境合规性审计：自动提取当前环境的 Python、Torch、Ultralytics 等库版本，对比清单中的原始记录，识别“环境漂移”风险。",
+            "终端诚信报告输出：设计了包含【文件完整性】与【环境一致性】两大板块的终端报告，使用 [PASS/FAIL] 状态位清晰标注校验结果。",
+            "异常中断机制：若校验失败（哈希不匹配或关键环境版本冲突），CLI 将输出详细差异并以非零退出码（Exit Code 1）终止，支持集成至自动化审计流水线。",
+            "核心逻辑实现片段：\n```python\n# micro_cli.py 逻辑\nif args.verify:\n    from src.verifier import IntegrityVerifier\n    verifier = IntegrityVerifier(args.verify)\n    results = verifier.perform_audit()\n    \n    print(\"\\n=== Micro-ID Integrity & Compliance Report ===\")\n    for item in results['file_checks']:\n        status = \"[PASS]\" if item['valid'] else \"[FAIL]\"\n        print(f\"{status} File: {item['name']} (Hash: {item['current_hash'][:8]}...)\")\n    \n    for comp in results['env_checks']:\n        status = \"[MATCH]\" if comp['match'] else \"[DRIFT]\"\n        print(f\"{status} {comp['lib']}: Current {comp['curr']} vs Manifest {comp['orig']}\")\n    \n    if not results['all_valid']: sys.exit(1)\n```"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "路径兼容性风险：Windows 系统的路径分隔符（\\）在写入 JSON 清单后，若在 Linux 环境校验可能因字符串匹配问题导致文件定位失败。",
+          "版本后缀干扰：部分库版本号包含本地编译标识（如 `+cu121`），可能导致环境合规性校验产生误报。"
+        ],
+        "next_hint": "建议将此 `--verify` 逻辑集成至 GitHub Actions 的 Release 流程中，实现对自动生成的发布资产包进行闭环自校验。"
+      }
     }
   ],
   "next_task_id": 109
