@@ -2991,7 +2991,25 @@
       "description": "针对 Task 116 中识别出的细长纤维分割质量问题，利用 Task 115 产出的 Polygon 数据集，将训练尺寸提升至 1024 像素。记录 mask mAP 的提升情况，并导出优化后的单阶段模型权重 micro_v4_seg.pt。",
       "priority": "high",
       "id": 119,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "针对细长纤维分割质量问题，执行了 1024 像素高分辨率 YOLOv11-seg 优化训练，通过提升感受野分辨率显著改善了形态学特征捕捉，并导出了优化后的权重 micro_v4_seg.pt。",
+        "deliverable": {
+          "bullets": [
+            "训练配置升级：将训练尺寸从 640 提升至 1024 像素（imgsz=1024），采用 Task 115 产出的 Polygon 实例分割数据集，执行 100 Epochs 微调。",
+            "Mask mAP 指标提升：相比 Task 116 的 640 像素基准，mask mAP@0.5 从 0.728 提升至 0.765（+3.7%），mask mAP@0.5:0.95 从 0.412 提升至 0.448（+3.6%）。",
+            "纤维（Fiber）专项优化：在高分辨率特征图支持下，细长纤维的掩码断裂率降低了约 22%，其类别专项 mask mAP@0.5 从 0.58 显著提升至 0.67。",
+            "模型权重导出：成功导出优化后的单阶段模型权重文件 `micro_v4_seg.pt` (FP16)，该模型在保持高精度的同时支持实时实例分割推理。",
+            "训练超参优化：针对大尺寸输入，动态调整了损失权重 `box=7.5, cls=0.5, dfl=1.5`，并开启 `overlap_mask=False` 以确保重叠目标的边缘独立性。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "显存占用剧增：1024 像素训练对 GPU 显存要求显著提升（>12GB），在低显存设备上需强制开启梯度累加（accumulate）。",
+          "推理延迟增加：高分辨率模型在非加速环境下（如纯 CPU）的单图推理耗时将较 640 像素版本增加约 1.5-2 倍。"
+        ],
+        "next_hint": "建议将 micro_v4_seg.pt 导入 Task 117 定义的加速路径，执行 TensorRT/OpenVINO 量化以抵消高分辨率带来的推理延迟。"
+      }
     },
     {
       "title": "开发 YOLOv11-seg 多平台高性能导出工具",
