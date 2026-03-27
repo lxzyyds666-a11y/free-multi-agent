@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-27T10:08:39.287594+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 114,
+    "summary": "本任务完成了“公开可用的微碳屑自动识别论文生产线”样机（v1.2）的总结回顾，分析了当前系统在超高密度目标场景下的性能瓶颈，并制定了 v2.0 阶段的移动端轻量化与光谱信息集成路线图。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 114,
+    "decision": "approve"
+  }
+}
