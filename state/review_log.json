@@ -1355,6 +1355,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 123,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "工作结果非常具体且专业，提供了量化的精度指标（MAE、R²）、详细的性能对标数据以及针对性误差分析，完全满足任务要求。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

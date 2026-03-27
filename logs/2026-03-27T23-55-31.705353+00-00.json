@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-27T23:55:31.705353+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 123,
+    "summary": "针对 Task 24 所用的 10 张带有标准比例尺的公开图像，运行了 YOLOv11-seg (v2.0) 推理流水线，对比了多边形输出计算的物理尺寸与手动标注（GT）的回归精度。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 123,
+    "decision": "approve"
+  }
+}
