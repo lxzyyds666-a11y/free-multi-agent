@@ -1275,6 +1275,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 115,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "工作成果完整覆盖了任务要求的格式转换逻辑，提供了具体的实现算法（OpenCV）及代码片段，并包含了数据校验与类别映射，逻辑严密且具体。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

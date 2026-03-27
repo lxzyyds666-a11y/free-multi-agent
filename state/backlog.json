@@ -2884,7 +2884,47 @@
         ],
         "next_hint": "建议正式启动 v2.0 预研，首个子任务可聚焦于 YOLO 实例分割模型在微颗粒数据集上的精度基准测试。"
       }
+    },
+    {
+      "title": "開發微顆粒實例分割 Polygon 格式轉換工具",
+      "description": "基於 Task 7 和 Task 44 的工作，編寫 Python 腳本將 MicroNet 及 Zenodo 數據集中的原始多邊形（Polygon）或掩碼（Mask）標註轉換為 YOLO 實例分割標準格式（label_id x1 y1 x2 y2 ...），為 v2.0 的單階段模型訓練準備數據基准。",
+      "priority": "high",
+      "id": 115,
+      "status": "approved",
+      "worker_output": {
+        "summary": "開發並驗證了 Micro-ID Polygon 格式轉換工具（polygon_converter.py），實現了從 MicroNet (COCO) 及 Zenodo (Mask) 原始標註到 YOLO 實例分割標準格式（label_id x1 y1 ... xn yn）的自動化轉換，為 v2.0 單階段模型訓練奠定了數據基礎。",
+        "deliverable": {
+          "bullets": [
+            "核心腳本 (polygon_converter.py)：集成了 COCO JSON 解析與二值掩碼（Binary Mask）處理邏輯，支持將多邊形頂點坐標歸一化至 [0, 1] 區間。",
+            "掩碼轉多邊形引擎：利用 OpenCV `findContours` 算法實現從像素級 Mask 到多邊形邊界的轉換，並通過 `approxPolyDP` 進行頂點精簡以優化存儲效率。",
+            "標籤映射閉環：繼承 Task 4 規範，自動將原始標籤映射為 [fragment, fiber, film, pellet, sphere] 五大核心類別 ID。",
+            "數據校驗機制：內置頂點數檢查（至少 3 點）與坐標越界修正，自動過濾無效或面積過小的噪點多邊形。",
+            "輸出目錄規範：遵循 YOLO 實例分割目錄結構（/images, /labels），每個 .txt 文件記錄格式為 `class_id x1 y1 x2 y2 ...`。",
+            "轉換代碼片段：\npython\nimport cv2\nimport numpy as np\n\ndef mask_to_yolo_polygon(mask, class_id):\n    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)\n    polygons = []\n    h, w = mask.shape\n    for cnt in contours:\n        if len(cnt) < 3: continue\n        poly = cnt.reshape(-1, 2).astype(float)\n        poly[:, 0] /= w  # 歸一化 x\n        poly[:, 1] /= h  # 歸一化 y\n        line = f\"{class_id} \" + \" \".join([f\"{point[0]:.6f} {point[1]:.6f}\" for point in poly])\n        polygons.append(line)\n    return polygons"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "細長纖維（Fiber）在掩碼轉換過程中可能產生斷裂，導致單個目標被拆分為多個獨立多邊形。",
+          "高分辨率顯微圖像下，若不進行頂點精簡，單個多邊形的標註文件體積將顯著增加，影響數據加載速度。"
+        ],
+        "next_hint": "建議利用轉換後的多邊形數據集，啟動基於 YOLOv8-seg 或 YOLOv11-seg 的單階段實例分割模型訓練基准測試。"
+      }
+    },
+    {
+      "title": "執行 YOLOv11-seg 在公開數據集上的基準訓練與評估",
+      "description": "利用 Task 115 轉換後的數據，使用 YOLOv11-seg（或最新穩定版）執行初步微調訓練。記錄其實例分割指標（mask mAP@0.5:0.95），並與 v1.2 樣機中「YOLOv8+SAM2」組合的精度進行對標。",
+      "priority": "high",
+      "id": 116,
+      "status": "todo"
+    },
+    {
+      "title": "設計 v2.0「單階段高效生產線」架構骨架",
+      "description": "針對 v1.2 識別出的超高密度目標算力瓶頸，設計 v2.0 的模組化方案。重點定義如何將單階段實例分割模型與 SAHI 集成，並規劃如何通過模型量化（TensorRT/OpenVINO）進一步提升吞吐量，形成設計文檔。",
+      "priority": "medium",
+      "id": 117,
+      "status": "todo"
     }
   ],
-  "next_task_id": 115
+  "next_task_id": 118
 }

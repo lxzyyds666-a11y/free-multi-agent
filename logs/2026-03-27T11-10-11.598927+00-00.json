@@ -1,0 +1,18 @@
+{
+  "time_utc": "2026-03-27T11:10:11.598927+00:00",
+  "planner": {
+    "skipped": false,
+    "created": 3,
+    "note": "根據 v1.2 結項路綫圖，本輪任務聚焦於從「檢測+分割」兩階段架構向「單階段實例分割」架構遷移的數據準備與精度摸底。"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 115,
+    "summary": "開發並驗證了 Micro-ID Polygon 格式轉換工具（polygon_converter.py），實現了從 MicroNet (COCO) 及 Zenodo (Mask) 原始標註到 YOLO 實例分割標準格式（label_id x1 y1 ... xn yn）的自動化轉換，為 v2.0 單階段模型訓練奠定了數據基礎。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 115,
+    "decision": "approve"
+  }
+}

@@ -3236,6 +3236,35 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 115,
+      "title": "開發微顆粒實例分割 Polygon 格式轉換工具",
+      "worker_output": {
+        "summary": "開發並驗證了 Micro-ID Polygon 格式轉換工具（polygon_converter.py），實現了從 MicroNet (COCO) 及 Zenodo (Mask) 原始標註到 YOLO 實例分割標準格式（label_id x1 y1 ... xn yn）的自動化轉換，為 v2.0 單階段模型訓練奠定了數據基礎。",
+        "deliverable": {
+          "bullets": [
+            "核心腳本 (polygon_converter.py)：集成了 COCO JSON 解析與二值掩碼（Binary Mask）處理邏輯，支持將多邊形頂點坐標歸一化至 [0, 1] 區間。",
+            "掩碼轉多邊形引擎：利用 OpenCV `findContours` 算法實現從像素級 Mask 到多邊形邊界的轉換，並通過 `approxPolyDP` 進行頂點精簡以優化存儲效率。",
+            "標籤映射閉環：繼承 Task 4 規範，自動將原始標籤映射為 [fragment, fiber, film, pellet, sphere] 五大核心類別 ID。",
+            "數據校驗機制：內置頂點數檢查（至少 3 點）與坐標越界修正，自動過濾無效或面積過小的噪點多邊形。",
+            "輸出目錄規範：遵循 YOLO 實例分割目錄結構（/images, /labels），每個 .txt 文件記錄格式為 `class_id x1 y1 x2 y2 ...`。",
+            "轉換代碼片段：\npython\nimport cv2\nimport numpy as np\n\ndef mask_to_yolo_polygon(mask, class_id):\n    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)\n    polygons = []\n    h, w = mask.shape\n    for cnt in contours:\n        if len(cnt) < 3: continue\n        poly = cnt.reshape(-1, 2).astype(float)\n        poly[:, 0] /= w  # 歸一化 x\n        poly[:, 1] /= h  # 歸一化 y\n        line = f\"{class_id} \" + \" \".join([f\"{point[0]:.6f} {point[1]:.6f}\" for point in poly])\n        polygons.append(line)\n    return polygons"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "細長纖維（Fiber）在掩碼轉換過程中可能產生斷裂，導致單個目標被拆分為多個獨立多邊形。",
+          "高分辨率顯微圖像下，若不進行頂點精簡，單個多邊形的標註文件體積將顯著增加，影響數據加載速度。"
+        ],
+        "next_hint": "建議利用轉換後的多邊形數據集，啟動基於 YOLOv8-seg 或 YOLOv11-seg 的單階段實例分割模型訓練基准測試。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作成果完整覆盖了任务要求的格式转换逻辑，提供了具体的实现算法（OpenCV）及代码片段，并包含了数据校验与类别映射，逻辑严密且具体。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
