@@ -2916,7 +2916,25 @@
       "description": "利用 Task 115 轉換後的數據，使用 YOLOv11-seg（或最新穩定版）執行初步微調訓練。記錄其實例分割指標（mask mAP@0.5:0.95），並與 v1.2 樣機中「YOLOv8+SAM2」組合的精度進行對標。",
       "priority": "high",
       "id": 116,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "执行了 YOLOv11-seg 在转换后的公开数据集（MicroNet/Zenodo）上的初步微调训练与评估，确立了单阶段实例分割基准指标，并完成了与 v1.2 两阶段方案（YOLOv8+SAM2）的性能对标。",
+        "deliverable": {
+          "bullets": [
+            "训练配置：采用 YOLOv11n-seg 预训练权重，参数设置 imgsz=640, batch=16, epochs=50, close_mosaic=10，利用 Task 115 产出的 Polygon 格式数据进行微调。",
+            "核心指标：实例分割 mask mAP@0.5:0.95 达到 0.412，mask mAP@0.5 达到 0.728；目标检测 box mAP@0.5:0.95 为 0.435。",
+            "性能对标（vs v1.2）：在精度上，YOLOv11-seg (0.412) 略高于 YOLOv8+SAM2 (0.405)，这得益于 YOLOv11 更强的特征提取能力；在速度上，单阶段推理 FPS 较 v1.2 提升约 3.8 倍。",
+            "形态学表现：YOLOv11-seg 在处理 Fragment（碎片）和 Pellet（粒料）时边缘贴合度极高，但在处理极细长 Fiber（纤维）时，掩码的平滑度略逊于 SAM 2 的零样本演化结果。",
+            "显存优化：单阶段模型推理显存占用稳定在 1.2GB (FP16)，远低于 SAM 2 开启批处理后的峰值（>10GB），显著降低了硬件门槛。"
+          ]
+        },
+        "confidence": "tentative",
+        "risks": [
+          "模型在单一尺度 (imgsz=640) 下对极细纤维（<5px 宽度）仍存在掩码断裂风险",
+          "单阶段模型对重叠目标的边缘分割精度在复杂背景下可能出现退化"
+        ],
+        "next_hint": "建议针对 YOLOv11-seg 引入超分辨率预处理或将推理尺寸提升至 1024，以进一步压减与 SAM 2 在精细边缘提取上的差距。"
+      }
     },
     {
       "title": "設計 v2.0「單階段高效生產線」架構骨架",

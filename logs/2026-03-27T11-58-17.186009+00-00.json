@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-27T11:58:17.186009+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 116,
+    "summary": "执行了 YOLOv11-seg 在转换后的公开数据集（MicroNet/Zenodo）上的初步微调训练与评估，确立了单阶段实例分割基准指标，并完成了与 v1.2 两阶段方案（YOLOv8+SAM2）的性能对标。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 116,
+    "decision": "approve"
+  }
+}

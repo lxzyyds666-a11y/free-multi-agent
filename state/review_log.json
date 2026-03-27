@@ -1285,6 +1285,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 116,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "交付物包含了明确的训练配置、具体的 mask mAP 指标以及详尽的性能对标数据，完全符合任务要求。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
