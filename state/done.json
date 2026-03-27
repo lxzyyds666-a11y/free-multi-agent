@@ -3293,6 +3293,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 117,
+      "title": "設計 v2.0「單階段高效生產線」架構骨架",
+      "worker_output": {
+        "summary": "本任务完成了 v2.0「单阶段高效生产线」的架构骨架设计。针对 v1.2 中两阶段模型（YOLO+SAM 2）在处理高密度目标时的算力瓶颈，提出了基于 YOLOv11-seg 与 SAHI 集成的单阶段方案，并规划了高性能推理引擎（TensorRT/OpenVINO）的量化加速路径。",
+        "deliverable": {
+          "bullets": [
+            "单阶段流水线架构：定义了 [SAHI 图像切片] -> [YOLOv11-seg 并行推理] -> [多边形掩码全局合并] 的线性流程，通过单阶段架构消除 SAM 2 逐框 Prompt 的循环延迟。",
+            "SAHI 增强集成规范：规定了 Slice Segmentation 逻辑，通过 SAHI 的多边形合并算法（Mask Merging）解决高分辨率大图下微小目标特征丢失与切片边缘截断问题。",
+            "推理引擎量化路径：设计了从 PyTorch (.pt) 到 TensorRT (.engine) 和 OpenVINO (.xml/.bin) 的转换逻辑，支持 FP16/INT8 量化以提升吞吐量。",
+            "物理参数接口对齐：直接提取 YOLOv11-seg 输出的 Polygon 坐标，无缝对接 v1.2 开发的 `src/physics.py` 几何形态描述符计算模块。",
+            "算力解耦设计：在架构中引入模型加速层（Acceleration Layer），允许根据硬件探测结果（Task 88）动态选择 CPU (OpenVINO) 或 GPU (TensorRT) 运行环境。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "单阶段模型在复杂边缘（如重叠纤维）的分割精细度可能略逊于 SAM 2 的零样本演化结果",
+          "INT8 量化在处理微小目标（<10px）时可能引入精度漂移，导致物理尺寸计算误差增大"
+        ],
+        "next_hint": "建议编写针对 YOLOv11-seg 的高性能导出脚本，实现模型向 TensorRT 与 OpenVINO 格式的自动化转换及精度校准。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "方案精准覆盖了从单阶段架构选择、SAHI 集成逻辑到模型量化路径的全部核心要求，且与前置任务上下文（v1.2, Task 88）衔接紧密，具备高度可执行性。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
