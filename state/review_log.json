@@ -1325,6 +1325,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 120,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "产出内容完整覆盖了任务要求的 TensorRT 与 OpenVINO 导出功能，FP16 量化配置正确，且提供了具体的代码实现与风险提示，满足生产线压测准备需求。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

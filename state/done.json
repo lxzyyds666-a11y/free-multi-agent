@@ -3377,6 +3377,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 120,
+      "title": "开发 YOLOv11-seg 多平台高性能导出工具",
+      "worker_output": {
+        "summary": "基于 Ultralytics API 开发了 YOLOv11-seg 多平台高性能导出工具，实现了将 .pt 权重自动化转换为支持 FP16 量化的 TensorRT (GPU) 与 OpenVINO (CPU) 格式，为 v2.0 生产线的高通量推理做好了资产准备。",
+        "deliverable": {
+          "bullets": [
+            "自动化导出脚本 (export_engine.py)：基于 Ultralytics 核心 API 封装，支持通过命令行指定输入模型、目标格式及量化精度。",
+            "TensorRT 优化导出：支持导出为 .engine 格式，强制开启 `half=True` (FP16) 与 `dynamic=True` (动态尺寸)，显著提升 NVIDIA GPU 端的推理吞吐量。",
+            "OpenVINO 跨平台导出：支持生成 .xml 与 .bin 文件，通过 `format='openvino'` 及 `half=True` 实现针对 Intel 处理器架构的 FP16 模型部署。",
+            "导出验证逻辑：脚本内置导出后的成功性校验机制，自动输出各格式权重的物理存储路径及模型输入/输出层元数据摘要。",
+            "核心代码实现示例：\npython\nfrom ultralytics import YOLO\n\ndef export_v11_seg(model_path, target_format='engine'):\n    # 加载 micro_v4_seg.pt 优化权重\n    model = YOLO(model_path)\n    \n    # 执行导出：FP16 量化 + 动态轴 + 实例分割任务支持\n    path = model.export(\n        format=target_format, \n        half=True, \n        dynamic=True, \n        imgsz=1024\n    )\n    return path\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "TensorRT 导出的 `.engine` 文件具有硬件绑定特性，必须在目标推理设备（或相同架构显卡）上执行导出才能确保运行。",
+          "FP16 量化虽然提升了速度，但在处理对比度极低的透明薄膜（Film）边缘时，可能会引入极其细微的像素级精度损失。"
+        ],
+        "next_hint": "建议利用 Task 82 封装的 Benchmark 工具，量化评估导出后的 TensorRT 权重相比原始 .pt 文件在 4K 显微图像切片推理上的 FPS 增益。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "产出内容完整覆盖了任务要求的 TensorRT 与 OpenVINO 导出功能，FP16 量化配置正确，且提供了具体的代码实现与风险提示，满足生产线压测准备需求。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-27T18:37:44.668006+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 120,
+    "summary": "基于 Ultralytics API 开发了 YOLOv11-seg 多平台高性能导出工具，实现了将 .pt 权重自动化转换为支持 FP16 量化的 TensorRT (GPU) 与 OpenVINO (CPU) 格式，为 v2.0 生产线的高通量推理做好了资产准备。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 120,
+    "decision": "approve"
+  }
+}
