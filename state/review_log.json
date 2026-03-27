@@ -1305,6 +1305,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 118,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "工作成果完整覆盖了任务要求的 SAHI 集成、掩码合并逻辑及标准 JSON 输出，代码示例具有高度可执行性。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

@@ -3321,6 +3321,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 118,
+      "title": "实现基于 SAHI 的单阶段实例分割推理脚本",
+      "worker_output": {
+        "summary": "实现了基于 SAHI + YOLOv11-seg 的单阶段实例分割推理脚本，重点完成了大图切片预测后的多边形掩码（Mask Merging）全局坐标还原与标准 JSON 几何描述符输出。",
+        "deliverable": {
+          "bullets": [
+            "核心推理脚本 (inference_v2.py)：集成 `sahi.AutoDetectionModel` 封装 YOLOv11-seg 权重，原生支持单阶段实例分割推理。",
+            "切片推理逻辑：配置 `slice_height=640, slice_width=640` 并开启 `overlap_height_ratio=0.2`，利用 SAHI 引擎解决微小目标在整图下的特征丢失问题。",
+            "掩码合并（Mask Merging）实现：通过 `result.object_prediction_list` 提取合并后的全局多边形顶点，自动完成切片坐标系向原始大图坐标系的线性变换。",
+            "JSON 几何描述符输出：生成包含 `class_id`、`confidence`、`bbox` [x, y, w, h] 及 `segmentation` [x1, y1, ..., xn, yn] 的结构化 JSON，确保与 v1.2 的物理参数计算模块兼容。",
+            "高性能接口示例：\npython\nfrom sahi import AutoDetectionModel\nfrom sahi.predict import get_sliced_prediction\n\ndef run_v2_seg_inference(img_path, model_path='yolo11n-seg.pt'):\n    # 1. 初始化 YOLOv11-seg (SAHI 封装)\n    model = AutoDetectionModel.from_pretrained(\n        model_type='yolov8', # SAHI 目前通过 yolov8 接口兼容 v11\n        model_path=model_path,\n        confidence_threshold=0.25,\n        device='cuda:0'\n    )\n    # 2. 执行切片推理与掩码自动合并\n    result = get_sliced_prediction(\n        img_path, model,\n        slice_height=640, slice_width=640,\n        overlap_height_ratio=0.2\n    )\n    # 3. 提取标准几何描述符\n    detections = []\n    for obj in result.object_prediction_list:\n        if obj.mask: # 确保包含实例分割掩码\n            detections.append({\n                \"class_id\": obj.category.id,\n                \"confidence\": round(obj.score.value, 4),\n                \"bbox\": [round(x, 2) for x in obj.bbox.to_xywh()],\n                \"segmentation\": obj.mask.segmentation # 提取合并后的多边形\n            })\n    return detections\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "对于超高密度目标（单图 >500 颗粒），SAHI 的 NMS/Merge 过程在 CPU 端可能产生明显的计算延迟。",
+          "YOLOv11-seg 的多边形边缘在某些高动态范围图像下可能存在锯齿感，需评估是否需引入平滑后处理。"
+        ],
+        "next_hint": "建议将此脚本集成至 TensorRT 或 OpenVINO 推理引擎，并针对微小目标执行 INT8 量化后的精度损失评估。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作成果完整覆盖了任务要求的 SAHI 集成、掩码合并逻辑及标准 JSON 输出，代码示例具有高度可执行性。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
