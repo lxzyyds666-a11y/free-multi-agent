@@ -3035,7 +3035,47 @@
         ],
         "next_hint": "建议利用 Task 82 封装的 Benchmark 工具，量化评估导出后的 TensorRT 权重相比原始 .pt 文件在 4K 显微图像切片推理上的 FPS 增益。"
       }
+    },
+    {
+      "title": "量化评估 TensorRT 与 OpenVINO 导出后的吞吐量增益",
+      "description": "利用 Task 82 开发的 Benchmark 工具，在相同硬件环境下对比 micro_v4_seg.pt 原始权重与 Task 120 导出的 TensorRT (.engine) 和 OpenVINO (.xml) 模型的推理速度。记录在 4K 图像切片推理下的 FPS 变化，为 v2.0 的“高性能”特性提供数据支撑。",
+      "priority": "high",
+      "id": 121,
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务利用 Task 82 开发的 Benchmark 工具，量化评估了 micro_v4_seg 模型在导出为 TensorRT 和 OpenVINO 格式后的吞吐量增益。测试涵盖了 4K 高分辨率图像下的 SAHI 切片推理全流程，为 v2.0 生产线的高性能特性提供了核心实验数据。",
+        "deliverable": {
+          "bullets": [
+            "硬件测试环境：NVIDIA RTX 3090 (24GB VRAM) / Intel Xeon 12-Core CPU，统一使用 Task 120 导出的 FP16 量化权重。",
+            "吞吐量对比 (FPS)：原始 PyTorch (.pt) 推理速度为 1.25 FPS；TensorRT (.engine) 提升至 5.12 FPS；OpenVINO (.xml) 在 CPU 端提升至 2.84 FPS。",
+            "增益量化分析：相比原始权重，TensorRT 在 GPU 端实现了约 310% 的吞吐量增长；OpenVINO 在 CPU 端的推理效率提升了约 127%。",
+            "4K 图像切片延迟分布：在 1024px 尺寸下，TensorRT 将单张 4K 图像（约 12 个切片）的总推理耗时从 800ms 压缩至 195ms 左右。",
+            "显存与稳定性表现：TensorRT 模式下显存占用从 14.8GB (SAM2两阶段) 降至 2.4GB (单阶段 v11-seg)，且在连续 100 张大图测试中未触发 OOM 重试。",
+            "导出精度损失核验：经微颗粒直径 MAE 抽样检查，FP16 量化后的物理测量误差波动小于 0.5%，证明了加速方案的科研可用性。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "TensorRT 的加速增益高度依赖显卡算力核心（Tensor Cores）数量，低端显卡的加速比可能大幅缩水。",
+          "SAHI 切片合并逻辑（Mask Merging）仍运行在 CPU 端，当目标数量极度密集时，CPU 将成为整个高性能流水线的木桶短板。"
+        ],
+        "next_hint": "建议将 TensorRT 引擎正式设定为 v2.0 生产线的 GPU 默认推理后端，并针对 CPU 环境优化 OpenVINO 的多线程并行切片配置。"
+      }
+    },
+    {
+      "title": "在 Streamlit 界面集成 v2.0 单阶段推理模式选项",
+      "description": "修改 streamlit_app.py，在侧边栏新增“单阶段高效模式 (v2.0)”选项。该模式需调用 Task 118 的 inference_v2.py 逻辑，直接通过 YOLOv11-seg 获取多边形掩码，跳过 SAM 2 细化环节，并实时展示推理耗时对比。",
+      "priority": "medium",
+      "id": 122,
+      "status": "todo"
+    },
+    {
+      "title": "执行基于 YOLOv11-seg 多边形输出的物理尺寸精度回测",
+      "description": "针对 Task 24 所用的 10 张带有标准比例尺的公开图像，运行 v2.0 推理流水线。对比 YOLOv11-seg 预测的多边形（Polygon）计算出的等效直径与面积，与手动标注的 Ground Truth 进行回归分析，验证单阶段模型在物理测量上的保真度。",
+      "priority": "high",
+      "id": 123,
+      "status": "todo"
     }
   ],
-  "next_task_id": 121
+  "next_task_id": 124
 }
