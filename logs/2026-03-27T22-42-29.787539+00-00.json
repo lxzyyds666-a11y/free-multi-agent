@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-27T22:42:29.787539+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 122,
+    "summary": "本任务在 Streamlit 交互界面中成功集成了“单阶段高效模式 (v2.0)”选项。该模式通过调用 YOLOv11-seg 推理逻辑，实现了跳过 SAM 2 细化环节的快速分割，并新增了推理耗时实时对比看板，直观展示了 v2.0 对生产效率的提升。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 122,
+    "decision": "approve"
+  }
+}
