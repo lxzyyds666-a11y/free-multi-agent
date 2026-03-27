@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-27T09:10:17.184669+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 113,
+    "summary": "本任务完成了 v1.2 版样机在 Zenodo 的正式学术归档。通过 GitHub-Zenodo 集成功能，同步了源码快照，补传了核心权重与大规模实测资产包，并正式确立了持久化 DOI 引用体系。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 113,
+    "decision": "approve"
+  }
+}
