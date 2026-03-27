@@ -3122,6 +3122,36 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 111,
+      "title": "编制样机生产线 v1.2 功能增量说明书与 Benchmark 指南",
+      "worker_output": {
+        "summary": "本任务汇总了 Task 70-110 的技术演进，编制了样机生产线 v1.2 功能增量说明书，并更新了 `docs/tutorial.md`。核心增量涵盖了高通量 Benchmark 工具、环境自动初始化（--fix-all）以及科研诚信校验机制（--verify）。",
+        "deliverable": {
+          "bullets": [
+            "高通量 Benchmark 性能评估：新增 `src/benchmark.py` 工具，支持对处理帧率 (FPS)、显存峰值 (VRAM) 及各阶段耗时占比进行自动化评估，并产出结构化基准报告。",
+            "环境静默初始化机制：新增 CLI 参数 `--fix-all`，实现构建期自动创建目录、下载权重及修正权限，已成功集成至 Dockerfile 以实现容器“开箱即用”。",
+            "科研诚信与可复现性校验：开发了基于 SHA-256 哈希清单的校验工具 `--verify`，通过 `reproducibility_manifest.json` 自动核对 PDF/JSON 资产完整性及运行环境一致性。",
+            "高效率并发推理优化：集成了基于共享内存的异步并行预处理流水线（AsyncPreprocessor）及 SAM 2 的 VRAM 自适应批处理推理逻辑，显著提升大规模数据吞吐量。",
+            "学术资产自动化增强：完善了 LaTeX `longtable` 跨页排版适配、BibTeX 引用自动精简、以及 Benchmark 数据向论文“计算效率”章节的自动注入功能。",
+            "数据安全与合规脱敏：在资产包装流中强制集成元数据脱敏模块（Sanitizer），自动清除图像 EXIF/TIFF 中的 GPS、设备序列号等敏感隐私信息。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "LaTeX 编译环境（pdflatex、宏包）在非容器环境下的路径兼容性仍是用户部署的主要技术门槛",
+          "高通量模式下的资产包（ZIP）体积较大（>100MB），可能对部分学术托管平台的存储限额产生压力",
+          "跨平台路径分隔符与库版本后缀（如 +cu118）可能在极端环境下导致诚信校验产生误报"
+        ],
+        "next_hint": "建议正式发布 v1.2 稳定版 Tags，并开展针对多源公开数据集（如 Zenodo/Kaggle）的端到端大规模论文产出实测，作为结项演示资产。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "交付物完整覆盖了任务要求的三个核心重点（Benchmark、初始化、校验机制），技术细节描述具体且符合 v1.2 版本演进逻辑。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
