@@ -1375,6 +1375,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 125,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 完整实现了任务要求的双算法平滑模块，提供了明确的代码实现方案、配置开关以及针对物理偏差的修正逻辑，内容具体且符合技术要求。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-28T08:02:46.732091+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 125,
+    "summary": "本任务在 `src/physics.py` 中实现了多边形后处理精细化模块，通过集成 `cv2.approxPolyDP` 与高斯平滑算法，有效修正了单阶段模型（YOLOv11-seg）产生的边缘阶梯效应，提升了极小颗粒周长与圆度计算的物理准确性。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 125,
+    "decision": "approve"
+  }
+}
