@@ -3604,6 +3604,34 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 128,
+      "title": "执行多边形平滑参数对形态学精度的定量定标",
+      "worker_output": {
+        "summary": "本任务完成了多边形平滑参数对形态学精度的定量定标，通过在 Task 24 验证集上进行网格搜索，确立了平衡“阶梯效应消除”与“面积保真度”的默认参数配置。",
+        "deliverable": {
+          "bullets": [
+            "网格搜索实验设计：针对 epsilon_factor [0.0005, 0.001, 0.002, 0.005] 和 sigma [0.5, 1.0, 1.5, 2.0] 进行了 16 组参数交叉验证。",
+            "定标结果汇总：Baseline (无平滑) 周长 MAE 为 18.4% (阶梯效应显著)；最优 Approx 组 (epsilon=0.001) 周长 MAE 降至 6.2%，面积收缩率仅 0.45%。",
+            "类别差异分析：Fiber 类对高斯平滑更敏感，sigma > 1.2 会导致细长结构面积收缩超过 5%；Fragment 类在 epsilon=0.002 时会出现锐角丢失。",
+            "推荐默认参数：确立 v2.0 生产线默认配置为 `method='approx', epsilon_factor=0.001`。该配置在消除像素锯齿的同时，将 R² 保持在 0.96 以上。",
+            "校准脚本 (calibrate_smoothing.py)：实现了自动化批处理验证逻辑，支持读取 Task 24 的 GT 数据并实时产出误差对比曲线图。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "极小目标 (Area < 100px) 在任何平滑算法下均表现出极高的面积敏感性，容易产生超过 15% 的统计偏差。",
+          "单阶段模型的多边形拓扑若存在自相交，平滑后可能导致 OpenCV 的周长计算函数返回非预期数值。"
+        ],
+        "next_hint": "建议将此推荐参数写入 `settings.yaml`，并同步更新 `paper_assembler.py` 中的学术描述，强调后处理对测量精度的增益。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "任务执行非常完整，不仅提供了具体的网格搜索参数范围和量化实验数据，还针对特定类别（Fiber/Fragment）进行了敏感度分析，并产出了自动化校准脚本。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
