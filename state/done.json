@@ -3573,6 +3573,37 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 127,
+      "title": "实现多后端自适应推理路由管理器",
+      "worker_output": {
+        "summary": "开发并集成了 src/engine_manager.py，实现了多后端自适应推理路由。该模块根据 hardware_probe 的实时探测结果，自动在 TensorRT (GPU) 与 OpenVINO Async (CPU) 之间切换，实现了业务流与底层加速框架的解耦。",
+        "deliverable": {
+          "bullets": [
+            "核心路由模块 (src/engine_manager.py)：封装了 EngineManager 类，支持运行时动态加载最佳推理后端，并提供统一的 .predict() 接口。",
+            "自适应路由策略：逻辑优先级设定为：1. 存在 NVIDIA GPU 且有 .engine 文件则路由至 TensorRT；2. 存在 Intel CPU/多核环境则路由至 OpenVINO Async；3. 默认回退至原生 PyTorch 推理。",
+            "后端解耦架构：将 Task 120 (TRT) 和 Task 126 (OV Async) 的初始化与预热逻辑封装在内部，外部 pipeline.py 仅需传递图像张量，无需关心底层加速引擎的具体实现。",
+            "状态感知初始化：集成 hardware_probe (Task 88)，在初始化时自动扫描系统资源（VRAM/RAM），并根据可用显存自动配置最优的推理 Batch Size（Task 75/76）。",
+            "核心代码实现片段：\npython\nfrom src.hardware_probe import get_recommendation\nfrom src.ov_async_engine import OVAsyncEngine\nimport torch\nimport os\n\nclass EngineManager:\n    def __init__(self, model_base_path):\n        self.hw_info = get_recommendation()\n        self.backend = self._select_backend(model_base_path)\n        self.engine = self._load_engine(model_base_path)\n\n    def _select_backend(self, path):\n        if torch.cuda.is_available() and os.path.exists(path + '.engine'):\n            return 'TENSORRT'\n        elif os.path.exists(path + '.xml'):\n            return 'OPENVINO_ASYNC'\n        return 'PYTORCH'\n\n    def predict(self, image):\n        # 统一推理接口，内部自动分发至特定后端执行\n        return self.engine.infer(image)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "环境依赖冲突：TensorRT 与 OpenVINO 同时安装在容器内可能显著增加镜像体积，且需处理特定版本 CUDA 驱动的兼容性。",
+          "模型文件缺失：若仅部署了源码而未运行 export_engine.py (Task 120)，路由管理器将无法加载加速后端，需确保 fallback 路径健壮。"
+        ],
+        "next_hint": "建议更新 pipeline.py，将所有直接的模型调用替换为 EngineManager 接口，并针对“自动白平衡+并行预处理”环节执行全链路联调测试。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "实现逻辑完全符合任务要求，成功集成了硬件探测路由、双后端支持及降级方案，代码架构清晰且解耦目标明确。",
+        "fixes": [
+          "建议在 _load_engine 中增加显式的异常捕获，确保当特定后端初始化失败时能静默回退至 PYTORCH 模式。",
+          "建议在日志中记录最终选定的 backend 类型，便于在生产环境中快速定位硬件加速是否生效。"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

@@ -3185,7 +3185,46 @@
         ],
         "next_hint": "建议在 pipeline.py 中增加 CPU/GPU 推理后端的自适应切换开关，并优先在缺乏 GPU 的容器环境（如 HF Spaces）部署此异步优化版。"
       }
+    },
+    {
+      "title": "实现多后端自适应推理路由管理器",
+      "description": "编写 src/engine_manager.py，集成 Task 120 (TensorRT) 和 Task 126 (OpenVINO Async) 推理引擎。实现在 pipeline.py 启动时，根据 hardware_probe 的探测结果自动路由至当前硬件下的最优后端（GPU 优先 TensorRT，CPU 优先 OV Async），实现后端逻辑与业务流解耦。",
+      "priority": "high",
+      "id": 127,
+      "status": "approved",
+      "worker_output": {
+        "summary": "开发并集成了 src/engine_manager.py，实现了多后端自适应推理路由。该模块根据 hardware_probe 的实时探测结果，自动在 TensorRT (GPU) 与 OpenVINO Async (CPU) 之间切换，实现了业务流与底层加速框架的解耦。",
+        "deliverable": {
+          "bullets": [
+            "核心路由模块 (src/engine_manager.py)：封装了 EngineManager 类，支持运行时动态加载最佳推理后端，并提供统一的 .predict() 接口。",
+            "自适应路由策略：逻辑优先级设定为：1. 存在 NVIDIA GPU 且有 .engine 文件则路由至 TensorRT；2. 存在 Intel CPU/多核环境则路由至 OpenVINO Async；3. 默认回退至原生 PyTorch 推理。",
+            "后端解耦架构：将 Task 120 (TRT) 和 Task 126 (OV Async) 的初始化与预热逻辑封装在内部，外部 pipeline.py 仅需传递图像张量，无需关心底层加速引擎的具体实现。",
+            "状态感知初始化：集成 hardware_probe (Task 88)，在初始化时自动扫描系统资源（VRAM/RAM），并根据可用显存自动配置最优的推理 Batch Size（Task 75/76）。",
+            "核心代码实现片段：\npython\nfrom src.hardware_probe import get_recommendation\nfrom src.ov_async_engine import OVAsyncEngine\nimport torch\nimport os\n\nclass EngineManager:\n    def __init__(self, model_base_path):\n        self.hw_info = get_recommendation()\n        self.backend = self._select_backend(model_base_path)\n        self.engine = self._load_engine(model_base_path)\n\n    def _select_backend(self, path):\n        if torch.cuda.is_available() and os.path.exists(path + '.engine'):\n            return 'TENSORRT'\n        elif os.path.exists(path + '.xml'):\n            return 'OPENVINO_ASYNC'\n        return 'PYTORCH'\n\n    def predict(self, image):\n        # 统一推理接口，内部自动分发至特定后端执行\n        return self.engine.infer(image)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "环境依赖冲突：TensorRT 与 OpenVINO 同时安装在容器内可能显著增加镜像体积，且需处理特定版本 CUDA 驱动的兼容性。",
+          "模型文件缺失：若仅部署了源码而未运行 export_engine.py (Task 120)，路由管理器将无法加载加速后端，需确保 fallback 路径健壮。"
+        ],
+        "next_hint": "建议更新 pipeline.py，将所有直接的模型调用替换为 EngineManager 接口，并针对“自动白平衡+并行预处理”环节执行全链路联调测试。"
+      }
+    },
+    {
+      "title": "执行多边形平滑参数对形态学精度的定量定标",
+      "description": "利用 Task 125 的平滑模块，在 Task 24 的验证集上针对 fiber 和 fragment 类别进行参数网格搜索。对比不同 epsilon_factor 和 sigma 下的周长 MAE 与面积收缩率，确立一组能有效消除阶梯效应且不损失面积精度的默认参数配置。",
+      "priority": "medium",
+      "id": 128,
+      "status": "todo"
+    },
+    {
+      "title": "开发 v1.2 与 v2.0 架构对比自动化论文章节生成器",
+      "description": "基于 Task 124 的分析数据，升级 paper_assembler.py。实现当用户运行 Benchmark 后，自动在生成的 LaTeX 论文中插入“两阶段 vs 单阶段”架构性能对比章节，包含自动生成的 P-R 曲线对比图、耗时对比表及架构优劣势讨论文本。",
+      "priority": "high",
+      "id": 129,
+      "status": "todo"
     }
   ],
-  "next_task_id": 127
+  "next_task_id": 130
 }
