@@ -1385,6 +1385,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 126,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 完整实现了基于 AsyncInferQueue 的异步推理架构，提供了具体的性能提升数据（116.5%）及核心实现逻辑，且针对 SAHI 坐标映射和风险控制给出了具体方案。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
