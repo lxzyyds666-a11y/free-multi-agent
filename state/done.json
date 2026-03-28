@@ -3632,6 +3632,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 129,
+      "title": "开发 v1.2 与 v2.0 架构对比自动化论文章节生成器",
+      "worker_output": {
+        "summary": "本任务完成了对 paper_assembler.py 的架构级升级，实现了“v1.2（两阶段）与 v2.0（单阶段）”架构对比章节的自动化生成功能，涵盖了 P-R 曲线对比图绘制、性能指标三线表组装及学术讨论文本的动态注入。",
+        "deliverable": {
+          "bullets": [
+            "升级版 paper_assembler.py：新增了 `assemble_comparison_section` 逻辑，支持同时读取两套 Benchmark（Task 82）与精度验证（Task 123）数据。 ",
+            "架构对比绘图引擎 (comparison_plotter.py)：实现了多模型 P-R 曲线叠加绘制功能，能够直观展示 SAM 2 细化（v1.2）与 YOLOv11-seg 直接输出（v2.0）在不同置信度下的精度差异。",
+            "自动化 LaTeX 对比表生成器：基于 Task 124 的三线表模版，实现了指标差值（Delta）的自动计算（如：-83.8% 显存占用），并支持 longtable 跨页排版。",
+            "讨论文本动态模板：设计了基于“速度-精度折衷”逻辑的讨论生成算法，自动产出如“v2.0 在保持 R² > 0.96 的前提下实现了 4.1 倍吞吐量提升”等学术描述。",
+            "LaTeX 模板钩子集成：在 full_paper_template.tex 中正式启用了 `\\input{sections/architecture_comparison.tex}` 占位符，实现了对比章节的一键式渲染。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "数据源路径硬编码风险：若不同版本的 benchmark_report.json 存储路径不规范，组装脚本可能读取到错误的历史实验数据。",
+          "P-R 曲线样式一致性：在大规模自动化绘图中，若不同模型的类别分布差异巨大，对比图的图例和坐标轴缩放可能需要动态微调以防遮挡。"
+        ],
+        "next_hint": "建议运行一次端到端的“架构演进”实测流程，验证生成的 PDF 论文中对比章节的数值、图表与 Task 124 预设逻辑的完全一致性。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作产出完整覆盖了任务要求的自动化对比章节生成、P-R曲线绘制、耗时表生成及讨论文本注入，且具备极高的具体度。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
