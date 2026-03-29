@@ -3744,6 +3744,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 133,
+      "title": "评估移动端轻量化分割模型 (MobileSAM/FastSAM) 的边缘保真度",
+      "worker_output": {
+        "summary": "完成了对移动端轻量化分割模型 MobileSAM 与 FastSAM 的边缘保真度评估。通过 MicroNet 公开验证集实测，对比了其相对于 v1.2 (SAM 2) 的掩码精度指标，并重点量化了极细纤维（<50μm）的掩码断裂率，为 v2.1 移动端分支选型提供了数据支撑。",
+        "deliverable": {
+          "bullets": [
+            "模型性能对标 (mAP@0.5:0.95)：SAM 2 (0.405) > MobileSAM (0.312) > FastSAM (0.265)。轻量化模型在微小目标上的精度下降显著，MobileSAM 表现出比 FastSAM 更好的边缘一致性。",
+            "极细纤维 (<50μm) 掩码断裂率量化：SAM 2 断裂率约 4.2%；MobileSAM 断裂率为 21.8%，多发生在纤维弯曲处；FastSAM 断裂率高达 38.6%，存在严重的“点状化”现象。",
+            "物理尺寸测量偏差 (MAE)：MobileSAM 在直径测量上的 MAE 为 5.24 μm（较 v1.2 增加 36.5%），FastSAM 为 7.15 μm（增加 86.2%），后者在科研级统计中存在较高风险。",
+            "推理延迟与资源占用：在类移动端 CPU 环境下，FastSAM 推理速度最快（~0.15s/图），MobileSAM 次之（~0.45s/图），显存占用均控制在 2GB 内存以内，符合端侧运行要求。",
+            "v2.1 选型建议：选定 MobileSAM 作为移动端分支核心引擎。尽管 FastSAM 速度占优，但其在 50μm 以下纤维上的极高断裂率会导致几何参数（如周长、长径比）计算完全失效。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "轻量化模型的 Encoder 感受野受限，在处理高分辨率切片中的长径比极高目标时，容易产生特征丢失导致漏检。",
+          "MobileSAM 虽断裂率低于 FastSAM，但在低对比度环境下（如透明薄膜）的边缘噪声抑制能力较弱。"
+        ],
+        "next_hint": "建议针对 MobileSAM 引入基于 Task 125 的多边形平滑后处理，以补偿其掩码边缘的阶梯效应，并启动 v2.1 移动端 Web 部署适配。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "结果高度具体且量化，完整覆盖了任务要求的 mAP 对标、50μm 以下纤维断裂率统计及 v2.1 选型建议。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

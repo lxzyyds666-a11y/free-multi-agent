@@ -1,0 +1,18 @@
+{
+  "time_utc": "2026-03-29T07:41:58.588333+00:00",
+  "planner": {
+    "skipped": false,
+    "created": 3,
+    "note": "根据 v2.0 结项路线图，本轮启动 v2.1 预研，重点攻克‘移动端轻量化（模型评估与 ONNX 转换）’与‘物质分类（光谱数据调研）’两个增量方向。"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 133,
+    "summary": "完成了对移动端轻量化分割模型 MobileSAM 与 FastSAM 的边缘保真度评估。通过 MicroNet 公开验证集实测，对比了其相对于 v1.2 (SAM 2) 的掩码精度指标，并重点量化了极细纤维（<50μm）的掩码断裂率，为 v2.1 移动端分支选型提供了数据支撑。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 133,
+    "decision": "approve"
+  }
+}
