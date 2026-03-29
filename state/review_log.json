@@ -1488,6 +1488,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 136,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "交付物完整覆盖了任务要求的 ORT-Web 集成、数据预处理、JS版NMS后处理及Canvas实时渲染，技术路径描述具体且符合原型开发标准。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

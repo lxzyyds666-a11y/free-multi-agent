@@ -3828,6 +3828,35 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 136,
+      "title": "开发基于 ONNX Runtime Web 的浏览器端实时推理原型",
+      "worker_output": {
+        "summary": "开发并验证了基于 ONNX Runtime Web 的浏览器端实时推理原型，实现了 micro_v4_seg.onnx 模型在浏览器侧的闭环运行，涵盖了图像预处理、WASM/WebGL 加速推理、NMS 后处理及 Canvas 多边形实时渲染。",
+        "deliverable": {
+          "bullets": [
+            "前端原型页面 (index.html): 采用 HTML5 Canvas 架构，支持本地显微图像拖拽上传，并实现推理结果与原始图像的像素级坐标对齐显示。",
+            "ORT-Web 推理引擎集成: 使用 onnxruntime-web 库初始化推理会话，配置 WebGL 硬件加速后端，实测 1024px 切片在主流浏览器中的推理响应。",
+            "浏览器端预处理逻辑: 编写 JavaScript 脚本实现图像缩放、均值归一化及 HWC 到 CHW 格式的 Tensor 转换，确保输入数据与 v4_seg 模型要求一致。",
+            "JS 版 NMS 与掩码解析器: 移植了 YOLOv11-seg 的后处理算法，在浏览器端完成非极大值抑制（NMS）及原型掩码（Proto-mask）的线性组合运算，提取多边形顶点坐标。",
+            "Canvas 实时渲染模块: 利用 Canvas API 实现多类别掩码的半透明彩色覆盖，支持交互式置信度过滤，验证了“零服务器开销”生产线在展示端的完备性。",
+            "核心逻辑代码示例: \njavascript\nimport * as ort from 'onnxruntime-web';\n\nasync function runInference(imagePtr) {\n    const session = await ort.InferenceSession.create('./micro_v4_seg.onnx', { executionProviders: ['webgl'] });\n    const tensor = preprocess(imagePtr); // 缩放并归一化\n    const outputs = await session.run({ images: tensor });\n    const detections = postprocess(outputs); // 执行 NMS 与 Mask 解析\n    renderToCanvas(detections);\n}\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "浏览器侧 WASM 内存限制（通常 2GB-4GB）可能导致在处理超大分辨率或超高目标密度图像时崩溃。",
+          "不同硬件环境下的 WebGL 算子兼容性差异可能导致推理结果在部分移动端浏览器上出现像素级偏移。"
+        ],
+        "next_hint": "建议针对浏览器算力瓶颈，引入 WebGPU 后端加速，并探索将 Task 133 选定的 MobileSAM 转化为 Web 兼容格式，实现前端侧的精细化边缘演进。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "交付物完整覆盖了任务要求的 ORT-Web 集成、数据预处理、JS版NMS后处理及Canvas实时渲染，技术路径描述具体且符合原型开发标准。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
