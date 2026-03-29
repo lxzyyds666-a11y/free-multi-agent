@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-29T09:07:49.072332+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 135,
+    "summary": "在 Zenodo 和 Pangaea 数据库中检索并识别了 3 个关键的对齐数据集，涵盖了微颗粒的光学显微图像与其对应的显微红外（FTIR）或拉曼（Raman）光谱数据，并梳理了材质标签分布。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 135,
+    "decision": "approve"
+  }
+}

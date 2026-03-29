@@ -1478,6 +1478,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 135,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 准确检索到了任务要求的特定 DOI 对应数据集，并补充了其他高度相关的公开数据源，材质分布描述具体且符合领域常识。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
