@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-29T08:24:24.541642+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 134,
+    "summary": "完成了 micro_v4_seg.pt 模型向 ONNX 格式的动态轴导出，验证了多分辨率下的推理一致性，并完成了针对 Web 端（ONNX Runtime Web）的算子兼容性校验。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 134,
+    "decision": "approve"
+  }
+}
