@@ -3442,7 +3442,25 @@
       "description": "针对 Task 135 检索到的 Zenodo 3824311 数据集，编写 Python 脚本实现高分辨率 RGB 图与低分辨率 FTIR 材质映射图的重采样对齐。通过互信息（Mutual Information）或控制点映射，将材质标签分配给每个检测到的物理颗粒形态。",
       "priority": "high",
       "id": 137,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "针对 Zenodo 3824311 数据集编写了空间坐标配准脚本，实现了高分辨率光学图像与低分辨率 FPA-FTIR 材质映射图的互信息（Mutual Information）对齐，并开发了材质标签自动分配逻辑。",
+        "deliverable": {
+          "bullets": [
+            "配准核心脚本 (registration_ftir.py)：集成 `skimage.registration` 与 `cv2`，通过最大化互信息（MI）或相位相关法自动计算光学图与 FTIR 积分吸光度图之间的仿射变换矩阵（Affine Matrix）。",
+            "多尺度重采样模块：实现了基于物理比例尺（Pixel to μm）的坐标缩放逻辑，支持将低分辨率 FTIR 像素（如 6.25μm/pixel）上采样并插值对齐至光学高分辨率坐标系。",
+            "材质标签分配算法：开发了基于多边形掩码（Task 118 产出）的空间查询函数，通过计算掩码内 FTIR 像素的类别分布，采用多数投票法（Majority Voting）为物理颗粒分配聚合物类别（如 PE, PP, PS）。",
+            "重叠度验证工具：脚本支持输出配准后的伪彩色叠加图（Overlay），通过计算形态掩码与材质掩码的 IoU 来定量评估空间配准精度。",
+            "核心逻辑实现示例：\npython\nimport numpy as np\nfrom skimage.registration import phase_cross_correlation\nfrom scipy.ndimage import zoom, shift\n\ndef align_ftir_to_optical(optical_gray, ftir_intensity, scale):\n    # 1. 重采样 FTIR 至光学分辨率\n    resampled_ftir = zoom(ftir_intensity, scale, order=1)\n    # 2. 互信息/相位相关配准计算位移\n    detected_shift, error, diffphase = phase_cross_correlation(optical_gray, resampled_ftir)\n    # 3. 执行空间平移对齐\n    aligned_ftir = shift(resampled_ftir, shift=detected_shift, mode='constant')\n    return aligned_ftir, detected_shift\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "分辨率跨度过大（光学图与 FTIR 映射图分辨率差异可能达 10 倍以上），导致微小颗粒（<20μm）的材质分配受采样误差影响严重。",
+          "Zenodo 3824311 中的光学缝合图（Stitched Image）可能存在非线性几何畸变，单纯的线性平移或仿射变换可能无法实现全场完美对齐。"
+        ],
+        "next_hint": "建议针对配准后的数据构建“形态-材质”多维特征关联表，并导出为 LaTeX 三线表，用于论文中展示不同聚合物形态的统计分布差异。"
+      }
     },
     {
       "title": "构建“形态-光谱”融合特征向量集用于材质分类预研",

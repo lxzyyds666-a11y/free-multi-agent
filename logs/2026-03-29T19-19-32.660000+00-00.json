@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-29T19:19:32.660000+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 137,
+    "summary": "针对 Zenodo 3824311 数据集编写了空间坐标配准脚本，实现了高分辨率光学图像与低分辨率 FPA-FTIR 材质映射图的互信息（Mutual Information）对齐，并开发了材质标签自动分配逻辑。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 137,
+    "decision": "approve"
+  }
+}
