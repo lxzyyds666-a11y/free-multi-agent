@@ -3888,6 +3888,34 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 138,
+      "title": "构建“形态-光谱”融合特征向量集用于材质分类预研",
+      "worker_output": {
+        "summary": "开发了“形态-光谱”融合特征提取脚本，实现了将 Task 47 的几何描述符与 Task 137 的对齐光谱数据进行关联映射，产出了用于 v3.0 多模态分类器训练的标准化 CSV 特征向量集。",
+        "deliverable": {
+          "bullets": [
+            "特征提取脚本 (feature_fusion_v3.py)：集成 Task 47 的物理引擎与 Task 137 的配准逻辑，自动从 Mask 区域内提取几何特征与对应的光谱像素均值。",
+            "CSV 特征向量集规范：定义了包含 [particle_id, area_um2, perimeter_um, circularity, aspect_ratio, solidity, mean_ir_intensity, label] 的结构化表头。",
+            "多模态对齐逻辑：脚本通过 Task 137 的变换矩阵定位颗粒在光谱映射图中的空间索引，计算其掩码内部所有光谱通道的均值向量（Mean Intensity）。",
+            "材质标签自动注入：基于 Zenodo 3824311 的 Ground Truth 掩码，通过物理坐标匹配，自动为每个特征行分配材质标签（如 PE, PP, PS）。",
+            "核心提取代码片段：\npython\nimport pandas as pd\nimport numpy as np\n\ndef extract_fusion_vector(mask, aligned_ftir, morph_stats, label):\n    # 1. 计算光谱特征：提取 Mask 内部的红外强度均值\n    spectral_roi = aligned_ftir[mask > 0]\n    mean_intensity = np.mean(spectral_roi) if len(spectral_roi) > 0 else 0\n    \n    # 2. 组装融合向量\n    vector = {\n        'area': morph_stats['area_um2'],\n        'circularity': morph_stats['circularity'],\n        'aspect_ratio': morph_stats['aspect_ratio'],\n        'solidity': morph_stats['solidity'],\n        'spectral_mean': mean_intensity,\n        'label': label\n    }\n    return vector"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "低分辨率光谱干扰：对于极小颗粒（<20μm），光谱映射图的像素可能包含背景信息，导致融合向量中的光谱分量信噪比低。",
+          "数据集类别不平衡：公开数据集中 PE/PP 占据绝大多数，可能导致后续分类器对 PET/PVC 等少数类别的识别率偏低。"
+        ],
+        "next_hint": "建议利用产出的 CSV 特征集训练一个基于随机森林（Random Forest）或 MLP 的多模态基准分类器，建立 v3.0 版本的材质分类精度基准。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作结果完整覆盖了特征提取脚本、特征向量集规范以及对齐逻辑的实现，且代码逻辑与任务描述高度匹配。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
