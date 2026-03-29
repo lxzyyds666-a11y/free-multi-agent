@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-29T06:44:01.308397+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 132,
+    "summary": "本任务完成了微碳屑识别样机 Release v2.0 的正式发布日志撰写及性能手册更新，汇总了从两阶段（v1.2）向单阶段（v2.0）架构演进的核心技术指标与应用指南。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 132,
+    "decision": "approve"
+  }
+}
