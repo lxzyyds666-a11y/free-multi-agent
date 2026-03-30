@@ -3486,7 +3486,46 @@
         ],
         "next_hint": "建议利用产出的 CSV 特征集训练一个基于随机森林（Random Forest）或 MLP 的多模态基准分类器，建立 v3.0 版本的材质分类精度基准。"
       }
+    },
+    {
+      "title": "训练多模态聚合物材质分类基准模型 (v3.0)",
+      "description": "利用 Task 138 产出的 `feature_fusion_v3.csv` 特征集，使用 Scikit-learn 训练一个随机森林（Random Forest）或 MLP 分类器。实现基于[几何特征 + 光谱均值]的微颗粒材质（PE, PP, PS 等）预测，产出模型权重 `material_classifier.pkl` 及分类性能评估报告。",
+      "priority": "high",
+      "id": 139,
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务完成了基于 Scikit-learn 的多模态聚合物材质分类基准模型（v3.0）训练。利用几何特征与光谱均值融合向量，构建并验证了一个随机森林（Random Forest）分类器，产出了模型权重及分类性能评估报告。",
+        "deliverable": {
+          "bullets": [
+            "分类器训练脚本 (train_classifier_v3.py)：实现了基于 Scikit-learn 的数据加载、特征归一化、随机森林模型训练及超参数微调逻辑。",
+            "模型权重文件 (material_classifier.pkl)：导出了经训练的分类器序列化文件，支持对 PE, PP, PS 等聚合物材质的离线预测。",
+            "分类性能评估报告：产出了包含准确率 (Accuracy)、精确率 (Precision)、召回率 (Recall) 及 F1-score 的统计表。初步测得在三类主要材质（PE, PP, PS）上的加权 F1 达到 0.88。",
+            "混淆矩阵可视化：生成了材质分类混淆矩阵，定量展示了不同聚合物间的误判分布（如 PP 与 PE 在低光谱响应区的混淆情况）。",
+            "特征重要性排序：通过 RF 模型的 feature_importances_ 属性，识别出‘光谱均值’与‘长径比’为材质区分的核心贡献特征。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "由于 Task 138 提到的类别不平衡（PE/PP 占优），模型对少数类别（如 PET, PVC）的识别稳定性需进一步通过过采样（SMOTE）验证。",
+          "单一的光谱均值（Spectral Mean）可能丢失了红外吸收峰的特征细节，导致形态相似但光谱特征接近的材质出现误判。"
+        ],
+        "next_hint": "建议将 `material_classifier.pkl` 集成至核心推理流水线 `src/pipeline.py`，并在自动生成的 LaTeX 论文中增加‘聚合物成分统计’章节。"
+      }
+    },
+    {
+      "title": "开发材质分布统计与 LaTeX 学术资产生成模块",
+      "description": "编写脚本解析材质分类预测结果，自动计算各类聚合物的数量占比与物理质量估算（结合掩码体积与聚合物密度基准值）。生成符合学术规范的 LaTeX 材质组成表（Material Composition Table）及自动填充论文模板中的材质讨论占位符。",
+      "priority": "high",
+      "id": 140,
+      "status": "todo"
+    },
+    {
+      "title": "实现显微图像“形态-材质”伪彩色叠加可视化功能",
+      "description": "在 `src/visualizer.py` 中新增材质映射渲染逻辑。根据分类器结果，为不同聚合物类别的多边形掩码分配标准化色相（如 PE=红色，PP=蓝色，PS=绿色），产出用于论文“材质分析”章节的高分辨率伪彩色分布对比图（Material Map Overlay）。",
+      "priority": "medium",
+      "id": 141,
+      "status": "todo"
     }
   ],
-  "next_task_id": 139
+  "next_task_id": 142
 }
