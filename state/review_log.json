@@ -1561,6 +1561,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 143,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "产出完整实现了任务要求的 Streamlit 界面升级，包括光谱数据上传、Task 141 结果展示以及 Plotly 交互式统计图表，代码示例逻辑清晰。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

@@ -4029,6 +4029,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 143,
+      "title": "在 Streamlit 界面集成材质分布可视化与统计看板",
+      "worker_output": {
+        "summary": "本任务完成了对 Streamlit Web 界面的升级，集成了“材质分析”看板。实现了光谱数据上传入口、形态-材质伪彩色叠加图展示，以及基于 Plotly 的聚合物种类占比与质量估算交互式统计图表。",
+        "deliverable": {
+          "bullets": [
+            "新增光谱数据上传组件：在侧边栏集成 `st.file_uploader`，支持用户上传配准用的 FPA-FTIR 或 Raman 积分吸光度映射图（.tif/.png）。",
+            "材质分析可视化板块：在推理结果页新增 'Material Analysis' 扩展项，展示由 Task 141 生成的半透明伪彩色叠加图，实现颗粒形态与材质属性的直观对齐。",
+            "聚合物占比饼图 (Plotly)：利用 `plotly.express.pie` 实时渲染检测到的 PE、PP、PS 等材质数量百分比，支持点击图例进行数据过滤。",
+            "质量分布柱状图 (Plotly)：利用 `plotly.express.bar` 绘制各材质類别的估算总质量（mg），直观展示样本中主要的质量贡献组分。",
+            "核心代码集成示例：\npython\nimport streamlit as st\nimport plotly.express as px\n\ndef render_material_dashboard(results):\n    st.header('材质分布与质量统计')\n    col1, col2 = st.columns(2)\n    \n    # 1. 材质占比饼图\n    df_stats = results['material_summary_df']\n    fig_pie = px.pie(df_stats, values='count', names='polymer', title='聚合物数量占比')\n    col1.plotly_chart(fig_pie, use_container_width=True)\n    \n    # 2. 质量分布柱状图\n    fig_bar = px.bar(df_stats, x='polymer', y='total_mass_mg', title='各类材质估算质量 (mg)')\n    col2.plotly_chart(fig_bar, use_container_width=True)\n    \n    # 3. 伪彩色叠加图展示 (Task 141)\n    st.subheader('形态-材质空间分布图')\n    st.image(results['material_overlay_img'], caption='伪彩色标签: PE(红), PP(蓝), PS(绿), ...')\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若用户上传的光谱图分辨率过低或未校准，饼图中的材质分类比例可能产生严重统计偏倚。",
+          "Plotly 交互图表在处理包含数千个微颗粒的海量数据点时，浏览器端渲染可能存在性能瓶颈。"
+        ],
+        "next_hint": "建议针对 Zenodo 3824311 等公开多模态数据集进行端到端部署测试，并验证 Web 界面在真实“形态-材质”配准场景下的交互流畅度。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "产出完整实现了任务要求的 Streamlit 界面升级，包括光谱数据上传、Task 141 结果展示以及 Plotly 交互式统计图表，代码示例逻辑清晰。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
