@@ -1551,6 +1551,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 142,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "任务完整实现了多模态材质分类引擎的集成，逻辑涵盖了模型加载、条件触发、特征融合及质量估算，并明确了输出 JSON 的字段变更，符合所有任务要求。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

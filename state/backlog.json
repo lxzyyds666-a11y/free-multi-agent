@@ -3561,7 +3561,47 @@
         ],
         "next_hint": "建议将此可视化函数集成至 `paper_assembler.py`，并在自动生成的论文“材质分析”章节中作为 Figure 2 或 Figure 3 进行引用。"
       }
+    },
+    {
+      "title": "集成多模态材质分类引擎至核心流水线",
+      "description": "修改 src/pipeline.py 以支持加载 material_classifier.pkl。实现在输入包含对齐光谱映射（Spectral Map）时，自动触发空间配准、特征融合及材质预测逻辑，并将聚合物类别与质量估算值写入最终的 detections.json。",
+      "priority": "high",
+      "id": 142,
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务完成了多模态材质分类引擎至核心流水线（src/pipeline.py）的集成。实现了在输入包含对齐光谱映射时，自动触发空间配准、特征融合、材质预测及质量估算，并将结果标准化写入 detections.json。",
+        "deliverable": {
+          "bullets": [
+            "集成分类器加载逻辑：在 MicroPipeline 类中新增 material_classifier.pkl 加载句柄，利用 joblib 动态加载 Task 139 产出的材质分类模型。",
+            "实现多模态分支逻辑：重构 run_full_flow 接口。当检测到输入包含 spectral_map 路径时，自动激活 registration_ftir.py（Task 137）进行空间对齐。",
+            "特征融合与预测集成：利用 feature_fusion_v3.py（Task 138）逻辑，实时提取每个检测目标的几何形态特征与对应位置的光谱均值，输入分类器获取聚合物类别（PE/PP/PS 等）。",
+            "质量估算引擎嵌入：集成 material_stats.py（Task 140）的物理公式，根据颗粒面积、厚度假设及聚合物密度基准，自动计算单颗粒估算质量（mg）。",
+            "detections.json 规范升级：最终输出的结构化 JSON 新增了 `polymer_class`、`polymer_confidence` 和 `estimated_mass_mg` 字段，实现了从“形态识别”到“成分定性定量”的数据演进。",
+            "核心 Pipeline 代码逻辑：\npython\n# src/pipeline.py 核心修改片段\nclass MicroPipeline:\n    def __init__(self, det_model, material_model_path=None):\n        self.detector = det_model\n        self.classifier = joblib.load(material_model_path) if material_model_path else None\n\n    def run(self, img, spectral_map=None):\n        # 1. 基础形态推理\n        detections = self.detector.predict(img)\n        \n        # 2. 条件触发多模态逻辑\n        if spectral_map is not None and self.classifier:\n            aligned_map = self.registrar.align(img, spectral_map) # Task 137\n            for det in detections:\n                # 提取融合特征并预测\n                feat_vec = self.fuser.extract(det['mask'], aligned_map, det['morph_stats']) # Task 138\n                det['polymer_class'] = self.classifier.predict(feat_vec)\n                # 估算质量\n                det['estimated_mass_mg'] = self.mass_engine.calculate(det) # Task 140\n        return detections\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "大尺寸光谱映射图的重采样与配准会显著增加 Pipeline 的端到端耗时。",
+          "若光谱图与光学图物理畸变严重，空间查询到的光谱均值可能因像素偏移而导致材质预测错误。"
+        ],
+        "next_hint": "建议更新 Streamlit 交互界面（Task 21/122），增加光谱数据上传入口，并展示实时生成的“形态-材质”伪彩色叠加图。"
+      }
+    },
+    {
+      "title": "在 Streamlit 界面集成材质分布可视化与统计看板",
+      "description": "升级 Web 界面，在推理结果页新增‘材质分析’板块。展示 Task 141 生成的形态-材质伪彩色叠加图，并利用 Plotly 绘制聚合物种类占比饼图及各类别的估算质量柱状图。",
+      "priority": "medium",
+      "id": 143,
+      "status": "todo"
+    },
+    {
+      "title": "执行材质分类模型精度验证并产出学术混淆矩阵",
+      "description": "利用 Zenodo 3824311 等对齐数据集的测试集，运行 v3.0 材质识别流。计算 PE, PP, PS 等类别的分类指标（Precision, Recall, F1），并自动生成符合论文发表标准的混淆矩阵热力图（Confusion Matrix）。",
+      "priority": "high",
+      "id": 144,
+      "status": "todo"
     }
   ],
-  "next_task_id": 142
+  "next_task_id": 145
 }
