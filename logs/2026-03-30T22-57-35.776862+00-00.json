@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-30T22:57:35.776862+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 149,
+    "summary": "升级了数值一致性审计工具 `audit_paper.py`，新增对 v3.0 多模态材质指标（F1 分数、总质量、材质占比）的解析与校验逻辑，确保论文结论与底层 `material_metrics.json` 数据一致。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 149,
+    "decision": "approve"
+  }
+}

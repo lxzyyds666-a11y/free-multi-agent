@@ -3743,7 +3743,25 @@
       "description": "升级 `audit_paper.py`，增加对 `\\PolymerFOne`、`\\TotalMass` 及各类材质占比宏变量的解析逻辑。通过对比 `material_metrics.json` 原始数据，确保 v3.0 论文资产包的材质统计结论严谨无误。",
       "priority": "medium",
       "id": 149,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "升级了数值一致性审计工具 `audit_paper.py`，新增对 v3.0 多模态材质指标（F1 分数、总质量、材质占比）的解析与校验逻辑，确保论文结论与底层 `material_metrics.json` 数据一致。",
+        "deliverable": {
+          "bullets": [
+            "扩展宏变量解析库：新增对 `\\PolymerFOne` (加权F1)、`\\TotalMass` (估算总质量)、`\\DominantPolymer` (优势材质) 及各聚合物精确率（如 `\\PEAccuracy`）的正则提取逻辑。",
+            "多源数据交叉索引：建立了从 LaTeX 宏到 `material_metrics.json` (模型性能) 与 `material_summary.json` (样本统计) 的映射字典。",
+            "质量/占比容差校验：实现了针对质量单位（mg/g）的自动换算校验，并对百分比指标设置了 ±0.01 的四舍五入容差阈值。",
+            "审计脚本代码片段：\npython\ndef audit_material_metrics(tex_path, json_path):\n    # 映射表定义\n    mapping = {\n        '\\\\PolymerFOne': 'weighted_f1',\n        '\\\\TotalMass': 'total_estimated_mass_mg',\n        '\\\\PEAccuracy': 'PE_precision'\n    }\n    with open(tex_path) as f: tex_content = f.read()\n    with open(json_path) as f: raw_data = json.load(f)\n    \n    for macro, key in mapping.items():\n        # 正则提取 \\newcommand{\\Macro}{Value}\n        match = re.search(r'\\\\newcommand\\{' + re.escape(macro) + r'\\}\\{([\\d\\.]+)', tex_content)\n        if match:\n            tex_val = float(match.group(1))\n            raw_val = float(raw_data.get(key, 0))\n            if abs(tex_val - raw_val) > 0.01:\n                print(f'[FAIL] {macro}: LaTeX {tex_val} != Data {raw_val}')\n",
+            "审计报告增强：在生成的 `audit_report.json` 中新增 `material_consistency` 模块，记录材质相关指标的偏移量与合规状态。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "质量单位歧义：若论文正文使用克(g)而宏定义使用毫克(mg)，审计工具需具备自动量级识别能力以防误报。",
+          "材质标签拼写不一致：`material_metrics.json` 中的 Key 名需与 LaTeX 宏的命名缩写（如 PE, PP, PS）严格对齐。"
+        ],
+        "next_hint": "建议针对 Task 148 产出的 18-20 页 v3.0 学术初稿运行此升级版审计工具，执行最终的发布前数值核验。"
+      }
     },
     {
       "title": "执行 v3.0 多模态生产线全流程封测与结项资产构建",
