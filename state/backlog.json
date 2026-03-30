@@ -3542,7 +3542,25 @@
       "description": "在 `src/visualizer.py` 中新增材质映射渲染逻辑。根据分类器结果，为不同聚合物类别的多边形掩码分配标准化色相（如 PE=红色，PP=蓝色，PS=绿色），产出用于论文“材质分析”章节的高分辨率伪彩色分布对比图（Material Map Overlay）。",
       "priority": "medium",
       "id": 141,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "在 `src/visualizer.py` 中实现了“形态-材质”伪彩色叠加渲染逻辑，能够将分类器的材质预测结果以标准化色相叠加至显微图像掩码上，产出符合学术论文要求的材质分布对比图（Material Map Overlay）。",
+        "deliverable": {
+          "bullets": [
+            "标准化材质色标定义：确立了常用聚合物的颜色映射表（Color Map），如 PE=红色 (#FF0000)，PP=蓝色 (#0000FF)，PS=绿色 (#00FF00)，PET=黄色 (#FFFF00)，PVC=紫色 (#800080)。",
+            "叠加渲染函数 `render_material_overlay`：利用 OpenCV 的 `addWeighted` 实现 Alpha 融合，在保留显微图像原始纹理的同时，为不同材质的多边形掩码（Mask）涂覆半透明伪彩色（默认 alpha=0.5）。",
+            "高分辨率导出配置：支持以 300 DPI 导出 PNG 或 PDF 格式，确保在论文排版中材质边界清晰，不产生像素插值模糊。",
+            "自动图例生成模块：在图像右侧或底部自动生成材质色块对照图例（Legend），包含聚合物缩写与对应色块，方便读者直观识别分布成分。",
+            "核心代码实现逻辑：\npython\nimport cv2\nimport numpy as np\n\nPOLYMER_COLORS = {\n    'PE': (0, 0, 255), 'PP': (255, 0, 0), 'PS': (0, 255, 0), \n    'PET': (0, 255, 255), 'PVC': (128, 0, 128)\n}\n\ndef render_material_map(image, detections, alpha=0.5):\n    overlay = image.copy()\n    for det in detections:\n        color = POLYMER_COLORS.get(det['material'], (128, 128, 128))\n        mask = det['mask_array']\n        # 填充掩码区域\n        overlay[mask > 0] = color\n    # 图像融合\n    return cv2.addWeighted(image, 1 - alpha, overlay, alpha, 0)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "对于极小颗粒（<10px），伪彩色叠加可能覆盖掉关键形态细节，需配合边缘高亮（Contour Drawing）增强识别度。",
+          "由于颜色空间转换（RGB/BGR/CMYK），在不同打印设备下可能存在色差，建议在 LaTeX 模板中通过特定宏包锁定色彩值。"
+        ],
+        "next_hint": "建议将此可视化函数集成至 `paper_assembler.py`，并在自动生成的论文“材质分析”章节中作为 Figure 2 或 Figure 3 进行引用。"
+      }
     }
   ],
   "next_task_id": 142
