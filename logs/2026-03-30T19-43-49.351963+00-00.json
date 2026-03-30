@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-30T19:43:49.351963+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 147,
+    "summary": "本任务扩展了 `micro_cli.py` 命令行工具，新增了 `--spectral_map` 参数以支持多模态（光学+光谱）输入，并集成了材质预测逻辑，实现了从命令行直接输出聚合物成分统计结果的功能。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 147,
+    "decision": "approve"
+  }
+}

@@ -4142,6 +4142,33 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 147,
+      "title": "扩展 CLI 工具以支持多模态数据输入与材质预测",
+      "worker_output": {
+        "summary": "本任务扩展了 `micro_cli.py` 命令行工具，新增了 `--spectral_map` 参数以支持多模态（光学+光谱）输入，并集成了材质预测逻辑，实现了从命令行直接输出聚合物成分统计结果的功能。",
+        "deliverable": {
+          "bullets": [
+            "更新 `micro_cli.py` 参数解析：新增 `--spectral_map` 参数用于接收 FTIR/Raman 映射图路径，以及 `--material_model` 参数用于指定分类器权重（默认指向 `material_classifier.pkl`）。",
+            "集成多模态推理逻辑：在 CLI 主逻辑中调用 `EngineManager` 的多模态接口。当检测到光谱输入时，自动触发空间配准、特征融合与材质分类流程。",
+            "终端摘要输出优化：在推理完成后，除了保存 JSON 结果，还会在终端实时打印聚合物统计摘要，包含各类聚合物（PE, PP, PS 等）的数量及估算总质量。",
+            "核心代码集成示例：\npython\n# micro_cli.py 扩展片段\nparser.add_argument('--spectral_map', type=str, help='路径：FTIR/Raman 光谱映射图')\nargs = parser.parse_args()\n\n# 调用 EngineManager 执行复合推理 (Task 127/142)\nresults = engine_manager.run_multimodal(\n    img_path=args.input, \n    spectral_path=args.spectral_map\n)\n\n# 打印材质统计摘要 (Task 140)\nprint('\\n=== Polymer Composition Summary ===')\nfor poly, data in results['summary'].items():\n    print(f'- {poly}: {data[\"count\"]} particles, {data[\"mass_mg\"]:.3f} mg')\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若光谱图与光学图长宽比差异过大，自动配准模块（Task 137）可能因互信息不足而报错，导致 CLI 中断。",
+          "在多模态模式下，内存中需同时载入分割模型、分类模型及高维光谱数组，在 8GB RAM 以下环境存在崩溃风险。"
+        ],
+        "next_hint": "建议将此扩展后的 CLI 工具作为 v3.0 多模态样机的核心入口，并编写配套的 README 更新说明，指导用户如何准备符合配准要求的光谱映射数据。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "worker 完整实现了任务要求的 CLI 参数扩展、EngineManager 逻辑集成以及终端摘要输出，内容具体且符合技术逻辑。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

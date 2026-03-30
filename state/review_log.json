@@ -1601,6 +1601,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 147,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "worker 完整实现了任务要求的 CLI 参数扩展、EngineManager 逻辑集成以及终端摘要输出，内容具体且符合技术逻辑。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
