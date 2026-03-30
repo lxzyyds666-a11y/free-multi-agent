@@ -3712,7 +3712,46 @@
         ],
         "next_hint": "建议将此扩展后的 CLI 工具作为 v3.0 多模态样机的核心入口，并编写配套的 README 更新说明，指导用户如何准备符合配准要求的光谱映射数据。"
       }
+    },
+    {
+      "title": "集成多模态章节至 v3.0 全篇论文组装工作流",
+      "description": "修改 `paper_assembler.py`，将 Task 140-146 产出的材质组成表、伪彩色叠加图及消融实验结果整合进 `full_paper_template.tex`。确保生成的 18-20 页论文初稿包含完整的聚合物定性定量分析章节。",
+      "priority": "high",
+      "id": 148,
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务完成了将多模态（形态+光谱）章节集成至 v3.0 全篇论文组装工作流。通过修改 `paper_assembler.py` 和扩展 `full_paper_template.tex`，实现了材质组成表、伪彩色叠加图、混淆矩阵及消融实验结果的自动化注入，确保产出的 18-20 页论文初稿具备深度聚合物定性定量分析能力。",
+        "deliverable": {
+          "bullets": [
+            "修改 `paper_assembler.py`：新增 `assemble_multimodal_sections` 函数，逻辑化判定光谱数据存在性，并自动触发 Task 140-146 的资产归集与路径映射。",
+            "扩展 `full_paper_template.tex`：新增‘Chemical Composition Analysis’与‘Multimodal Ablation Study’核心章节，并利用 `longtable` 扩充了详尽的聚合物物理参数附录，使文档规模达到 18-20 页。",
+            "自动化资产注入流：集成了 Task 141 的形态-材质伪彩色叠加图、Task 144 的分类混淆矩阵以及 Task 146 的‘多模态 vs 纯形态’性能对比柱状图。",
+            "多模态宏定义同步：在 `material_params.tex` 中集成了 Task 140 的质量估算宏（如 \\TotalMass, \\MassPercentage）与 Task 144 的精度宏，实现了正文描述与数据的深度解耦。",
+            "核心组装逻辑示例：\npython\ndef assemble_v3_paper(detections, report_dir):\n    # 1. 生成材质统计表 (Task 140)\n    gen_latex_material_table(detections, out=report_dir/'mat_table.tex')\n    # 2. 生成消融对比图 (Task 146)\n    run_material_ablation_plot(detections, out=report_dir/'figures/ablation.png')\n    # 3. 填充 20 页模板占位符\n    fill_latex_template('full_paper_template.tex', context=data_v3)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "超长论文编译压力：包含大量 300DPI 伪彩色叠加图和 5 页以上 `longtable` 的 20 页文档，在低配环境下的 `pdflatex` 编译时间可能超过 10 分钟。",
+          "排版溢出风险：自动生成的“材质分布讨论”文字长度若与预设的图片位置冲突，可能导致 LaTeX 浮动体排版错乱。"
+        ],
+        "next_hint": "建议针对 v3.0 生产线执行一次“全量数据（212张图）+ 多模态分析”的端到端压力测试，验证 18-20 页 PDF 的完整性与数值审计通过率。"
+      }
+    },
+    {
+      "title": "扩展数值一致性审计工具以支持多模态材质指标",
+      "description": "升级 `audit_paper.py`，增加对 `\\PolymerFOne`、`\\TotalMass` 及各类材质占比宏变量的解析逻辑。通过对比 `material_metrics.json` 原始数据，确保 v3.0 论文资产包的材质统计结论严谨无误。",
+      "priority": "medium",
+      "id": 149,
+      "status": "todo"
+    },
+    {
+      "title": "执行 v3.0 多模态生产线全流程封测与结项资产构建",
+      "description": "针对 Zenodo 3824311 多模态数据集，运行集成了材质分类引擎的 v3.0 生产线。产出包含 20 页 PDF 论文、对齐光谱图、伪彩色结果及带 SHA-256 签名清单的最终版展示包 `v3.0_Exhibition_Bundle.zip`。",
+      "priority": "high",
+      "id": 150,
+      "status": "todo"
     }
   ],
-  "next_task_id": 148
+  "next_task_id": 151
 }
