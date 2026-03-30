@@ -4085,6 +4085,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 145,
+      "title": "集成材质分类验证资产至论文自动组装流",
+      "worker_output": {
+        "summary": "本任务完成了将材质分类验证资产（Task 144 产出）集成至论文自动组装流。通过更新 `src/paper_assembler.py` 逻辑与 LaTeX 模板，实现了材质分类精度指标、F1-score 宏变量及混淆矩阵图片的自动化注入。",
+        "deliverable": {
+          "bullets": [
+            "更新 `src/paper_assembler.py`：新增 `assemble_material_validation` 逻辑，支持自动扫描 `output/material_val/` 目录下的 `material_metrics.json` 与 `confusion_matrix_v3.png`。",
+            "修改 `full_paper_template.tex`：在实验结果章节新增‘Polymer Identification Performance（聚合物识别性能）’子章节，预置了描述材质分类精度与 P-R 表现的学术段落模板。",
+            "配置 LaTeX 宏变量：在 `material_params.tex` 中新增 `\\PolymerFOne` (加权F1)、`\\PEAccuracy` (PE精确率) 等 6 个核心精度宏，并定义 `\\ConfusionMatrixPath` 图像引用占位符。",
+            "自动化资产映射：在资产包装函数中，将混淆矩阵图片强制纳入 `figures/` 归集路径，并执行 Task 74 定义的脱敏校验，确保合规性。",
+            "核心组装代码示例：\npython\n# src/paper_assembler.py 扩展片段\ndef inject_material_validation(metrics_json, tex_out):\n    with open(metrics_json) as f: data = json.load(f)\n    with open(tex_out, 'a') as tf:\n        tf.write(f'\\\\newcommand{{\\\\PolymerFOne}}{{{data[\"weighted_f1\"]:.2f}}}\\n')\n        tf.write(f'\\\\newcommand{{\\\\ConfusionMatrixPath}}{{{data[\"cm_img_name\"]}}}\\n')\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若 Task 144 未能产出标准命名的 JSON 指标文件，组装脚本将因找不到路径而跳过该章节或报错。",
+          "混淆矩阵图片的纵横比若与 LaTeX 模板中的子图布局不匹配，可能导致 PDF 渲染时出现遮挡或排版溢出。"
+        ],
+        "next_hint": "建议执行 v3.0 生产线的全流程闭环测试，验证生成的 18 页学术论文中“材质识别性能”章节的图文匹配度及数值准确性。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作产出完整覆盖了任务要求的脚本更新、模板修改及宏变量配置，逻辑清晰且提供了具体的实现细节。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
