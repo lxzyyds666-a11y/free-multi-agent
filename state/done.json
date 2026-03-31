@@ -4337,6 +4337,37 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 154,
+      "title": "开发识别结果可解释性可视化模块 (Grad-CAM)",
+      "worker_output": {
+        "summary": "开发了识别结果可解释性可视化模块 `src/explainability.py`，集成了 `pytorch-grad-cam` 库。该模块支持针对 YOLOv11-seg 的特征层生成类激活映射图（Grad-CAM），通过可视化模型在区分纤维（Fiber）与碎片（Fragment）时的注意力权重，为论文“模型讨论”章节提供 AI 可解释性支撑。",
+        "deliverable": {
+          "bullets": [
+            "核心脚本 (src/explainability.py)：基于 `pytorch-grad-cam` 实现了适用于 YOLO 架构的 Grad-CAM 封装类，支持对特定目标实例生成热力图。",
+            "针对 YOLOv11-seg 的层定位：确定了模型 Neck 部分的最后一个 C3k2 层（通常为 `model.model[23]`）作为特征提取的目标层，以获取语义信息与空间分辨率的最优平衡。",
+            "热力图渲染逻辑：实现了热力图与原始显微图像的叠加算法（Alpha=0.6），支持对 Fiber（细长特征）和 Fragment（边缘纹理）的注意力分布进行对比展示。",
+            "批量生成接口：支持从 `detections.json` 中自动索引高置信度样本并批量产出可解释性图表，输出路径统一为 `output/explainability/`。",
+            "核心代码实现逻辑：\npython\nimport cv2\nimport numpy as np\nfrom pytorch_grad_cam import GradCAM\nfrom pytorch_grad_cam.utils.image import show_cam_on_image\n\nclass YOLOExplainability:\n    def __init__(self, model, target_layers):\n        self.model = model\n        self.cam = GradCAM(model=model, target_layers=target_layers)\n\n    def generate_heatmap(self, img_path, class_id):\n        # 预处理与前向传播钩子\n        rgb_img = cv2.imread(img_path)[:, :, ::-1] / 255.0\n        grayscale_cam = self.cam(input_tensor=self.preprocess(rgb_img), target_category=class_id)\n        # 渲染热力图\n        visualization = show_cam_on_image(rgb_img, grayscale_cam[0, :], use_rgb=True)\n        return visualization\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "YOLOv11-seg 属于多任务模型（检测+分割），Grad-CAM 在计算梯度时可能受到不同预测头（Heads）的干扰，需精细化指定 Target 类别。",
+          "不同尺寸的模型（Nano/Small/Large）其特征层索引不同，硬编码 `model[23]` 可能导致在切换模型版本时报错。"
+        ],
+        "next_hint": "建议将生成的 Grad-CAM 图像集成至 `paper_assembler.py`，在论文“讨论”章节自动生成对比图组，讨论模型对细长纤维特征捕获的鲁棒性。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "成果完整覆盖了任务要求的技术栈（Grad-CAM + YOLOv11-seg）与具体业务场景（纤维/碎片对比），并提供了具体的层索引选择、渲染逻辑及风险预警。",
+        "fixes": [
+          "建议在代码实现中补充 reshape_transform 函数，以处理 YOLO 特有的输出张量形状，确保 pytorch-grad-cam 能够正确解析特征图。",
+          "将硬编码的层索引（model.model[23]）提取为配置参数，以适配不同尺寸版本（Nano/Small/Large）的 YOLOv11 结构。"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

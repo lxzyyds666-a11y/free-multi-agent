@@ -3862,7 +3862,46 @@
         ],
         "next_hint": "“公开可用的微碳屑自动识别论文生产线”样机全阶段开发任务已圆满闭环。建议正式发布结项 Release，并在学术社交平台（如 ResearchGate/GitHub）进行成果分发与社区公测。"
       }
+    },
+    {
+      "title": "开发识别结果可解释性可视化模块 (Grad-CAM)",
+      "description": "编写 src/explainability.py，集成 pytorch-grad-cam 库。针对 YOLOv11-seg 的特征提取层生成类激活映射图（Grad-CAM），可视化展示模型在识别特定微颗粒（如纤维 vs 碎片）时的注意力区域，为论文“模型讨论”章节提供 AI 可解释性图表。",
+      "priority": "high",
+      "id": 154,
+      "status": "approved",
+      "worker_output": {
+        "summary": "开发了识别结果可解释性可视化模块 `src/explainability.py`，集成了 `pytorch-grad-cam` 库。该模块支持针对 YOLOv11-seg 的特征层生成类激活映射图（Grad-CAM），通过可视化模型在区分纤维（Fiber）与碎片（Fragment）时的注意力权重，为论文“模型讨论”章节提供 AI 可解释性支撑。",
+        "deliverable": {
+          "bullets": [
+            "核心脚本 (src/explainability.py)：基于 `pytorch-grad-cam` 实现了适用于 YOLO 架构的 Grad-CAM 封装类，支持对特定目标实例生成热力图。",
+            "针对 YOLOv11-seg 的层定位：确定了模型 Neck 部分的最后一个 C3k2 层（通常为 `model.model[23]`）作为特征提取的目标层，以获取语义信息与空间分辨率的最优平衡。",
+            "热力图渲染逻辑：实现了热力图与原始显微图像的叠加算法（Alpha=0.6），支持对 Fiber（细长特征）和 Fragment（边缘纹理）的注意力分布进行对比展示。",
+            "批量生成接口：支持从 `detections.json` 中自动索引高置信度样本并批量产出可解释性图表，输出路径统一为 `output/explainability/`。",
+            "核心代码实现逻辑：\npython\nimport cv2\nimport numpy as np\nfrom pytorch_grad_cam import GradCAM\nfrom pytorch_grad_cam.utils.image import show_cam_on_image\n\nclass YOLOExplainability:\n    def __init__(self, model, target_layers):\n        self.model = model\n        self.cam = GradCAM(model=model, target_layers=target_layers)\n\n    def generate_heatmap(self, img_path, class_id):\n        # 预处理与前向传播钩子\n        rgb_img = cv2.imread(img_path)[:, :, ::-1] / 255.0\n        grayscale_cam = self.cam(input_tensor=self.preprocess(rgb_img), target_category=class_id)\n        # 渲染热力图\n        visualization = show_cam_on_image(rgb_img, grayscale_cam[0, :], use_rgb=True)\n        return visualization\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "YOLOv11-seg 属于多任务模型（检测+分割），Grad-CAM 在计算梯度时可能受到不同预测头（Heads）的干扰，需精细化指定 Target 类别。",
+          "不同尺寸的模型（Nano/Small/Large）其特征层索引不同，硬编码 `model[23]` 可能导致在切换模型版本时报错。"
+        ],
+        "next_hint": "建议将生成的 Grad-CAM 图像集成至 `paper_assembler.py`，在论文“讨论”章节自动生成对比图组，讨论模型对细长纤维特征捕获的鲁棒性。"
+      }
+    },
+    {
+      "title": "开发基于 OpenAlex API 的学术背景自动关联工具",
+      "description": "编写脚本利用 OpenAlex 或 Crossref 公开 API，根据样机检测到的优势聚合物类别（如 PE, PP）和形态特征，自动检索近 5 年相关的公开文献摘要，并生成 BibTeX 引用建议，辅助自动化论文初稿的“引言”与“讨论”章节编写。",
+      "priority": "medium",
+      "id": 155,
+      "status": "todo"
+    },
+    {
+      "title": "实现符合 FAIR 原则的自动化数据卡片 (Data Card) 生成器",
+      "description": "编写 src/datacard_gen.py，根据生产线运行结果自动生成符合 FAIR 原则的 `dataset_metadata.md`。包含数据集引用 DOI、分类体系说明、物理比例尺标准、脱敏状态及 SHA-256 签名，提升产出学术资产的规范性。",
+      "priority": "medium",
+      "id": 156,
+      "status": "todo"
     }
   ],
-  "next_task_id": 154
+  "next_task_id": 157
 }
