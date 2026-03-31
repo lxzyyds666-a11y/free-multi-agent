@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-31T08:15:12.901276+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 150,
+    "summary": "本任务完成了 v3.0 多模态生产线的全流程封测与结项资产构建。针对 Zenodo 3824311 数据集，通过空间配准、单阶段分割与材质分类引擎，全自动产出了包含 20 页学术论文、对齐光谱图及材质伪彩色结果的最终展示包 `v3.0_Exhibition_Bundle.zip`。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 150,
+    "decision": "approve"
+  }
+}
