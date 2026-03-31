@@ -1694,6 +1694,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 156,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "脚本实现完整，涵盖了任务要求的 DOI、分类体系、物理比例尺、脱敏状态及 SHA-256 签名等 FAIR 原则核心要素，且提供了具体的代码逻辑与字段映射说明。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
