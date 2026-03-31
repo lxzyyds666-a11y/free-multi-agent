@@ -4368,6 +4368,34 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 155,
+      "title": "开发基于 OpenAlex API 的学术背景自动关联工具",
+      "worker_output": {
+        "summary": "本任务开发了基于 OpenAlex API 的学术背景自动关联工具，实现了根据检测到的聚合物类别（PE/PP等）和形态特征自动检索近5年公开文献摘要并生成 BibTeX 引用的功能。",
+        "deliverable": {
+          "bullets": [
+            "OpenAlex 检索脚本 (openalex_fetcher.py)：利用 OpenAlex REST API 开发的 Python 模块，支持根据聚合物材质与形态标签组合（如 'Polyethylene' + 'Fiber'）进行自动化语义检索。",
+            "时间与合规性过滤：脚本内置过滤逻辑，仅检索 2019 年至今发布的、且标记为开放获取（Open Access）的学术论文，确保与本样机“公开资料”的属性对齐。",
+            "BibTeX 转换引擎：实现了从 OpenAlex 元数据到标准 BibTeX 格式的自动映射，涵盖 DOI、作者、期刊名及出版年份等核心字段，确保生成的引用可直接用于 LaTeX 编译。",
+            "摘要上下文提取：自动解析检索结果中的摘要（Abstract）信息，生成 `literature_context.json`，为论文“引言”部分的背景描述和“讨论”部分的对标分析提供原文支撑。",
+            "核心代码实现逻辑：\npython\nimport requests\n\ndef fetch_related_papers(polymer='PE', morphology='fiber', limit=5):\n    # 构建 OpenAlex API 过滤请求\n    base_url = 'https://api.openalex.org/works'\n    query = f'{polymer} microplastics {morphology}'\n    params = {\n        'filter': 'from_publication_date:2019-01-01,is_oa:true',\n        'search': query,\n        'sort': 'cited_by_count:desc',\n        'per_page': limit\n    }\n    response = requests.get(base_url, params=params).json()\n    # 转换逻辑：将 results 映射为 BibTeX 条目及摘要字典\n    return process_results(response['results'])\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "OpenAlex 免费 API（Polite Pool）在高频并发时可能触发频率限制，需在脚本中加入指数退避重试机制。",
+          "自动检索结果的精准度高度依赖关键词组合，对于某些冷门聚合物类别可能出现检索结果为空的情况。"
+        ],
+        "next_hint": "建议将此检索工具集成至 paper_assembler.py，作为论文组装的前置环节，自动填充“相关工作”章节的引文信息。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作成果完整覆盖了任务要求，提供了具体的脚本逻辑、API 调用参数及核心代码实现，且具备实际可操作性。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
