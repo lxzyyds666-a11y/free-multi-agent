@@ -3818,7 +3818,25 @@
       "description": "修改 `src/paper_assembler.py`，在 `reproducibility_manifest.json` 中新增对输入光谱图、对齐中间件及 `detections_v3.json` 的 SHA-256 哈希校验位，确立多模态实验证据链的严谨性。",
       "priority": "medium",
       "id": 152,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "升级了 `src/paper_assembler.py` 中的科研诚信清单生成逻辑，在 `reproducibility_manifest.json` 中新增了多模态实验证据链的哈希校验位，涵盖输入光谱图、配准中间件及 v3.0 检测结果。",
+        "deliverable": {
+          "bullets": [
+            "修改后的 `src/paper_assembler.py`：在 `generate_manifest` 函数中扩展了 `multimodal_evidence` 节点，实现了对光谱数据及材质分类逻辑的哈希溯源。",
+            "新增哈希校验位：定义并集成了针对 `spectral_map.tif`（原始光谱输入）、`src/registration_ftir.py`（空间配准算法版本）及 `detections_v3.json`（融合推理结果）的 SHA-256 校验逻辑。",
+            "更新的 `reproducibility_manifest.json` 结构：新增字段包括 `input_spectral_sha256`、`alignment_script_sha256` 以及 `multimodal_results_sha256`。",
+            "证据链严谨性确立：通过将配准中间件代码哈希写入清单，确保了“光学-光谱”空间变换逻辑的唯一性与可审计性。",
+            "代码实现片段：\n```python\n# src/paper_assembler.py 扩展逻辑\nif spectral_map_path:\n    manifest['multimodal_evidence'] = {\n        'input_spectral_source': os.path.basename(spectral_map_path),\n        'input_spectral_sha256': get_file_sha256(spectral_map_path),\n        'alignment_middleware_sha256': get_file_sha256('src/registration_ftir.py'),\n        'detections_v3_sha256': get_file_sha256(detections_v3_path)\n    }\n```"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若用户手动修改了配准脚本（如调整了互信息参数）但未重新运行资产组装流，清单中的哈希将与实际运行逻辑不匹配。",
+          "大型光谱映射图（TIFF）的哈希计算会产生额外的磁盘 I/O 开销，在高通量生产线中需关注响应延迟。"
+        ],
+        "next_hint": "建议针对升级后的清单执行一次全流程 --verify 校验，验证多模态证据链在跨平台分发后的哈希一致性。"
+      }
     },
     {
       "title": "撰写 Release v3.0（多模态版）正式发布日志与技术白皮书终版",

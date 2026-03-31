@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-31T10:40:14.369121+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 152,
+    "summary": "升级了 `src/paper_assembler.py` 中的科研诚信清单生成逻辑，在 `reproducibility_manifest.json` 中新增了多模态实验证据链的哈希校验位，涵盖输入光谱图、配准中间件及 v3.0 检测结果。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 152,
+    "decision": "approve"
+  }
+}
