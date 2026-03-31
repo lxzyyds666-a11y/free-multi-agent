@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-03-31T11:37:42.577216+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 153,
+    "summary": "本任务完成了 Release v3.0（多模态版）正式发布日志与技术白皮书终版的撰写。系统性汇总了光谱对齐、材质分类及质量估算的技术指标，标志着样机从“形态测量”向“化学定性”生产线的跨越，并同步更新了 Zenodo 元数据。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 153,
+    "decision": "approve"
+  }
+}
