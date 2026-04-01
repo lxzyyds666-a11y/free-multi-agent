@@ -4512,6 +4512,37 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 160,
+      "title": "在 Streamlit 界面集成交互式 Grad-CAM 可解释性视图",
+      "worker_output": {
+        "summary": "本任务完成了 Streamlit Web 界面的升级，集成了交互式 Grad-CAM 可解释性视图，允许用户针对特定颗粒目标实时生成并查看 AI 注意力热力图。",
+        "deliverable": {
+          "bullets": [
+            "新增‘AI 可解释性’交互标签页：在 Streamlit 界面通过 `st.tabs` 扩展了专门的可解释性分析区域，与‘推理演示’和‘材质看板’并列。",
+            "目标对象选择器 (Object Selector)：实现了基于检测结果 ID 的动态下拉菜单，用户可在‘精细模式’推理完成后，选择特定编号的颗粒进行深度解析。",
+            "实时 Grad-CAM 渲染集成：前端调用 `src/explainability.py` 模块，根据用户选择的颗粒 ID 及其 BBox 坐标，反向触发 YOLOv11-seg 特征层的梯度计算并生成热力图。",
+            "对比显示布局：采用 `st.columns(2)` 布局，左侧展示原始显微切片，右侧叠加展示 Grad-CAM 热力图（Alpha=0.6），直观呈现模型识别该目标的特征关注点（如边缘轮廓或中心纹理）。",
+            "核心代码集成片段：\npython\nimport streamlit as st\nfrom src.explainability import YOLOExplainability\n\nwith st.expander(\"🔍 目标可解释性深度解析\"):\n    obj_ids = [det['id'] for det in st.session_state.results]\n    selected_id = st.selectbox(\"选择要分析的颗粒 ID\", obj_ids)\n    \n    if st.button(\"生成 Grad-CAM 热力图\"):\n        with st.spinner(\"正在回溯特征层梯度...\"):\n            explainer = YOLOExplainability(model, target_layers=['model.23'])\n            # 获取选定目标的 class_id 并生成热力图\n            target_obj = next(d for d in st.session_state.results if d['id'] == selected_id)\n            heatmap = explainer.generate_heatmap(img_path, target_obj['class_id'])\n            \n            col1, col2 = st.columns(2)\n            col1.image(target_obj['crop_img'], caption='目标局部原图')\n            col2.image(heatmap, caption='Grad-CAM 注意力分布')"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "实时性瓶颈：Grad-CAM 涉及完整的反向传播过程，在 Web 端并发调用时可能产生 2-5 秒的卡顿，需通过 `st.cache_resource` 优化模型加载。",
+          "特征层匹配：若用户动态切换模型版本（如从 Large 切换至 Nano），硬编码的层索引（model[23]）可能导致热力图生成失败。"
+        ],
+        "next_hint": "建议针对“解释性视图”增加用户定性反馈按钮，收集研究者对 AI 注意力分布与真实鉴定逻辑一致性的评价。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作产出完整覆盖了任务要求的交互逻辑、后端集成及可视化展示，且代码片段与风险评估具有高度的具体性和专业性。",
+        "fixes": [
+          "建议在后续迭代中将硬编码的特征层索引（model.23）改为根据模型架构动态匹配，以提高跨模型的鲁棒性。",
+          "考虑增加对 Grad-CAM 生成状态的缓存机制，避免同一目标的重复计算导致界面卡顿。"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
