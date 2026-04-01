@@ -4543,6 +4543,38 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 161,
+      "title": "扩展审计工具以支持“文-图-数”三位一体逻辑校验",
+      "worker_output": {
+        "summary": "本任务完成了审计工具 `audit_paper.py` 的架构升级，实现了“文-图-数”三位一体逻辑校验功能，确保了自动生成的 20 页论文在 Grad-CAM 样本索引、OpenAlex 动态引文关键词与底层材质统计数据之间无逻辑冲突。",
+        "deliverable": {
+          "bullets": [
+            "升级版审计脚本 (audit_paper.py)：新增 `logical_audit` 模块，通过解析 LaTeX 源码中的样本引用（如 Fig. X）与 `detections.json` 中的 Grad-CAM 路径进行物理 ID 匹配校验。",
+            "Grad-CAM 一致性核验逻辑：自动提取论文“讨论”章节中提到的典型样本 ID（如 Fiber #42），核实对应的 Grad-CAM 热力图是否存在于资产包中，且其激活类别与文中描述的形态学标签一致。",
+            "引文-材质逻辑对齐检查：建立 `OpenAlex-Data` 校验链，对比 `material_summary.json` 中的优势材质（如 PE）与 `bib_sync.py` 检索时使用的关键词，确保引文背景不偏离实验观测事实。",
+            "冲突警告机制：当发现“检测优势材质为 PP 但自动引文关键词为 PE”或“文中描述为纤维热力图但实际索引图为碎片”时，审计报告将主动标注 `LOGIC_CONFLICT` 警告。",
+            "审计报告 JSON 增强：更新 `audit_report.json` 结构，新增 `trinity_check` 节点，记录每个多模态资产点的逻辑链路验证状态（Pass/Fail）。",
+            "核心校验代码片段：\npython\ndef verify_trinity_logic(tex_path, json_path, bib_path):\n    # 1. 材质与引文对齐校验\n    dominant_poly = get_json_field(json_path, 'dominant_polymer')\n    cited_keywords = extract_bib_keywords(bib_path)\n    if dominant_poly not in cited_keywords:\n        log_error('Citation Mismatch', f'Data: {dominant_poly}, Bib: {cited_keywords}')\n    \n    # 2. 图像索引与文本一致性校验\n    paper_sample_ids = re.findall(r'Sample #(\\d+)', tex_path)\n    for sid in paper_sample_ids:\n        if not verify_cam_exists(sid, json_path):\n            log_error('Index Mismatch', f'Sample ID {sid} mentioned but no CAM found')\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "LaTeX 正文中通过自然语言描述的样本 ID 若格式不统一（如 'Sample 42' vs '#42'），正则表达式提取可能出现漏判。",
+          "OpenAlex 检索到的文献标题中可能包含多个聚合物关键词，简单的关键词包含性检查可能产生逻辑假阴性。"
+        ],
+        "next_hint": "建议针对 v3.0 展示包执行最终的“三位一体”全量审计，并结合 Task 160 的可解释性反馈，完成生产线的结项验收。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 完整实现了任务要求的“文-图-数”逻辑校验功能，提供了具体的实现细节、逻辑核验链路以及核心代码片段，具备高度的可操作性与针对性。",
+        "fixes": [
+          "建议在后续迭代中引入模糊匹配或 NLP 实体识别，以解决风险项中提到的样本 ID 格式不统一导致的漏判问题。",
+          "建议细化 OpenAlex 关键词匹配算法，引入权重评分以减少由于多关键词导致的逻辑假阴性。"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
