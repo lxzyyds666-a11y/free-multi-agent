@@ -4070,7 +4070,26 @@
       "description": "更新 Hugging Face Space 的部署配置，集成 material_classifier.onnx 权重及多模态推理分支。优化在线环境下的 LaTeX 编译路径映射，确保用户可通过浏览器上传光谱图并一键获取完整的 v3.0 论文资产包。",
       "priority": "high",
       "id": 162,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务完成了 Hugging Face Space 向 v3.0（多模态全功能版）的全面升级，集成了形态-材质融合推理引擎及自动化论文生产线，实现了从光谱上传到学术资产包一键生成的云端闭环。",
+        "deliverable": {
+          "bullets": [
+            "配置文件升级：更新了 `requirements.txt`（新增 onnxruntime, skl2onnx, requests）及 `packages.txt`（集成 texlive-xetex 与 libgl1），确保 v3.0 环境兼容性。",
+            "模型权重集成：在 Space 存储库中正式上线了 `micro_v4_seg.onnx` 与 `material_classifier.onnx`，实现了形态分割与材质分类的全 ONNX 化推理。",
+            "多模态 UI 交互：在 Streamlit 侧边栏新增了“光谱映射图（FPA-FTIR/Raman）”上传入口及“自动配准”开关，支持实时展示“形态-材质”伪彩色叠加视图。",
+            "LaTeX 路径映射优化：针对 Hugging Face 容器环境优化了 `pdflatex` 路径映射，解决了跨平台路径转义问题，并集成了异步编译与状态轮询机制（Task 89）。",
+            "一键资产包产出：集成了 `paper_assembler.py` 终版逻辑，用户可通过浏览器一键触发“推理-审计-组装”流，下载包含 20 页 PDF、脱敏图像、SHA-256 校验清单及 FAIR 数据卡片的 v3.0 资产包。",
+            "智能配置看板：集成了硬件探测逻辑，自动识别 HF Space 算力资源并推荐“超轻量”或“多模态”运行模式，有效预防在线环境下的 OOM 崩溃。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "Hugging Face 免费层（16GB RAM）在执行 4K 大图的多模态配准与 SAM 2 细化时，依然存在瞬时内存溢出的风险。",
+          "在线编译大型 LaTeX 论文（含大量矢量图）可能因耗时过长触发浏览器的 Gateway Timeout，需依赖异步任务队列。"
+        ],
+        "next_hint": "建议正式发布 v3.0 在线演示链接，并利用 OpenAlex API 功能开展针对真实学术文献引用的社区公测。"
+      }
     }
   ],
   "next_task_id": 163
