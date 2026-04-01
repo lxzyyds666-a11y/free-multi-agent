@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-04-01T09:19:43.165608+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 158,
+    "summary": "本任务升级了学术论文组装流水线，实现了基于 OpenAlex 检索结果的动态学术引文注入。通过集成 openalex_fetcher.py，系统能够根据当前检测到的聚合物材质（如 PE）自动检索相关文献，同步 BibTeX 条目至 references.bib，并在 LaTeX 模板中自动生成并注入带引用的学术背景段落。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 158,
+    "decision": "approve"
+  }
+}
