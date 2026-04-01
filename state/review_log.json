@@ -1727,6 +1727,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 159,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 完整实现了在资产归集流程中强制集成数据卡片的逻辑，包含代码层面的调用、目录结构的对齐以及配套文档的更新，且输出内容具体，无明显越界或幻觉。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-04-01T11:39:24.908364+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 159,
+    "summary": "本任务在 `paper_assembler.py` 的资产归集流程中强制集成了 FAIR 数据卡片生成逻辑，确保每个发布的 ZIP 资产包根目录均包含 `dataset_metadata.md`，并同步更新了项目文档以展示数据卡片入口。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 159,
+    "decision": "approve"
+  }
+}
