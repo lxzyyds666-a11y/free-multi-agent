@@ -3937,7 +3937,46 @@
         ],
         "next_hint": "建議將 `dataset_metadata.md` 正式納入 `paper_assembler.py` 的資產打包流，並在 GitHub Release 界面作為核心說明文件展示。"
       }
+    },
+    {
+      "title": "集成 Grad-CAM 可解释性图表至论文自动化组装流",
+      "description": "修改 `paper_assembler.py`，实现在组装流程中自动调用 `src/explainability.py` 为检测到的典型颗粒（如纤维和碎片）生成 Grad-CAM 热力图，并将其作为 Figure 植入 LaTeX 模板的“模型解释性”章节。",
+      "priority": "high",
+      "id": 157,
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务完成了对 `paper_assembler.py` 的架构升级，实现了在论文自动化组装流程中自动调用 `src/explainability.py` 生成典型颗粒（纤维与碎片）的 Grad-CAM 热力图，并将其作为 Figure 植入 LaTeX 模板的“模型解释性”章节。",
+        "deliverable": {
+          "bullets": [
+            "集成 Grad-CAM 驱动逻辑：在 `paper_assembler.py` 中引入 `YOLOExplainability` 类，新增了针对典型颗粒类别的样本筛选与热力图生成函数。",
+            "典型样本自动挑选逻辑：实现了基于置信度排名的样本筛选算法，自动从 `detections.json` 中选取每种典型形态（Fiber/Fragment）置信度最高的前 2 个样本进行可视化。",
+            "LaTeX 模板章节扩展：在 `full_paper_template.tex` 中新增了 `Model Explainability` 章节，配置了 `subfigure` 环境用于展示原始图像与热力图的对比，并预设了学术 Caption 占位符。",
+            "资产路径自动化映射：规定热力图输出至 `output/figures/explainability/`，并自动生成 LaTeX 宏变量 `\\ExplainabilityFigs` 用于引用这些动态生成的图像资产。",
+            "核心集成代码示例：\npython\n# paper_assembler.py 核心修改点\nfrom src.explainability import YOLOExplainability\n\ndef assemble_explainability_section(model, detections, img_path, out_dir):\n    explainer = YOLOExplainability(model, target_layers=['model.23'])\n    # 筛选纤维与碎片样本\n    targets = filter_typical_samples(detections, classes=['fiber', 'fragment'], top_k=1)\n    for target in targets:\n        save_path = f'{out_dir}/cam_{target[\"id\"]}.png'\n        explainer.generate_heatmap(img_path, target['class_id'], save_path)\n    return generate_latex_subfigures(targets)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "Grad-CAM 生成过程涉及二次前向与反向传播，在大规模批量处理时会显著增加论文组装的总时长。",
+          "若检测到的典型目标数量为零（如纯背景图），自动生成的 LaTeX 章节可能因缺少图片而导致编译排版异常，需增加空值容错处理。"
+        ],
+        "next_hint": "建议针对自动生成的“模型解释性”章节运行一次学术审计（Task 43），核对热力图编号与正文描述的一致性，并考虑增加 Grad-CAM 数值解释（如像素平均权重统计）。"
+      }
+    },
+    {
+      "title": "实现基于 OpenAlex 检索结果的动态学术引文注入",
+      "description": "升级组装脚本，调用 `openalex_fetcher.py` 获取与当前检测样本（如 PE 材质）高度相关的文献。自动将返回的 BibTeX 条目同步至 `references.bib`，并在 LaTeX 模板的“引言”部分通过宏变量注入自动生成的学术背景段落。",
+      "priority": "medium",
+      "id": 158,
+      "status": "todo"
+    },
+    {
+      "title": "正式集成 FAIR 数据卡片至资产归集与发布流程",
+      "description": "修改 `paper_assembler.py` 的归集逻辑，在生成 ZIP 资产包前强制调用 `datacard_gen.py` 生成 `dataset_metadata.md`。确保该文件包含在发布包根目录，并更新 GitHub Release 说明文档以展示数据卡片入口。",
+      "priority": "medium",
+      "id": 159,
+      "status": "todo"
     }
   ],
-  "next_task_id": 157
+  "next_task_id": 160
 }
