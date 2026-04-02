@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-04-02T09:17:36.660282+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 165,
+    "summary": "本任务完成了 v3.0 全功能样机“从光谱到论文”最终版综合指南的编制。整合了前序 164 个任务的技术资产，形成了一份涵盖多模态预处理、单/两阶段推理切换、光谱配准、AI 可解释性分析及 FAIR 科研诚信体系的标准化技术文档（docs/v3_COMPLETE_GUIDE.md）。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 165,
+    "decision": "approve"
+  }
+}

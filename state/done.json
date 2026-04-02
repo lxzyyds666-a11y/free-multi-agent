@@ -4662,6 +4662,35 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 165,
+      "title": "编制 v3.0 全功能样机“从光谱到论文”最终版综合指南",
+      "worker_output": {
+        "summary": "本任务完成了 v3.0 全功能样机“从光谱到论文”最终版综合指南的编制。整合了前序 164 个任务的技术资产，形成了一份涵盖多模态预处理、单/两阶段推理切换、光谱配准、AI 可解释性分析及 FAIR 科研诚信体系的标准化技术文档（docs/v3_COMPLETE_GUIDE.md）。",
+        "deliverable": {
+          "bullets": [
+            "架构选择指南：详细对比了 v1.2 两阶段高精度架构（YOLOv8+SAM 2）与 v2.0 单阶段高通量架构（YOLOv11-seg + TensorRT/OpenVINO）的适用场景与算力配置。",
+            "多模态数据标准：定义了光学显微图像与 FPA-FTIR/Raman 光谱映射图的标准化输入规范、元数据对齐协议及物理比例尺（Pixel-to-um）换算逻辑。",
+            "核心工作流实操：串联了‘自动白平衡/CLAHE -> SAHI 切片推理 -> 空间坐标配准 -> 材质分类与质量估算’的闭环路径，并提供了各环节的 CLI 参数对照表。",
+            "学术资产自动生成规范：说明了 20 页 LaTeX 论文模板的自动填充机制，包含 Grad-CAM 热力图生成、OpenAlex 动态引文注入及 longtable 跨页排版技巧。",
+            "科研诚信与 FAIR 体系：详细说明了 --verify 校验工具的使用、SHA-256 全局哈希清单生成、EXIF 元数据脱敏以及 FAIR 原则数据卡片（Data Card）的结构。",
+            "交互式增强功能：指导用户利用 Web 界面执行在线学术讨论文本润色、离群点过滤强度动态调节以及全系统环境诊断（--diagnose）。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "环境依赖复杂性：LaTeX 编译环境（TeX Live）与 GPU 驱动在非容器化环境下的路径配置仍是用户实操中的主要风险点。",
+          "硬件门槛：SAM 2 的批处理推理对显存（>12GB）有强制要求，若用户未参考硬件自适应建议，易触发 OOM。"
+        ],
+        "next_hint": "建议将此综合指南作为样机 v3.0 结项发布的核心入口文档，正式打标 GitHub Release v3.0 并进入样机维护阶段。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "交付物完整覆盖了任务要求的技术要点，包括多模态标准、自动配准、Grad-CAM及FAIR体系，且参数化描述非常具体，具备高度的可操作性。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
