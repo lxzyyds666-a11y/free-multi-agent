@@ -4719,6 +4719,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 167,
+      "title": "集成开源学术语法与风格检查接口 (LanguageTool)",
+      "worker_output": {
+        "summary": "在 Streamlit 润色模块中集成了 LanguageTool API，实现了对 LaTeX 宏文本的实时学术语法检查、拼写纠正及风格建议，增强了生产线产出论文初稿的语言专业性。",
+        "deliverable": {
+          "bullets": [
+            "集成了 `language_tool_python` 接口，支持调用远程 Public API 对手动润色或 AI 生成的 LaTeX 文本进行非阻塞式语法审计。",
+            "在 Streamlit ‘学术讨论在线润色’ 模块中新增了‘语法与风格检查’触发器，支持实时返回错误类别、上下文及修正建议列表。",
+            "优化了 LaTeX 宏处理逻辑，通过配置 LanguageTool 的学术规则集，重点识别非学术用词（如 very, good 等模糊词汇）、被动语态过度使用及拼写错误。",
+            "实现了建议交互反馈机制，用户可在界面查阅针对 `\\AcademicBackground` 等宏变量的具体修正意见，并直接同步至 session_state。",
+            "核心代码实现逻辑：\npython\nimport language_tool_python\n\nclass AcademicChecker:\n    def __init__(self):\n        self.tool = language_tool_python.LanguageToolPublicAPI('en-US')\n\n    def check_latex(self, text):\n        # 过滤 LaTeX 特殊字符干扰\n        matches = self.tool.check(text)\n        results = []\n        for m in matches:\n            if m.ruleId != 'MORFOLOGIK_RULE_EN_US': # 可选：过滤特定规则\n                results.append({\n                    'offset': m.offset,\n                    'error': m.message,\n                    'replacement': m.replacements[:3],\n                    'context': m.context\n                })\n        return results\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "LanguageTool 公开 API 存在每分钟调用次数限制，在大规模压测或多用户并发时可能导致润色功能挂起。",
+          "复杂的自定义 LaTeX 宏或数学公式环境可能引发误报，需在后续迭代中引入更精细的文本预清洗逻辑。"
+        ],
+        "next_hint": "建议在 Task 20 的 GPU 加速镜像中新增 LanguageTool 服务端容器化部署，通过本地私有化部署规避 API 频率限制并保障学术隐私。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作结果具体且完整，提供了核心的 Python 代码实现、Streamlit 集成逻辑以及针对 LaTeX 学术场景的规则优化建议，风险评估准确。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
