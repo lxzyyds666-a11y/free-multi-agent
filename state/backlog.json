@@ -4243,7 +4243,47 @@
         ],
         "next_hint": "建议访问生成的 GitHub Pages 链接进行最终的导航逻辑验证，并执行一次全站搜索功能自测。"
       }
+    },
+    {
+      "title": "实现多目标期刊 LaTeX 模板切换机制 (.cls 管理)",
+      "description": "在 `src/paper_assembler.py` 中增加模板样式选择逻辑。引入 2-3 种主流学术期刊模板（如 Elsevier 单栏、IEEE 双栏），支持用户通过参数切换输出 PDF 的排版风格，提升“生产线”的投稿适配能力。",
+      "priority": "medium",
+      "id": 169,
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务在 `src/paper_assembler.py` 中实现了多目标期刊 LaTeX 模板切换机制，支持通过参数动态选择 .cls 文件（如 Elsevier 和 IEEE），显著提升了生产线的投稿适配能力。",
+        "deliverable": {
+          "bullets": [
+            "模板管理架构：在 `templates/cls/` 目录下引入了 `elsarticle.cls`（Elsevier 单栏）和 `IEEEtran.cls`（IEEE 双栏）标准模板文件。",
+            "动态模板映射逻辑：在 `PaperAssembler` 类中增加了 `template_map`，将用户参数（如 'elsevier', 'ieee'）映射至对应的类文件与预设宏包组合。",
+            "核心逻辑实现 (src/paper_assembler.py)：重构了 `generate_latex_header` 函数，支持根据选择的模板动态注入 `\\documentclass` 声明及期刊特有的作者/机构排版环境。",
+            "CLI 参数扩展：在 `micro_cli.py` 中新增 `--template` 参数（默认值 'elsevier'），允许用户在命令行一键切换 PDF 的排版风格。",
+            "排版自适应补丁：针对 IEEE 双栏模式下的宽图片（Figure*）与宽表格（Table*）自动调整 LaTeX 环境标签，确保跨栏排版不溢出。",
+            "代码集成片段：\npython\nclass TemplateManager:\n    CONFIG = {\n        'elsevier': {'cls': 'elsarticle', 'opts': 'review,12pt'},\n        'ieee': {'cls': 'IEEEtran', 'opts': 'journal,twocolumn,letterpaper'}\n    }\n    def get_header(self, style):\n        conf = self.CONFIG.get(style, self.CONFIG['elsevier'])\n        return f\"\\\\documentclass[{conf['opts']}]{{{conf['cls']}}}\\n\"\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "不同期刊模板对作者信息（Author/Affiliation）的定义语法差异巨大，强制套用可能导致编译警告。",
+          "IEEE 双栏模板对大尺寸形态指纹热力图的排版极度敏感，可能需要额外的 [t!] 浮动控制。"
+        ],
+        "next_hint": "建议开发一个通用的“作者/机构元数据转换器”，将标准化的 JSON 人员信息自动转换为适配不同 .cls 语法的 LaTeX 代码块。"
+      }
+    },
+    {
+      "title": "集成私有化 LanguageTool 服务至 Docker 工作流",
+      "description": "修改 `docker-compose.yaml`，集成 LanguageTool 官方容器镜像。重构 `src/academic_checker.py` 以优先连接本地私有服务，确保在不联网且保障学术隐私的前提下，完成自动化讨论文本的语法纠错与风格优化。",
+      "priority": "high",
+      "id": 170,
+      "status": "todo"
+    },
+    {
+      "title": "执行基于文档指引的“第三方视角”全链路复现验证",
+      "description": "参照 Task 168 部署的在线文档，在全新的隔离环境中仅依靠文档指引完成 v3.0 生产线的搭建与运行。记录文档中描述模糊或缺失的路径配置细节，优化 MkDocs 搜索索引与导航逻辑，确保样机的“易复现性”。",
+      "priority": "medium",
+      "id": 171,
+      "status": "todo"
     }
   ],
-  "next_task_id": 169
+  "next_task_id": 172
 }
