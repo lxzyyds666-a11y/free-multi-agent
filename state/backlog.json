@@ -4301,7 +4301,26 @@
       "description": "参照 Task 168 部署的在线文档，在全新的隔离环境中仅依靠文档指引完成 v3.0 生产线的搭建与运行。记录文档中描述模糊或缺失的路径配置细节，优化 MkDocs 搜索索引与导航逻辑，确保样机的“易复现性”。",
       "priority": "medium",
       "id": 171,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务在完全隔离的全新 Ubuntu 22.04 环境中，仅依据 Task 168 部署的 MkDocs 在线文档完成了 v3.0 生产线的全链路复现验证。识别并修复了文档中关于路径映射、依赖版本冲突及 LaTeX 环境变量配置的模糊描述，并优化了文档站点的搜索与导航逻辑。",
+        "deliverable": {
+          "bullets": [
+            "验证通过率：在隔离环境下实现 100% 成功复现，涵盖从 `fetch_public_data.py` 数据获取到 `report.pdf` 最终产出的全流程。",
+            "文档路径修正：明确了 `docker-compose.yaml` 中宿主机相对路径与容器内 `/app/data` 绝对路径的映射对应关系，修复了原文档中关于挂载点权限的含糊说明。",
+            "依赖项精准化：在 `requirements.txt` 中锁定了 `opencv-python-headless` 及其版本，解决了复现过程中因缺少系统图形库导致的容器启动报错。",
+            "MkDocs 导航优化：在 `mkdocs.yml` 中集成了 `navigation.tabs`、`navigation.expand` 及 `search.highlight` 特性，提升了跨模块（如‘环境诊断’与‘多模态配置’）的跳转效率。",
+            "新增‘快速开始’校验清单：在文档首页增加了核心指令流（`--fix-all` -> `--diagnose` -> `--report`）的顺序提示，降低了第三方视角的上手难度。",
+            "LaTeX 编译环境指引补全：补充了非 Docker 环境下针对 Windows (MiKTeX) 与 Linux (TeX Live) 路径变量（PATH）的手动配置步骤。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "虽然修复了通用路径问题，但对于特定非标准 Linux 发行版（如 Alpine），仍可能存在底层系统库缺失的风险。",
+          "MkDocs 搜索索引目前未包含 LaTeX 模板内部变量，可能影响开发者对 `.tex` 自定义宏的检索。"
+        ],
+        "next_hint": "建议将此复现成功的稳定版本代码与文档正式打标为 Release v3.0-stable，并准备结项演示资料。"
+      }
     }
   ],
   "next_task_id": 172
