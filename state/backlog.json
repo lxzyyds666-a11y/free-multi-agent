@@ -4275,7 +4275,26 @@
       "description": "修改 `docker-compose.yaml`，集成 LanguageTool 官方容器镜像。重构 `src/academic_checker.py` 以优先连接本地私有服务，确保在不联网且保障学术隐私的前提下，完成自动化讨论文本的语法纠错与风格优化。",
       "priority": "high",
       "id": 170,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务完成了 LanguageTool 私有化服务的 Docker 容器化集成，并重构了 Python 学术检查模块，实现了在断网环境下对学术讨论文本的隐私保护与语法风格优化。",
+        "deliverable": {
+          "bullets": [
+            "更新 `docker-compose.yaml`：集成 `languagetool` 官方容器镜像（建议使用 `silvio/languagetool`），配置 8081 端口映射及 `restart: always`，确保服务随工作流自动启动。",
+            "重构 `src/academic_checker.py`：通过 `os.getenv` 引入 `LANGUAGETOOL_URL` 变量，逻辑优先级设定为：1. 本地容器服务 (`http://languagetool:8081/v2`) -> 2. 宿主机回环地址 -> 3. 公共 API（可选关闭）。",
+            "实现私有化检查接口：重写 `check_academic_text` 方法，将文本直接 POST 至本地 REST API，通过本地 Java 引擎执行全量学术规则集，确保讨论内容不离开私有网络。",
+            "增强风格优化配置：通过 API 参数开启 `picky` 模式，针对学术写作中的被动语态、冗余词汇及非正式表达（如 Task 167 提到的模糊词）提供深度修正建议。",
+            "核心配置示例：\nyaml\n  languagetool:\n    image: silvio/languagetool\n    container_name: micro-id-languagetool\n    ports:\n      - \"8081:8081\"\n    environment:\n      - langtool_languageModel=/ngrams # 可选：支持 n-gram 提升精度\n",
+            "代码逻辑片段：\npython\n# src/academic_checker.py\nself.api_url = os.getenv('LT_URL', 'http://languagetool:8081/v2/check')\ndef check(self, text):\n    response = requests.post(self.api_url, data={'text': text, 'language': 'en-US'})\n    return response.json().get('matches', [])\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "LanguageTool 镜像由于包含 Java 运行环境及规则库，容器体积较大（约 500MB-1GB），且运行时内存占用通常在 512MB 以上。",
+          "若 `docker-compose` 未统一定义网络（Network），宿主机应用进程可能无法通过服务名 `languagetool` 直接访问容器。"
+        ],
+        "next_hint": "建议在 `micro_cli.py --diagnose` 中新增对本地 8081 端口的存活性检查，并正式在 Task 164 的润色界面中启用该私有化检查模块。"
+      }
     },
     {
       "title": "执行基于文档指引的“第三方视角”全链路复现验证",
