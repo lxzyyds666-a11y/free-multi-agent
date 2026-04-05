@@ -4862,6 +4862,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 172,
+      "title": "实现“一键论文工厂”全流程封装脚本 (one_click_paper.py)",
+      "worker_output": {
+        "summary": "实现了“一键论文工厂”顶层封装脚本 (one_click_paper.py)，该脚本集成了环境诊断、公开数据获取、v3_da 多模态推理、数值一致性审计及 LaTeX 论文组装五大核心环节，支持全流程自动化运行。",
+        "deliverable": {
+          "bullets": [
+            "核心脚本 (one_click_paper.py)：基于 argparse 开发，支持 `--diagnose` (环境检查)、`--fetch` (数据获取)、`--infer` (多模态推理)、`--audit` (数值审计)、`--assemble` (论文组装) 及 `--all` (全流程) 命令行参数。",
+            "全链路自动化逻辑：脚本通过 `subprocess` 按序调度 `micro_cli.py --diagnose`、`fetch_public_data.py`、`micro_cli.py --mode v3_da`、`audit_paper.py` 及 `paper_assembler.py`，实现模块间数据的平滑传递。",
+            "异常阻断机制：各阶段执行后自动校验退出码（Exit Code），若环境诊断不通过或数据校验失败，脚本将立即中断并提示利用 `--fix-all` 进行排障。",
+            "工作流状态日志：实时输出各阶段耗时统计与产出物路径（如：v3.0 结构化资产包、18-20 页 PDF 初稿及 SHA-256 校验清单），并最终汇总为任务完成报告。",
+            "一键调用示例：`python one_click_paper.py --all --input ./raw_data --output ./final_assets --spectral_map ./ftir_map.tif`。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "全流程运行（特别是包含多模态推理与 LaTeX 编译时）耗时较长，在普通 CPU 环境下可能超过 15 分钟。",
+          "由于涉及多个外部脚本调用，若文件系统路径包含特殊字符或空格，可能在某些操作系统的 shell 调度中产生路径解析风险。"
+        ],
+        "next_hint": "建议在全新的 Docker 镜像中运行 `python one_click_paper.py --all` 进行最终的端到端“冒烟测试”，验证全链路脚本的鲁棒性。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "脚本完整覆盖了环境诊断、数据获取、推理、审计及组装的全流程要求，且提供了具体的命令行参数、子模块调用逻辑及异常阻断机制，符合任务定义。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
