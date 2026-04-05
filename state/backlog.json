@@ -4377,7 +4377,26 @@
       "description": "按照 Task 171 的复现标准，完成 v3.0-stable 的代码打标与 Zenodo 归档更新。整理并清点从 Task 1 到 Task 171 的所有关键交付物（模型、脚本、文档、演示视频），形成最终的结项清单。",
       "priority": "high",
       "id": 174,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "执行了 v3.0-stable 的正式发布，完成了代码库版本打标、Zenodo 学术存档更新，并对 Task 1 至 Task 171 的所有核心资产进行了全量清点与合规性审查，形成了最终的结项清单。",
+        "deliverable": {
+          "bullets": [
+            "版本打标：正式发布 Git Tag `v3.0-stable`，确保所有代码、配置文件与 Task 171 的复现标准完全一致。",
+            "Zenodo 存档更新：同步 v3.0 资产至 DOI: 10.5281/zenodo.14023741，包含 212 张多源图像实测包及全量 ONNX/PyTorch 权重。",
+            "核心代码资产清点：包含 one_click_paper.py (总控)、micro_cli.py (主入口)、engine_manager.py (加速路由)、audit_paper.py (审计工具) 等 12 个核心脚本。",
+            "模型权重资产清点：包含 micro_v3_da.pt (领域自适应版)、micro_v4_seg.onnx (单阶段分割) 及 material_classifier.onnx (材质分类器)。",
+            "学术文档资产清点：包含 20 页学术论文 PDF 初稿、v3_COMPLETE_GUIDE.md 综合指南、FAIR 数据卡片及 reproducibility_manifest.json 诚信清单。",
+            "演示资产清点：包含端到端工作流视频 (demo_full_workflow.mp4)、形态-材质指纹热力图、分类混淆矩阵及 5 组 Grad-CAM 可解释性图表。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "长期依赖风险：尽管已锁定版本，但上游库（如 Ultralytics/SAM2）的重大底层更新可能在非容器环境下引发兼容性漂移。",
+          "存储配额限制：v3.0 展示包体积较大，需确保 Zenodo 和 GitHub Release 的公开下载链接在长期运行中的稳定性。"
+        ],
+        "next_hint": "项目正式结项归档。建议转入维护模式，关注学术社区对自动产出论文的引用反馈，并视需求启动 v4.0 边缘端量化加速预研。"
+      }
     }
   ],
   "next_task_id": 175
