@@ -4472,7 +4472,46 @@
         ],
         "next_hint": "建议将此生成器正式集成至 one_click_paper.py，并完成 v3.0-stable 版本的最终 PDF 产出测试，确保消融章节逻辑严密。"
       }
+    },
+    {
+      "title": "集成模型压缩与边缘加速章节至论文自动组装流",
+      "description": "修改 `src/paper_assembler.py`，实现对 `compression_chapter_gen.py`（Task 177）的调用。确保在启用 INT8 模式运行 Benchmark 后，生成的 LaTeX 论文中自动包含‘Model Compression & Edge Acceleration’章节及其对比表格。",
+      "priority": "high",
+      "id": 178,
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务完成了将‘模型压缩与边缘加速’章节集成至论文自动组装流水线（src/paper_assembler.py），实现了 INT8 量化消融数据与学术论证文本在 LaTeX 论文中的自动化嵌入。",
+        "deliverable": {
+          "bullets": [
+            "重构 `src/paper_assembler.py`：新增对 `compression_chapter_gen.py` 的调用接口，在组装逻辑中引入模型压缩消融分析子流程。",
+            "自动数据采集集成：配置流水线自动读取 `quantize_regression.json`（Task 175）中的 FP16 与 INT8 对标数据，并将其传递至章节生成器。",
+            "LaTeX 模板占位符更新：在 `full_paper_template.tex` 的实验章节末尾新增 `\\input{sections/model_compression.tex}` 占位符，支持动态内容注入。",
+            "资产归集逻辑增强：确保量化精度回归图（由 Task 175 产出）被自动移动至 `output/figures/` 目录并完成脱敏审计。",
+            "核心集成代码片段：\npython\n# src/paper_assembler.py 扩展逻辑\nfrom src.compression_chapter_gen import gen_compression_section\n\ndef assemble_compression_chapter(project_dir, metrics_data):\n    # 1. 调用 Task 177 逻辑生成 LaTeX 源码\n    latex_content = gen_compression_section(\n        metrics_data['fp16'], \n        metrics_data['int8']\n    )\n    # 2. 写入独立的章节文件\n    sec_path = os.path.join(project_dir, 'sections/model_compression.tex')\n    with open(sec_path, 'w', encoding='utf-8') as f:\n        f.write(latex_content)\n    return '\\\\input{sections/model_compression.tex}'\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若 `quantize_regression.json` 缺失（如未运行量化压测），组装脚本需具备静默跳过该章节的容错机制，防止 LaTeX 编译因文件缺失中断。",
+          "INT8 量化带来的 3.1% 精度损失可能在某些严谨期刊模板中需要更详尽的局限性说明文本。"
+        ],
+        "next_hint": "建议执行一次端到端的“全功能论文工厂”运行测试（one_click_paper.py），验证最终生成的 20+ 页 PDF 中‘模型压缩与边缘加速’章节的排版及数值审计准确性。"
+      }
+    },
+    {
+      "title": "在 Web 界面增加‘INT8 极限吞吐’实时性能监测看板",
+      "description": "升级 Streamlit 界面，在推理模式中增加‘INT8 加速’开关。调用 Task 175 的量化引擎，并在 UI 端实时对比展示 INT8 与 FP16 模式下的 FPS 波动与显存下降比例，直观演示边缘端优化成果。",
+      "priority": "medium",
+      "id": 179,
+      "status": "todo"
+    },
+    {
+      "title": "执行 v4.0“极限规模”全特性论文产出压力测试",
+      "description": "汇总前序所有功能（v3_da、多模态材质、Grad-CAM 可解释性、OpenAlex 动态引文、INT8 量化、元分析），针对 200 张以上多源图像运行 `one_click_paper.py`。产出一份包含所有最新消融章节、25 页以上的终极版学术论文 PDF 并通过一致性审计。",
+      "priority": "high",
+      "id": 180,
+      "status": "todo"
     }
   ],
-  "next_task_id": 178
+  "next_task_id": 181
 }
