@@ -4547,7 +4547,47 @@
         ],
         "next_hint": "生产线 v4.0 极限压力测试圆满通过。建议将此 26 页论文作为样机最终展示成果，正式发布 GitHub Release v4.0-ultimate 并进入项目结项宣讲阶段。"
       }
+    },
+    {
+      "title": "开发基于 LaTeX Beamer 的自动化学术汇报幻灯片生成器",
+      "description": "编写 src/slides_gen.py，利用 Task 180 产出的 26 页论文核心资产（mAP、MAE、P-R 曲线、Grad-CAM 热力图及元分析结论），自动填充至 LaTeX Beamer 模板。实现“一键生成项目结项汇报 PPT”，提升样机成果的学术分发效率。",
+      "priority": "high",
+      "id": 181,
+      "status": "approved",
+      "worker_output": {
+        "summary": "开发了基于 LaTeX Beamer 的自动化学术汇报幻灯片生成器 `src/slides_gen.py`，实现了将 Task 180 产出的 26 页论文核心资产（指标、图表、结论）自动转化为专业学术 PPT 的功能。",
+        "deliverable": {
+          "bullets": [
+            "核心生成脚本 (src/slides_gen.py)：基于 Python 字符串模板开发，支持读取 `detections_v3.json` 和 `benchmark_report.json` 等结构化数据并自动填充至幻灯片。",
+            "LaTeX Beamer 模板 (templates/slides_template.tex)：设计了包含标题页、技术路线（SAHI+v11-seg）、性能指标（mAP/MAE）、材质分布（饼图/质量估算）、可解释性（Grad-CAM）及元分析结论的标准化幻灯片结构。",
+            "指标自动对齐逻辑：自动将 Task 180 审计通过的关键数值（如 6.2 FPS、4.38μm MAE）映射至 Beamer 的 `block` 环境，确保汇报数据与论文的一致性。",
+            "图表自动排版模块：实现了针对 P-R 曲线、形态指纹热力图及材质伪彩色叠加图的 `columns` 并排布局优化，适配 16:9 汇报比例。",
+            "动态引文集成：同步 Task 155/158 的 OpenAlex 检索结果，在幻灯片底部自动生成参考文献脚注（Footnotes）。",
+            "一键生成指令：集成至 CLI，支持 `python src/slides_gen.py --assets_dir ./output --out report_slides.pdf` 直接产出结项演示文稿。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "排版溢出风险：当检测目标或元分析结论文字过长时，Beamer 幻灯片易出现内容超出边界（Overfull vbox），需预设字体自动缩小逻辑。",
+          "环境依赖：编译 PDF 需宿主机安装 `beamer` 宏包及相关主题（如 Metropolis），在非完整版 TeX Live 环境下可能失败。"
+        ],
+        "next_hint": "建议将幻灯片生成器集成至 `one_click_paper.py` 总控脚本中，作为全流程生产线的最后一个输出节点，实现“一键导出论文+数据包+演示幻灯片”。"
+      }
+    },
+    {
+      "title": "执行 v4.0-ultimate 生产线在 Zenodo 的最终学术存档",
+      "description": "将 Task 180 产生的 v4.0 极限规模实测资产包（含 212 张多源图像、26 页 PDF、完整审计报告）同步上传至 Zenodo 归档。更新 DOI 引用信息，并在 README 中显著标记为“v4.0 最终稳定版”，确立项目闭环的里程碑。",
+      "priority": "high",
+      "id": 182,
+      "status": "todo"
+    },
+    {
+      "title": "开发基于 GitHub Pages 的“微碳屑识别全球元分析”交互式门户",
+      "description": "基于 Task 173 的元分析数据，利用 MkDocs 和 Plotly.js 升级在线文档。创建一个可交互的仪表盘页面，动态展示不同公开数据集（MicroNet, Zenodo, Figshare, Kaggle）的聚合物丰度对比及模型识别精度，作为样机的最终展示门户。",
+      "priority": "medium",
+      "id": 183,
+      "status": "todo"
     }
   ],
-  "next_task_id": 181
+  "next_task_id": 184
 }
