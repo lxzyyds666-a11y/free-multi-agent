@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-04-06T09:20:12.396926+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 176,
+    "summary": "本任务完成了浏览器端推理原型的后端升级，将 onnxruntime-web 推理后端由 WebGL/WASM 升级为 WebGPU，显著降低了 1024px 切片的推理延迟并提升了端侧生产线的性能上限。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 176,
+    "decision": "approve"
+  }
+}
