@@ -4604,7 +4604,25 @@
       "description": "基于 Task 173 的元分析数据，利用 MkDocs 和 Plotly.js 升级在线文档。创建一个可交互的仪表盘页面，动态展示不同公开数据集（MicroNet, Zenodo, Figshare, Kaggle）的聚合物丰度对比及模型识别精度，作为样机的最终展示门户。",
       "priority": "medium",
       "id": 183,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务基于 Task 173 的元分析数据，成功将原有的 MkDocs 静态文档升级为交互式门户，利用 Plotly.js 构建了动态仪表盘，实现了跨数据集聚合物分布与模型精度的可视化展示。",
+        "deliverable": {
+          "bullets": [
+            "MkDocs 增强配置：在 `mkdocs.yml` 中引入 Plotly.js 核心库及 `extra_javascript` 脚本，支持在 Markdown 页面中直接渲染交互式图表。",
+            "交互式仪表盘页面 (`docs/dashboard.md`)：设计并实现了基于 Plotly 的动态看板，包含 4 个公开数据集（MicroNet, Zenodo, Figshare, Kaggle）的聚合物丰度对比柱状图。",
+            "模型性能帕累托前沿图：集成了 v1.2、v2.0 与 v4.0 的精度-速度权衡散点图，支持用户通过悬停交互查看不同硬件环境下的推荐配置。",
+            "自动化数据桥接工具：编写了 `src/export_portal_data.py`，将 `meta_analysis.py` 产出的原始统计量转换为前端可消费的 `docs/assets/data/meta_stats.json`。",
+            "GitHub Pages 部署升级：更新了 `.github/workflows/deploy_docs.yml`，确保每次 Release 发布时，最新的元分析数据自动同步至在线门户。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "浏览器兼容性：部分旧版浏览器可能无法流畅渲染包含数千个数据点的 Plotly 交互图表。",
+          "静态站点局限：由于 GitHub Pages 为静态托管，无法执行实时的大规模数据处理，仪表盘数据更新高度依赖于构建流水线的触发。"
+        ],
+        "next_hint": "样机的展示门户与核心功能已全部闭环，建议进行最终的结项宣讲准备，整理一份面向学术用户的快速部署与引用指南。"
+      }
     }
   ],
   "next_task_id": 184
