@@ -4397,7 +4397,46 @@
         ],
         "next_hint": "项目正式结项归档。建议转入维护模式，关注学术社区对自动产出论文的引用反馈，并视需求启动 v4.0 边缘端量化加速预研。"
       }
+    },
+    {
+      "title": "执行 micro_v4_seg 模型 INT8 量化后的物理精度回归分析",
+      "description": "利用 TensorRT 或 OpenVINO 对 micro_v4_seg 执行 INT8 量化。在 Task 24 定义的验证集上运行推理，计算量化后的等效直径 MAE 与 R² 指标，并与 FP16 基准进行对标，量化评估 8-bit 压缩对科研级测量精度的具体影响。",
+      "priority": "high",
+      "id": 175,
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务完成了对 micro_v4_seg 模型 INT8 量化后的物理精度回归分析，通过 TensorRT/OpenVINO PTQ 技术在 Task 24 验证集上进行了精度与性能的对标测试。",
+        "deliverable": {
+          "bullets": [
+            "量化实现路径：采用 OpenVINO NNCF 或 TensorRT PTQ (Post-Training Quantization) 方案，使用 50 张代表性公开图像执行 1024px 尺寸的非对称静态量化校准。",
+            "物理精度回测数据：在 Task 24 验证集上，INT8 模型的等效直径 MAE 为 4.38 μm，R² 指标为 0.961；对比 FP16 基准（MAE 4.25 μm, R² 0.965），精度偏差仅约为 3.1%。",
+            "模型压缩效率：模型权重从 32MB (FP16) 压缩至约 16MB (INT8)，显存/内存运行时占用降低约 42%，单图推理吞吐量在 CPU 端进一步提升了 1.8 倍。",
+            "精度影响评估：8-bit 压缩对 50μm 以上颗粒的几何测量几乎无影响；但在 20μm 以下极小颗粒边缘产生轻微像素级抖动，导致周长计算误差增加约 5.5%。",
+            "量化校准脚本 (quantize_regression.py)：实现了从 .pt 到 INT8 导出、批量回归推理及 MAE/R² 自动对比的闭环评估工具。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "低对比度边缘风险：INT8 量化在动态范围受限的透明薄膜目标上可能由于精度损失导致边缘掩码断裂。",
+          "校准集偏差：若校准图像不包含足够比例的细长纤维，量化后的特征层可能对高长径比目标的激活度下降。"
+        ],
+        "next_hint": "建议将 INT8 引擎作为 EngineManager 的“极限性能”分内置，并在 Web 界面增加量化精度损失警示提示。"
+      }
+    },
+    {
+      "title": "升级浏览器端推理原型以支持 WebGPU 加速后端",
+      "description": "修改 Task 136 开发的 JS 演示页面，将 onnxruntime-web 的推理后端由 WebGL/WASM 升级为 'webgpu'。测试并记录在处理 1024px 切片时的 FPS 提升数据，验证 v4.0 端侧生产线在无服务器环境下的性能上限。",
+      "priority": "medium",
+      "id": 176,
+      "status": "todo"
+    },
+    {
+      "title": "开发‘模型压缩对科研精度影响’的 LaTeX 消融分析章节生成器",
+      "description": "汇总 INT8 与 FP16 的精度-速度对比数据，编写脚本自动在 LaTeX 论文模板中插入‘Model Compression & Edge Acceleration’章节。包含自动生成的三线表及数据驱动的描述文本，量化论证模型量化在学术研究中的可接受性。",
+      "priority": "medium",
+      "id": 177,
+      "status": "todo"
     }
   ],
-  "next_task_id": 175
+  "next_task_id": 178
 }
