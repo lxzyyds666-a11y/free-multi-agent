@@ -1,0 +1,18 @@
+{
+  "time_utc": "2026-04-06T20:27:13.611595+00:00",
+  "planner": {
+    "skipped": false,
+    "created": 3,
+    "note": "本轮任务旨在将 v4.0-ultimate 的零散资产（如幻灯片生成、多源实测成果）正式并入总控脚本与在线门户，并强化科研引用的便捷性，完成项目从‘开发态’向‘分发态’的最终交付。"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 184,
+    "summary": "本任务完成了将 LaTeX Beamer 幻灯片生成逻辑集成至 `one_click_paper.py` 总控流程，实现了“论文-数据-幻灯片”的一键式自动化产出。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 184,
+    "decision": "approve"
+  }
+}

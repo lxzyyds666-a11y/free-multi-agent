@@ -5203,6 +5203,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 184,
+      "title": "集成 Beamer 幻灯片生成至 `one_click_paper.py` 总控流程",
+      "worker_output": {
+        "summary": "本任务完成了将 LaTeX Beamer 幻灯片生成逻辑集成至 `one_click_paper.py` 总控流程，实现了“论文-数据-幻灯片”的一键式自动化产出。",
+        "deliverable": {
+          "bullets": [
+            "修改了 `one_click_paper.py`：在 `argparse` 中新增了 `--slides` 可选参数，用于控制是否生成汇报幻灯片。",
+            "更新了 `--all` 逻辑：将幻灯片生成正式纳入全流程生产线，确保在执行一键任务时自动触发 `src/slides_gen.py`。",
+            "实现了子进程调度：脚本在完成论文组装与审计后，自动调用 `python src/slides_gen.py --assets_dir {out_dir} --out {out_dir}/report_slides.pdf`。",
+            "优化了资产打包流：更新了 `create_asset_bundle` 逻辑，确保生成的 `report_slides.pdf` 自动归集至最终的 ZIP 压缩包及科研诚信清单中。",
+            "核心代码集成示例：\npython\n# one_click_paper.py 核心修改\nif args.slides or args.all:\n    print('[Step 6/6] Generating Academic Slides (Beamer)...')\n    cmd = [sys.executable, 'src/slides_gen.py', '--assets_dir', args.output, '--out', os.path.join(args.output, 'report_slides.pdf')]\n    subprocess.run(cmd, check=True)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "LaTeX 编译环境（如缺失 Metropolis 主题）可能导致幻灯片生成步骤失败，从而中断 `--all` 流程。",
+          "幻灯片中的图表路径引用若与论文生成的路径不一致，会导致 PDF 渲染出现空白。"
+        ],
+        "next_hint": "建议在 Docker 环境中执行 `python one_click_paper.py --all`，验证从“数据获取”到“PPT 幻灯片产出”的端到端闭环稳定性。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 准确实现了新增参数、逻辑集成以及资产打包的各项要求，代码逻辑清晰且符合任务描述。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
