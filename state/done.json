@@ -5376,6 +5376,35 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 190,
+      "title": "实现 JSON 驱动的作者与机构元数据映射器",
+      "worker_output": {
+        "summary": "开发了 `src/metadata_mapper.py` 模块，定义了标准化的作者与机构元数据 JSON 格式，并实现了自动转换为适配 Elsevier (cas-sc) 和 IEEE (IEEEtran) 语法的 LaTeX 代码生成器，解决了排版硬编码问题。",
+        "deliverable": {
+          "bullets": [
+            "元数据 JSON 规范定义：设计了包含 authors (姓名、邮箱、对应作者标识、ORCID)、institutions (名称、地址、ID) 和 funding (资助机构、项目号) 的标准 Schema。",
+            "核心映射器 `metadata_mapper.py`：实现 MetadataMapper 类，支持从 JSON 文件或字典加载数据，并内置了针对不同 LaTeX 宏包的解析引擎。",
+            "Elsevier (cas-sc) 适配器：自动生成基于 `\\author[aff_id]{Name}`、`\\ead{email}` 和 `\\address[id]{details}` 语法的代码块，支持多机构关联与对应作者标记。",
+            "IEEE (IEEEtran) 适配器：自动生成基于 `\\author{\\IEEEauthorblockN{...} \\IEEEauthorblockA{...}}` 语法的代码块，实现了多作者并排与机构信息的逻辑聚类。",
+            "资助信息自动化处理：实现了将 funding 数据转换为 LaTeX 脚注或 Acknowledgment 章节的代码片段，支持不同期刊对资助公示的格式要求。",
+            "代码示例逻辑：\npython\nclass MetadataMapper:\n    def to_elsevier(self):\n        lines = []\n        for auth in self.data['authors']:\n            affs = ','.join(map(str, auth['affiliations']))\n            lines.append(f\"\\\\author[{affs}]{{{auth['name']}}}\")\n            if auth.get('is_corresponding'): lines.append(\"\\\\cormark[1]\")\n            lines.append(f\"\\\\ead{{{auth['email']}}}\")\n        for inst in self.data['institutions']:\n            lines.append(f\"\\\\address[{inst['id']}]{{{inst['name']}, {inst['address']}}}\")\n        return '\\n'.join(lines)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "Elsevier cas-sc 宏包版本差异：不同版本的 cas-sc 对 affiliation 内部字段（如 organization, city）的强制要求可能导致编译警告。",
+          "复杂机构嵌套：当一个作者隶属于多个跨国机构时，LaTeX 的标脚（Footnote）排版可能出现重叠或超限。"
+        ],
+        "next_hint": "建议将此映射器集成至 `paper_assembler.py`，并在 `one_click_paper.py` 中通过 `--metadata` 参数支持外部 JSON 注入，实现完全的论文元数据动态化。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "成果完整实现了任务要求的 JSON 模式定义、核心映射器类及双模板（Elsevier/IEEE）适配逻辑，代码逻辑与 LaTeX 宏包语法契合，解决了硬编码问题。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

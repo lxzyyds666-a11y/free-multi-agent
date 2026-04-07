@@ -4775,7 +4775,47 @@
         ],
         "next_hint": "建议将此 v4.0-ultimate Notebook 链接更新至 GitHub 仓库首页，并启动样机在全球科研社区的公开测试与反馈收集。"
       }
+    },
+    {
+      "title": "实现 JSON 驱动的作者与机构元数据映射器",
+      "description": "编写 src/metadata_mapper.py，定义一个标准化的 JSON 格式用于存储作者姓名、机构、邮箱及资助信息。实现自动将该 JSON 数据转换为适配 Elsevier (cas-sc) 和 IEEE (IEEEtran) 不同语法的 LaTeX 代码块，解决任务 169 遗留的排版硬编码问题。",
+      "priority": "medium",
+      "id": 190,
+      "status": "approved",
+      "worker_output": {
+        "summary": "开发了 `src/metadata_mapper.py` 模块，定义了标准化的作者与机构元数据 JSON 格式，并实现了自动转换为适配 Elsevier (cas-sc) 和 IEEE (IEEEtran) 语法的 LaTeX 代码生成器，解决了排版硬编码问题。",
+        "deliverable": {
+          "bullets": [
+            "元数据 JSON 规范定义：设计了包含 authors (姓名、邮箱、对应作者标识、ORCID)、institutions (名称、地址、ID) 和 funding (资助机构、项目号) 的标准 Schema。",
+            "核心映射器 `metadata_mapper.py`：实现 MetadataMapper 类，支持从 JSON 文件或字典加载数据，并内置了针对不同 LaTeX 宏包的解析引擎。",
+            "Elsevier (cas-sc) 适配器：自动生成基于 `\\author[aff_id]{Name}`、`\\ead{email}` 和 `\\address[id]{details}` 语法的代码块，支持多机构关联与对应作者标记。",
+            "IEEE (IEEEtran) 适配器：自动生成基于 `\\author{\\IEEEauthorblockN{...} \\IEEEauthorblockA{...}}` 语法的代码块，实现了多作者并排与机构信息的逻辑聚类。",
+            "资助信息自动化处理：实现了将 funding 数据转换为 LaTeX 脚注或 Acknowledgment 章节的代码片段，支持不同期刊对资助公示的格式要求。",
+            "代码示例逻辑：\npython\nclass MetadataMapper:\n    def to_elsevier(self):\n        lines = []\n        for auth in self.data['authors']:\n            affs = ','.join(map(str, auth['affiliations']))\n            lines.append(f\"\\\\author[{affs}]{{{auth['name']}}}\")\n            if auth.get('is_corresponding'): lines.append(\"\\\\cormark[1]\")\n            lines.append(f\"\\\\ead{{{auth['email']}}}\")\n        for inst in self.data['institutions']:\n            lines.append(f\"\\\\address[{inst['id']}]{{{inst['name']}, {inst['address']}}}\")\n        return '\\n'.join(lines)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "Elsevier cas-sc 宏包版本差异：不同版本的 cas-sc 对 affiliation 内部字段（如 organization, city）的强制要求可能导致编译警告。",
+          "复杂机构嵌套：当一个作者隶属于多个跨国机构时，LaTeX 的标脚（Footnote）排版可能出现重叠或超限。"
+        ],
+        "next_hint": "建议将此映射器集成至 `paper_assembler.py`，并在 `one_click_paper.py` 中通过 `--metadata` 参数支持外部 JSON 注入，实现完全的论文元数据动态化。"
+      }
+    },
+    {
+      "title": "开发基于 CRediT 准则的自动化贡献声明生成器",
+      "description": "编写脚本从作者元数据中提取信息，按照 CRediT (Contributor Roles Taxonomy) 国际标准自动生成“Author Contribution Statement”文本段落。将其集成至 paper_assembler.py，确保生成的 20+ 页论文符合现代学术期刊的伦理规范要求。",
+      "priority": "low",
+      "id": 191,
+      "status": "todo"
+    },
+    {
+      "title": "实现学术论文排版规范（图片分辨率与标签）自动化审核工具",
+      "description": "扩展 audit_paper.py，增加对生成的 PDF/LaTeX 资产的物理检查：1. 验证所有 figures 文件夹下的图像 DPI 是否达到 300 以上；2. 扫描 LaTeX 源码确保所有 Figure 和 Table 均有对应的 \\label 和正文引用（\\ref），产出规范性自检报告。",
+      "priority": "high",
+      "id": 192,
+      "status": "todo"
     }
   ],
-  "next_task_id": 190
+  "next_task_id": 193
 }
