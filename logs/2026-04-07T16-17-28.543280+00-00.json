@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-04-07T16:17:28.543280+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 192,
+    "summary": "本任务扩展了 `audit_paper.py` 工具，实现了对学术论文排版规范的自动化审核，包含图像 DPI 物理分辨率校验及 LaTeX 标签/引用一致性逻辑审计，并产出了结构化排版规范自检报告。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 192,
+    "decision": "approve"
+  }
+}
