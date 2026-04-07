@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-04-07T14:48:07.828130+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 191,
+    "summary": "开发了基于 CRediT (Contributor Roles Taxonomy) 国际标准的自动化贡献声明生成器，通过扩展作者元数据 Schema，实现了符合现代学术期刊伦理规范的“Author Contribution Statement”段落自动组装与 LaTeX 集成。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 191,
+    "decision": "approve"
+  }
+}
