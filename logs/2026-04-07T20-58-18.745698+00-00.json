@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-04-07T20:58:18.745698+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 195,
+    "summary": "本任务扩展了 `micro_cli.py --diagnose` 逻辑，在推理任务启动前的诊断环节增加了图像质量（DPI）强制预检功能，确保输入源满足 300 DPI 的学术发表建议值。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 195,
+    "decision": "approve"
+  }
+}

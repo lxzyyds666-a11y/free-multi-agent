@@ -2099,6 +2099,16 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 195,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "实现方案完整且具体，核心逻辑 check_input_quality 函数准确覆盖了 DPI 检测、阈值判断及警告输出等任务要求，风险提示也符合技术实际。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

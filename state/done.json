@@ -5518,6 +5518,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 195,
+      "title": "在 CLI 诊断工具中增加图像质量 (DPI) 强制预检",
+      "worker_output": {
+        "summary": "本任务扩展了 `micro_cli.py --diagnose` 逻辑，在推理任务启动前的诊断环节增加了图像质量（DPI）强制预检功能，确保输入源满足 300 DPI 的学术发表建议值。",
+        "deliverable": {
+          "bullets": [
+            "扩展 `micro_cli.py`：在 `--diagnose` 流程中注入 `check_input_quality` 函数，支持对 `--input` 目录下的图像进行全量 DPI 扫描。",
+            "图像元数据解析引擎：利用 `Pillow` 库读取图像 `info` 字典中的 DPI 参数，支持对 JPEG、TIFF 及带有 pHYs 块的 PNG 格式进行解析。",
+            "DPI 阈值验证逻辑：设定 300 DPI 为学术合规基准线，对于检测值低于阈值或缺失 DPI 元数据的图像，自动生成警告日志并记录至诊断报告。",
+            "诊断中断机制：若检测到低分辨率图像，诊断工具将返回 `WARNING` 状态，并在控制台输出具体的排障建议（如：'请使用高分辨率模式重新拍摄或扫描'）。",
+            "核心代码实现逻辑：\npython\ndef check_input_quality(input_dir, min_dpi=300):\n    warnings = []\n    for img_file in glob.glob(os.path.join(input_dir, '*.*')):\n        if img_file.lower().endswith(('.jpg', '.jpeg', '.png', '.tiff')):\n            with Image.open(img_file) as img:\n                dpi = img.info.get('dpi', (72, 72))\n                if dpi[0] < min_dpi:\n                    warnings.append(f'{os.path.basename(img_file)}: Detected {dpi[0]} DPI (Target: {min_dpi})')\n    return warnings\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "元数据缺失风险：从网页下载或部分截屏工具生成的图像通常不包含 DPI 信息（默认为 72/96），会导致误报率增加。",
+          "PNG 兼容性：某些 PNG 编码库可能将 DPI 存储在非标准的元数据块中，导致 `Pillow` 的默认 `info.get` 无法读取。"
+        ],
+        "next_hint": "建议将此 DPI 预检逻辑与 Task 70 的脱敏模块结合，在脱敏阶段强制重新采样或保留高质量 DPI 标签，确保产出的学术资产包 100% 满足投稿要求。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "实现方案完整且具体，核心逻辑 check_input_quality 函数准确覆盖了 DPI 检测、阈值判断及警告输出等任务要求，风险提示也符合技术实际。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
