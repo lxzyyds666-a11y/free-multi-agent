@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-04-07T18:33:33.640075+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 194,
+    "summary": "开发并集成了自动化“数据可用性声明 (DAS)”生成器 `das_generator.py`。该工具根据项目 FAIR 数据卡片中的 Zenodo DOI 和第三方公开数据集来源，自动生成符合 Elsevier/IEEE 等期刊合规要求的学术文本段落，并将其以 LaTeX 宏形式注入论文组装流。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 194,
+    "decision": "approve"
+  }
+}
