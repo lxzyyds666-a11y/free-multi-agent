@@ -4851,7 +4851,46 @@
         ],
         "next_hint": "建议将此审核逻辑集成至 `one_click_paper.py`，并在 `micro_cli.py --diagnose` 中增加针对 300 DPI 图像质量的强制预检项。"
       }
+    },
+    {
+      "title": "集成学术排版规范审核至 one_click_paper.py",
+      "description": "修改 `one_click_paper.py` 总控脚本，在论文组装完成后自动调用 Task 192 开发的 `audit_layout_specs` 函数。将排版规范（DPI、标签引用）自检结果合并至最终审计报告中，实现全流程质量门禁。",
+      "priority": "high",
+      "id": 193,
+      "status": "approved",
+      "worker_output": {
+        "summary": "完成了将 Task 192 开发的学术排版规范审核功能集成至 `one_click_paper.py` 总控脚本，实现了“数据-逻辑-排版”三位一体的自动化质量门禁。",
+        "deliverable": {
+          "bullets": [
+            "修改了 `one_click_paper.py`：在 `assemble` 阶段后新增 `Step 7/7: Layout Specification Audit`，自动触发排版自检流程。",
+            "实现了审计报告合并逻辑：通过 `src/audit_paper.py` 接口将数值一致性审计（Task 161）与排版规范审计（Task 192）结果聚合至 `final_quality_report.json`。",
+            "建立了全流程质量门禁：脚本会根据 `dpi_audit` 和 `missing_refs` 的结果自动判定最终状态，若存在关键排版缺陷（如 DPI < 300 或 引用断裂），控制台将输出警告。",
+            "新增 CLI 强化参数：为 `one_click_paper.py` 增加 `--strict_layout` 参数，开启后若排版审计不通过，脚本将以非零退出码（Exit Code 1）中断，防止低质量资产发布。",
+            "核心集成逻辑示例：\npython\n# one_click_paper.py 集成片段\nif args.assemble or args.all:\n    # ... 原有组装逻辑 ...\n    print('[Step 7/7] Auditing Layout Specifications (DPI, Labels)...')\n    layout_results = audit_layout_specs(tex_path, figures_dir)\n    \n    # 合并至总审计报告\n    final_report = merge_audit_reports(data_audit_path, layout_results)\n    save_json(final_report, 'final_quality_report.json')\n    \n    if args.strict_layout and not layout_results['pass_all']:\n        sys.exit('Quality Gate Failed: Layout specifications not met.')\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若生成的 LaTeX 模板中包含大量由宏包动态生成的标签（如自动索引），简单正则审计可能产生误报。",
+          "在某些容器环境下，Pillow 读取超大显微图像元数据以校验 DPI 时可能产生瞬时内存峰值。"
+        ],
+        "next_hint": "建议针对 Task 180 产出的 26 页极限规模论文执行一次 `--strict_layout` 测试，验证全链路审计报告的完整性。"
+      }
+    },
+    {
+      "title": "实现自动化“数据可用性声明 (DAS)”生成器",
+      "description": "编写 `das_generator.py`，根据 FAIR 数据卡片中的 Zenodo DOI 和数据集来源信息，自动生成符合期刊合规要求的“Data Availability Statement”文本段落，并将其通过 LaTeX 宏集成至论文组装流。",
+      "priority": "medium",
+      "id": 194,
+      "status": "todo"
+    },
+    {
+      "title": "在 CLI 诊断工具中增加图像质量 (DPI) 强制预检",
+      "description": "扩展 `micro_cli.py --diagnose` 逻辑。在推理任务启动前，扫描输入目录中的图像元数据，验证其是否满足 300 DPI 的学术发表建议值。对于不达标图像输出警告提示，防止产出低分辨率的学术资产。",
+      "priority": "medium",
+      "id": 195,
+      "status": "todo"
     }
   ],
-  "next_task_id": 193
+  "next_task_id": 196
 }

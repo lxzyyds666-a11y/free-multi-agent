@@ -5461,6 +5461,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 193,
+      "title": "集成学术排版规范审核至 one_click_paper.py",
+      "worker_output": {
+        "summary": "完成了将 Task 192 开发的学术排版规范审核功能集成至 `one_click_paper.py` 总控脚本，实现了“数据-逻辑-排版”三位一体的自动化质量门禁。",
+        "deliverable": {
+          "bullets": [
+            "修改了 `one_click_paper.py`：在 `assemble` 阶段后新增 `Step 7/7: Layout Specification Audit`，自动触发排版自检流程。",
+            "实现了审计报告合并逻辑：通过 `src/audit_paper.py` 接口将数值一致性审计（Task 161）与排版规范审计（Task 192）结果聚合至 `final_quality_report.json`。",
+            "建立了全流程质量门禁：脚本会根据 `dpi_audit` 和 `missing_refs` 的结果自动判定最终状态，若存在关键排版缺陷（如 DPI < 300 或 引用断裂），控制台将输出警告。",
+            "新增 CLI 强化参数：为 `one_click_paper.py` 增加 `--strict_layout` 参数，开启后若排版审计不通过，脚本将以非零退出码（Exit Code 1）中断，防止低质量资产发布。",
+            "核心集成逻辑示例：\npython\n# one_click_paper.py 集成片段\nif args.assemble or args.all:\n    # ... 原有组装逻辑 ...\n    print('[Step 7/7] Auditing Layout Specifications (DPI, Labels)...')\n    layout_results = audit_layout_specs(tex_path, figures_dir)\n    \n    # 合并至总审计报告\n    final_report = merge_audit_reports(data_audit_path, layout_results)\n    save_json(final_report, 'final_quality_report.json')\n    \n    if args.strict_layout and not layout_results['pass_all']:\n        sys.exit('Quality Gate Failed: Layout specifications not met.')\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若生成的 LaTeX 模板中包含大量由宏包动态生成的标签（如自动索引），简单正则审计可能产生误报。",
+          "在某些容器环境下，Pillow 读取超大显微图像元数据以校验 DPI 时可能产生瞬时内存峰值。"
+        ],
+        "next_hint": "建议针对 Task 180 产出的 26 页极限规模论文执行一次 `--strict_layout` 测试，验证全链路审计报告的完整性。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作结果完整覆盖了任务要求的集成逻辑、报告合并以及质量门禁功能，且提供了具体的代码实现片段和新增参数说明。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
