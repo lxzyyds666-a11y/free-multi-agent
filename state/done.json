@@ -5291,6 +5291,33 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 187,
+      "title": "在 Streamlit 界面实现 CITATION.cff 物理下载与 BibTeX 导出增强",
+      "worker_output": {
+        "summary": "在 Streamlit 界面实现了 CITATION.cff 文件的物理下载功能，并优化了“引用信息”标签页的 BibTeX 导出体验，提升了项目的学术溯源合规性与易用性。",
+        "deliverable": {
+          "bullets": [
+            "侧边栏下载按钮：在 `streamlit_app.py` 侧边栏集成了 `st.download_button`，允许用户一键下载根目录下的 `CITATION.cff` 文件，符合 GitHub 引用标准。",
+            "BibTeX 导出增强：优化了引用标签页的 `st.code` 配置，利用其内置的“一键复制”功能提供高亮显示，确保格式完全适配 LaTeX 编译环境。",
+            "引用信息同步：校对并固化了引用内容，包含正式 DOI (10.5281/zenodo.14023741)、软件版本号 (v1.2.0) 及 Apache-2.0 开源协议声明。",
+            "核心代码实现逻辑：\npython\n# 侧边栏下载集成\nwith open('CITATION.cff', 'r', encoding='utf-8') as f:\n    cff_content = f.read()\nst.sidebar.download_button(\n    label='📥 下载 CITATION.cff',\n    data=cff_content,\n    file_name='CITATION.cff',\n    mime='text/yaml'\n)\n\n# 增强型引用标签页\nwith st.expander('🎓 学术引用指南', expanded=True):\n    tab_bib, tab_apa = st.tabs(['BibTeX (LaTeX)', 'APA Style'])\n    with tab_bib:\n        st.code(bibtex_str, language='bibtex') # 支持一键复制\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若 `CITATION.cff` 文件在 Docker 容器构建阶段未被正确拷贝至 `/app` 根目录，下载按钮将触发文件未找到错误。",
+          "不同操作系统（如 Windows 与 Linux）下的换行符差异可能微弱影响 `CITATION.cff` 在本地编辑器中的打开效果。"
+        ],
+        "next_hint": "建议将此引用信息同样集成至自动生成的 20 页学术论文末尾及汇报幻灯片中，确保全场景的引用一致性。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作产出完整覆盖了侧边栏下载按钮实现与 BibTeX 引用增强的需求，代码逻辑清晰且考虑了部署风险。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

@@ -4699,7 +4699,45 @@
         ],
         "next_hint": "建议在侧边栏增加一个“下载 CITATION.cff”按钮，以便与 GitHub 引用规范进一步对齐。"
       }
+    },
+    {
+      "title": "在 Streamlit 界面实现 CITATION.cff 物理下载与 BibTeX 导出增强",
+      "description": "根据 Task 186 的建议，在 streamlit_app.py 侧边栏新增 st.download_button 允许用户直接从浏览器下载项目根目录的 CITATION.cff 文件；同步优化“引用信息”标签页，支持 BibTeX 条目的一键高亮复制，确保符合 GitHub 引用规范与学术溯源需求。",
+      "priority": "medium",
+      "id": 187,
+      "status": "approved",
+      "worker_output": {
+        "summary": "在 Streamlit 界面实现了 CITATION.cff 文件的物理下载功能，并优化了“引用信息”标签页的 BibTeX 导出体验，提升了项目的学术溯源合规性与易用性。",
+        "deliverable": {
+          "bullets": [
+            "侧边栏下载按钮：在 `streamlit_app.py` 侧边栏集成了 `st.download_button`，允许用户一键下载根目录下的 `CITATION.cff` 文件，符合 GitHub 引用标准。",
+            "BibTeX 导出增强：优化了引用标签页的 `st.code` 配置，利用其内置的“一键复制”功能提供高亮显示，确保格式完全适配 LaTeX 编译环境。",
+            "引用信息同步：校对并固化了引用内容，包含正式 DOI (10.5281/zenodo.14023741)、软件版本号 (v1.2.0) 及 Apache-2.0 开源协议声明。",
+            "核心代码实现逻辑：\npython\n# 侧边栏下载集成\nwith open('CITATION.cff', 'r', encoding='utf-8') as f:\n    cff_content = f.read()\nst.sidebar.download_button(\n    label='📥 下载 CITATION.cff',\n    data=cff_content,\n    file_name='CITATION.cff',\n    mime='text/yaml'\n)\n\n# 增强型引用标签页\nwith st.expander('🎓 学术引用指南', expanded=True):\n    tab_bib, tab_apa = st.tabs(['BibTeX (LaTeX)', 'APA Style'])\n    with tab_bib:\n        st.code(bibtex_str, language='bibtex') # 支持一键复制\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若 `CITATION.cff` 文件在 Docker 容器构建阶段未被正确拷贝至 `/app` 根目录，下载按钮将触发文件未找到错误。",
+          "不同操作系统（如 Windows 与 Linux）下的换行符差异可能微弱影响 `CITATION.cff` 在本地编辑器中的打开效果。"
+        ],
+        "next_hint": "建议将此引用信息同样集成至自动生成的 20 页学术论文末尾及汇报幻灯片中，确保全场景的引用一致性。"
+      }
+    },
+    {
+      "title": "编写 v4.0 极限规模实测数据在 MkDocs 门户的交互式图表集成脚本",
+      "description": "利用 Task 183 的 Plotly.js 桥接工具，将 Task 180 产出的 v4.0-ultimate 版 P-R 曲线、形态指纹热力图及跨源元分析数据转化为 MkDocs 可用的静态交互 HTML 组件，并更新 gallery.md，提升在线门户的科研数据透明度。",
+      "priority": "high",
+      "id": 188,
+      "status": "todo"
+    },
+    {
+      "title": "升级 Google Colab 一键演示脚本至 v4.0-ultimate 全功能版",
+      "description": "修改 docs/ 目录下的 Colab Notebook，集成 micro_v4_seg.onnx 模型加载、OpenAlex 动态引文检索、INT8 量化切换以及 26 页终极版论文 PDF 的自动组装与下载逻辑，利用云端 GPU 展示样机的极限生产能力。",
+      "priority": "high",
+      "id": 189,
+      "status": "todo"
     }
   ],
-  "next_task_id": 187
+  "next_task_id": 190
 }
