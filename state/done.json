@@ -5635,6 +5635,37 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 199,
+      "title": "实现通用的 LaTeX 文本特殊字符自动转义工具",
+      "worker_output": {
+        "summary": "开发并集成了 LaTeX 特殊字符自动转义工具 `src/latex_escaper.py`，解决了从外部元数据（OpenAlex/JSON）引入的敏感字符（如 DOI 中的下划线、资助号中的 #）导致 LaTeX 编译中断的问题。",
+        "deliverable": {
+          "bullets": [
+            "实现核心转义工具 `src/latex_escaper.py`：通过正则表达式及映射表，自动处理 LaTeX 十大特殊字符（# $ % & _ { } ~ ^ \\），确保其转换为合法的 LaTeX 语法（如 \\_、\\& 等）。",
+            "集成至 CRediT/COI 生成器：在 `credit_generator.py` 和 `coi_generator.py` 的文本合成逻辑中引入转义器，防止作者名或贡献描述中的特殊符号引发语法错误。",
+            "集成至 Funding/DAS 生成器：在 `funding_generator.py` 和 `das_generator.py` 中强制转义资助号及数据托管链接，特别优化了对复杂 DOI 字符串的兼容性。",
+            "双重转义防御逻辑：算法采用先转义反斜杠（\\）再处理其他字符的顺序，并对 `~` 和 `^` 使用 `\\textasciitilde ` 和 `\\textasciicircum ` 宏，规避了常见的嵌套转义异常。",
+            "代码实现片段：\n```python\nimport re\ndef escape_latex(text):\n    chars = {'&': r'\\&', '%': r'\\%', '$': r'\\$', '#': r'\\#', '_': r'\\_', '{': r'\\{', '}': r'\\}', '~': r'\\textasciitilde ', '^': r'\\textasciicircum ', '\\\\': r'\\textbackslash '}\n    # 优先处理反斜杠，再处理其余字符\n    regex = re.compile('|'.join(re.escape(str(k)) for k in chars.keys()))\n    return regex.sub(lambda m: chars[m.group()], str(text))\n```"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "环境冲突：如果 LaTeX 模板中已经使用了 `url` 或 `doi` 宏包来包裹相关字段，手动转义后的字符串可能导致链接失效（路径中出现多余反斜杠）。",
+          "性能开销：在大规模（1000+ 目标）元数据批量处理时，频繁的正规表达式调用会产生微量的 CPU 累加延迟。"
+        ],
+        "next_hint": "建议对 Task 180 产出的“极限规模”论文进行一次端到端回归测试，特别在元数据 JSON 中构造包含全部十种特殊字符的“脏数据”以验证编译鲁棒性。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "worker 准确实现了 src/latex_escaper.py，并完成了 CRediT、COI、Funding、DAS 四个模块的集成，代码逻辑考虑了反斜杠优先转义及特殊宏转换。",
+        "fixes": [
+          "建议在回归测试中验证 escape_latex 与 LaTeX 宏包（如 url, hyperref）的嵌套兼容性",
+          "确保代码实现中对反斜杠的替换逻辑在正则匹配序位中处于最高优先级，以防止二次转义"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

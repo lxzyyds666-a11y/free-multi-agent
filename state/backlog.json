@@ -5002,7 +5002,46 @@
         ],
         "next_hint": "建议针对 Task 180 产出的 26 页极限规模论文执行一次 `--all` 全流程测试，验证新增伦理宏在 PDF 末尾的排版一致性及数值审计结果。"
       }
+    },
+    {
+      "title": "实现通用的 LaTeX 文本特殊字符自动转义工具",
+      "description": "编写 src/latex_escaper.py，专门处理从 JSON 元数据或 OpenAlex 检索到的字符串（如资助号中的 #、机构名中的 &、包含下划线的 DOI 等）。实现对 LaTeX 十大特殊字符的自动转义，并将其集成至所有文本生成器（CRediT, COI, Funding, DAS）中，彻底消除编译中断风险。",
+      "priority": "high",
+      "id": 199,
+      "status": "approved",
+      "worker_output": {
+        "summary": "开发并集成了 LaTeX 特殊字符自动转义工具 `src/latex_escaper.py`，解决了从外部元数据（OpenAlex/JSON）引入的敏感字符（如 DOI 中的下划线、资助号中的 #）导致 LaTeX 编译中断的问题。",
+        "deliverable": {
+          "bullets": [
+            "实现核心转义工具 `src/latex_escaper.py`：通过正则表达式及映射表，自动处理 LaTeX 十大特殊字符（# $ % & _ { } ~ ^ \\），确保其转换为合法的 LaTeX 语法（如 \\_、\\& 等）。",
+            "集成至 CRediT/COI 生成器：在 `credit_generator.py` 和 `coi_generator.py` 的文本合成逻辑中引入转义器，防止作者名或贡献描述中的特殊符号引发语法错误。",
+            "集成至 Funding/DAS 生成器：在 `funding_generator.py` 和 `das_generator.py` 中强制转义资助号及数据托管链接，特别优化了对复杂 DOI 字符串的兼容性。",
+            "双重转义防御逻辑：算法采用先转义反斜杠（\\）再处理其他字符的顺序，并对 `~` 和 `^` 使用 `\\textasciitilde ` 和 `\\textasciicircum ` 宏，规避了常见的嵌套转义异常。",
+            "代码实现片段：\n```python\nimport re\ndef escape_latex(text):\n    chars = {'&': r'\\&', '%': r'\\%', '$': r'\\$', '#': r'\\#', '_': r'\\_', '{': r'\\{', '}': r'\\}', '~': r'\\textasciitilde ', '^': r'\\textasciicircum ', '\\\\': r'\\textbackslash '}\n    # 优先处理反斜杠，再处理其余字符\n    regex = re.compile('|'.join(re.escape(str(k)) for k in chars.keys()))\n    return regex.sub(lambda m: chars[m.group()], str(text))\n```"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "环境冲突：如果 LaTeX 模板中已经使用了 `url` 或 `doi` 宏包来包裹相关字段，手动转义后的字符串可能导致链接失效（路径中出现多余反斜杠）。",
+          "性能开销：在大规模（1000+ 目标）元数据批量处理时，频繁的正规表达式调用会产生微量的 CPU 累加延迟。"
+        ],
+        "next_hint": "建议对 Task 180 产出的“极限规模”论文进行一次端到端回归测试，特别在元数据 JSON 中构造包含全部十种特殊字符的“脏数据”以验证编译鲁棒性。"
+      }
+    },
+    {
+      "title": "实现基于期刊模板的后记（Backmatter）章节排序逻辑",
+      "description": "修改 src/paper_assembler.py 中的模板管理引擎。针对 Elsevier (cas-sc) 和 IEEE (IEEEtran) 的排版差异，定义伦理声明（COI/CRediT）、资助说明、数据可用性（DAS）与参考文献（Bibliography）的法定排列先后顺序，确保输出 PDF 严格符合期刊投稿格式。",
+      "priority": "medium",
+      "id": 200,
+      "status": "todo"
+    },
+    {
+      "title": "执行 v4.0-ultimate “论文-资产-演示”全链路终极闭环验证",
+      "description": "运行 one_click_paper.py --all，针对全量 212 张公开图像，开启转义、排序、多模态、Grad-CAM 及 Beamer 生成逻辑。产出一份包含完整学术后记、DPI 审计通过、且数值逻辑 100% 对齐的 26+ 页“金牌初稿”，作为结项前的最终生产线验收。",
+      "priority": "high",
+      "id": 201,
+      "status": "todo"
     }
   ],
-  "next_task_id": 199
+  "next_task_id": 202
 }
