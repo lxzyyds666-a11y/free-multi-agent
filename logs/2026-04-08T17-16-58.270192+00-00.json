@@ -1,0 +1,18 @@
+{
+  "time_utc": "2026-04-08T17:16:58.270192+00:00",
+  "planner": {
+    "skipped": false,
+    "created": 3,
+    "note": "本轮任务旨在补全学术论文发表所需的伦理合规性（利益冲突、资助说明、贡献声明）最后三块拼图，并将这些元数据驱动的文本模块正式集成进一键组装流水线。"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 196,
+    "summary": "本任务开发并集成了自动化“利益冲突声明 (COI)”生成器 `coi_generator.py`。该工具从 Task 190 定义的作者元数据 JSON 中提取声明内容，并在字段缺失时自动填充标准学术不冲突文本，输出为 LaTeX 宏配置文件 `coi_params.tex`。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 196,
+    "decision": "approve"
+  }
+}

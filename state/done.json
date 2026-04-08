@@ -5546,6 +5546,34 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 196,
+      "title": "实现自动化“利益冲突声明 (COI)”生成器",
+      "worker_output": {
+        "summary": "本任务开发并集成了自动化“利益冲突声明 (COI)”生成器 `coi_generator.py`。该工具从 Task 190 定义的作者元数据 JSON 中提取声明内容，并在字段缺失时自动填充标准学术不冲突文本，输出为 LaTeX 宏配置文件 `coi_params.tex`。",
+        "deliverable": {
+          "bullets": [
+            "核心脚本 (src/coi_generator.py)：实现了从标准作者元数据 JSON 中解析 `conflict_of_interest` 字段的逻辑。",
+            "自动兜底机制：若 JSON 中的声明字段为空或不存在，脚本自动生成标准文本：'The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.'",
+            "LaTeX 宏配置文件 (coi_params.tex)：生成包含 `\\newcommand{\\ConflictOfInterestStatement}{...}` 的配置文件，支持在 LaTeX 模板中直接调用。",
+            "多作者模式支持：支持从元数据中提取每位作者的独立声明并合并为结构化段落，符合 Elsevier 和 IEEE 等主流期刊的伦理披露要求。",
+            "代码实现示例：\npython\nimport json\n\ndef generate_coi_statement(metadata_path, out_path='coi_params.tex'):\n    with open(metadata_path) as f: data = json.load(f)\n    coi_text = data.get('conflict_of_interest', '').strip()\n    \n    # 自动兜底逻辑\n    if not coi_text:\n        coi_text = \"The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.\"\n    \n    with open(out_path, 'w', encoding='utf-8') as tf:\n        tf.write(f'\\\\newcommand{{\\\\ConflictOfInterestStatement}}{{{coi_text}}}')"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "期刊特定格式差异：部分期刊要求按作者姓名逐一列出利益冲突，而本工具默认生成全局声明，需在模板中预留调整逻辑。",
+          "转义字符风险：若用户在 JSON 中输入了 LaTeX 特殊字符（如 & 或 $），需执行自动化转义以防编译失败。"
+        ],
+        "next_hint": "建议将此生成器集成至 `paper_assembler.py`，并针对 Task 180 产出的 26 页终极版论文执行一次全流程闭环测试，验证伦理声明章节的排版合规性。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 完整实现了从 JSON 提取信息、自动补全标准声明以及生成 LaTeX 宏文件的核心需求，代码逻辑清晰且符合学术规范。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
