@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-04-08T19:51:08.567504+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 198,
+    "summary": "重构了 `paper_assembler.py` 的组装逻辑，实现了 CRediT、COI、Funding 及 DAS 生成器的顺序调用与宏变量统一注入，确保 20+ 页论文符合完整的学术发表伦理规范。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 198,
+    "decision": "approve"
+  }
+}

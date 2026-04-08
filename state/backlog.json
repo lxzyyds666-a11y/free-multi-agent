@@ -4983,7 +4983,25 @@
       "description": "修改 `paper_assembler.py`，在组装阶段依次调用 CRediT (Task 191)、COI (Task 196)、Funding (Task 197) 及 DAS (Task 194) 生成器。将产生的宏变量统一注入 LaTeX 模板的后记（Backmatter）章节，确保 20+ 页论文符合完整的学术发表规范。",
       "priority": "high",
       "id": 198,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "重构了 `paper_assembler.py` 的组装逻辑，实现了 CRediT、COI、Funding 及 DAS 生成器的顺序调用与宏变量统一注入，确保 20+ 页论文符合完整的学术发表伦理规范。",
+        "deliverable": {
+          "bullets": [
+            "重构 `paper_assembler.py`：新增 `assemble_backmatter` 核心方法，依次调度 `credit_generator` (Task 191)、`coi_generator` (Task 196)、`funding_generator` (Task 197) 和 `das_generator` (Task 194)。",
+            "宏变量统一注入：将生成的贡献声明、利益冲突、资助说明及数据可用性文本汇总写入 `backmatter_params.tex`，并通过 `\\input` 指令集成至 LaTeX 模板的后记（Backmatter）章节。",
+            "LaTeX 模板更新：在 `full_paper_template.tex` 尾部定义了 Backmatter 结构，包含 `\\section*{CRediT Authorship Contribution Statement}`、`\\section*{Declaration of Competing Interest}` 等标准排版环境。",
+            "多源元数据桥接：通过 Task 190 定义的 `metadata.json` 作为统一数据源，实现了从单一 JSON 到多项伦理声明的自动化映射，支撑 20+ 页长篇论文的合规性。",
+            "核心逻辑实现示例：\npython\nfrom src import credit_generator, coi_generator, funding_generator, das_generator\n\ndef assemble_backmatter(metadata_path, output_dir):\n    # 1. 顺序生成四大伦理/资助宏文本\n    credit_text = credit_generator.generate_credit_statement(metadata_path)\n    coi_text = coi_generator.generate_coi_statement(metadata_path)\n    funding_text = funding_generator.generate_funding_statement(metadata_path)\n    das_text = das_generator.generate_das(metadata_path)\n    \n    # 2. 汇总写入 LaTeX 宏配置文件\n    with open(os.path.join(output_dir, 'backmatter_params.tex'), 'w', encoding='utf-8') as f:\n        f.write(f'\\\\newcommand{{\\\\ContributionStatement}}{{{credit_text}}}\\n')\n        f.write(f'\\\\newcommand{{\\\\ConflictOfInterestStatement}}{{{coi_text}}}\\n')\n        f.write(f'\\\\newcommand{{\\\\FundingAcknowledgement}}{{{funding_text}}}\\n')\n        f.write(f'\\\\newcommand{{\\\\DataAvailabilityStatement}}{{{das_text}}}\\n')\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "排版位置冲突：不同期刊模板（Elsevier vs IEEE）对 Backmatter 章节的先后顺序有硬性规定，需在 `TemplateManager` 中增加章节排序配置。",
+          "字段缺失风险：若 `metadata.json` 未配置资助信息，需确保 `funding_generator` 返回的兜底文本（No specific grant）在 LaTeX 环境下不产生多余空行。"
+        ],
+        "next_hint": "建议针对 Task 180 产出的 26 页极限规模论文执行一次 `--all` 全流程测试，验证新增伦理宏在 PDF 末尾的排版一致性及数值审计结果。"
+      }
     }
   ],
   "next_task_id": 199
