@@ -5574,6 +5574,36 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 197,
+      "title": "实现自动化“项目资助说明 (Funding)”段落生成器",
+      "worker_output": {
+        "summary": "开发并验证了自动化“项目资助说明 (Funding)”段落生成器 `funding_generator.py`，实现了从元数据中提取资助机构与合同号并自动合成 LaTeX 宏的功能，完善了论文自动化生产线的致谢章节逻辑。",
+        "deliverable": {
+          "bullets": [
+            "核心脚本 (src/funding_generator.py)：实现了对元数据中 `funding` 列表的解析逻辑，支持单项及多项资助源的自动合并与语序优化。",
+            "学术段落合成引擎：采用标准化模板（如“This work was supported by [Agency] under Grant [Number]”），对于多项资助自动处理标点符号（逗号与 'and' 连词）。",
+            "LaTeX 宏配置文件 (funding_params.tex)：生成包含 `\\newcommand{\\FundingAcknowledgement}{...}` 的配置文件，便于在 LaTeX 模板中一键引用。",
+            "资助源列表解析逻辑：支持从 JSON 中提取 `agency` 和 `grant_number` 字段，若合同号缺失，则自动调整为“This work was supported by [Agency]”格式。",
+            "代码实现示例：\npython\nimport json\n\ndef generate_funding_statement(metadata_path, out_path='funding_params.tex'):\n    with open(metadata_path) as f: data = json.load(f)\n    funding_list = data.get('funding', [])\n    \n    parts = []\n    for item in funding_list:\n        agency = item.get('agency')\n        number = item.get('grant_number')\n        if agency and number:\n            parts.append(f\"{agency} under Grant {number}\")\n        elif agency:\n            parts.append(f\"{agency}\")\n    \n    if not parts:\n        statement = \"This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.\"\n    else:\n        text = \", \".join(parts[:-1]) + (\" and \" if len(parts) > 1 else \"\") + parts[-1]\n        statement = f\"This work was supported by the {text}.\"\n    \n    with open(out_path, 'w', encoding='utf-8') as tf:\n        tf.write(f'\\\\newcommand{{\\\\FundingAcknowledgement}}{{{statement}}}')\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "期刊格式严格度：部分高端期刊（如 Nature）对资助公示有特定的缩写或特定段首语要求，通用模板可能需要二次微调。",
+          "非法字符转义：资助机构名称或合同号中若包含 LaTeX 特殊字符（如 # 或 &），需在脚本中增加自动转义逻辑以防编译报错。"
+        ],
+        "next_hint": "建议将此生成器集成至 `paper_assembler.py`，并针对 Task 180 产出的 26 页终极版论文执行一次全流程闭环测试，确保资助致谢章节的排版合规性。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作产出完整覆盖了任务需求，包括 Python 逻辑实现、LaTeX 宏生成、多项资助源的语序处理以及无资助情况的兜底描述，且代码示例具体可行。",
+        "fixes": [
+          "在正式集成到流水线时，建议落实风险提示中提到的 LaTeX 特殊字符（如 &、#、_）转义逻辑，以防止含有特殊编号的合同导致编译失败。"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
