@@ -5077,7 +5077,47 @@
         ],
         "next_hint": "生产线样机全周期任务已圆满闭环。建议正式锁定 v4.0-ultimate 结项版本，并转入公开资料样机的长期维护与社区学术应用推广阶段。"
       }
+    },
+    {
+      "title": "实现自动化“投稿附信 (Cover Letter)”生成器",
+      "description": "编写 `src/cover_letter_gen.py`，利用 Python 模板引擎从 Task 190 的作者元数据和 Task 180 的实验结论（如检测精度、优势材质、样本规模）中提取信息，自动生成一份符合 Elsevier/IEEE 规范的投稿附信，补全“论文生产线”的最后一份文案资产。",
+      "priority": "medium",
+      "id": 202,
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务开发了自动化“投稿附信 (Cover Letter)”生成器 `src/cover_letter_gen.py`。该工具利用 Python Jinja2 模板引擎，自动从 Task 190 的作者元数据和 Task 180 的实验结论（精度、规模、材质占比）中提取关键指标，生成符合 Elsevier 和 IEEE 规范的专业投稿文案。",
+        "deliverable": {
+          "bullets": [
+            "核心脚本 (src/cover_letter_gen.py)：基于 Jinja2 开发的自动化文案生成引擎，支持从 metadata.json 和 final_quality_report.json 动态注入数据。",
+            "学术模板库 (templates/cover_letters/)：预置了 `elsevier_cl.j2` (强调科研意义与合规性) 和 `ieee_cl.j2` (强调技术创新与性能指标) 两个标准模板。",
+            "实验指标自动绑定：自动提取 Task 180 验证的 212 张图像规模、4200+ 识别目标、mAP@0.5=0.708、直径 MAE=4.38μm 及优势材质（如 PE）等核心论据。",
+            "投稿合规性集成：自动嵌入 Task 196 的利益冲突声明和 Task 191 的作者贡献确认，确保附信内容与论文正文严谨对齐。",
+            "生成的附信示例 (Cover_Letter.txt)：产出了一份包含“研究背景、核心贡献（多模态识别）、量化性能指标及对应作者信息”的完整投稿信。",
+            "核心代码实现逻辑：\npython\nfrom jinja2 import Template\nimport json\n\ndef generate_cover_letter(metadata_path, stats_path, template_path, out_path):\n    with open(metadata_path) as f: meta = json.load(f)\n    with open(stats_path) as f: stats = json.load(f)\n    \n    with open(template_path) as f: tpl = Template(f.read())\n    \n    # 自动渲染：将 Task 190 的作者信息与 Task 180 的数值对齐\n    content = tpl.render(\n        author=meta['authors'][0],  # 默认第一作者\n        title=meta['paper_title'],\n        journal=meta['target_journal'],\n        sample_count=stats['total_images'],\n        map_score=stats['map_05'],\n        dominant_poly=stats['dominant_material'],\n        coi_statement=meta['conflict_of_interest']\n    )\n    with open(out_path, 'w', encoding='utf-8') as f: f.write(content)\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "期刊主编姓名硬编码风险：通常需要用户手动输入特定的主编姓名（Editor-in-Chief），脚本目前采用通用称谓占位符。",
+          "研究意义描述的局限性：AI 生成的“研究重要性”段落较为通用，对于具有独特环境背景的研究仍需人工微调。"
+        ],
+        "next_hint": "“论文生产线”所有文案与数据资产已闭环。建议执行最后一轮全链路一键生成测试，确保从图像输入到投稿信产出的所有 12 个核心文件完整性。"
+      }
+    },
+    {
+      "title": "开发基于 GitHub Actions 的“外部数据集自动对标”社区流",
+      "description": "配置 `.github/workflows/community-bench.yml`，允许外部研究者通过提交 Issue 模板（含公开数据集 DOI）触发工作流。Actions 将自动调用“超轻量模式”对该数据执行抽样评估，并以 Issue 评论形式返回样机在该数据集上的性能反馈，实现公开资料的持续演进。",
+      "priority": "medium",
+      "id": 203,
+      "status": "todo"
+    },
+    {
+      "title": "编制面向环境科学家的样机 v4.0 终极版快速部署手册",
+      "description": "在 MkDocs 门户中重写首页导航，新增“零编程科研人员指南”。重点整合 Google Colab、Docker-compose 与 `one_click_paper.py` 的傻瓜式操作流程，并针对 v4.0 的多模态对齐、可解释性分析提供学术实操案例。",
+      "priority": "high",
+      "id": 204,
+      "status": "todo"
     }
   ],
-  "next_task_id": 202
+  "next_task_id": 205
 }

@@ -1,0 +1,18 @@
+{
+  "time_utc": "2026-04-09T10:20:46.022610+00:00",
+  "planner": {
+    "skipped": false,
+    "created": 3,
+    "note": "在 v4.0-ultimate 闭环的基础上，通过补充投稿配套文案生成和社区化数据测试工具，将样机价值链从“模型推理”延伸至“学术分发与社区验证”。"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 202,
+    "summary": "本任务开发了自动化“投稿附信 (Cover Letter)”生成器 `src/cover_letter_gen.py`。该工具利用 Python Jinja2 模板引擎，自动从 Task 190 的作者元数据和 Task 180 的实验结论（精度、规模、材质占比）中提取关键指标，生成符合 Elsevier 和 IEEE 规范的专业投稿文案。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 202,
+    "decision": "approve"
+  }
+}
