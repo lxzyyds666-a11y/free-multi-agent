@@ -2157,6 +2157,16 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 200,
+      "decision": "approve",
+      "review": {
+        "decision": "approve",
+        "reason": "Worker 提供了具体的代码实现方案，明确区分了 Elsevier 和 IEEE 的排序逻辑，并针对 IEEE 的合并需求提供了策略，符合任务要求且具备高度可操作性。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }

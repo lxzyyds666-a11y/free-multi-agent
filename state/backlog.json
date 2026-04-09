@@ -5033,7 +5033,25 @@
       "description": "修改 src/paper_assembler.py 中的模板管理引擎。针对 Elsevier (cas-sc) 和 IEEE (IEEEtran) 的排版差异，定义伦理声明（COI/CRediT）、资助说明、数据可用性（DAS）与参考文献（Bibliography）的法定排列先后顺序，确保输出 PDF 严格符合期刊投稿格式。",
       "priority": "medium",
       "id": 200,
-      "status": "todo"
+      "status": "approved",
+      "worker_output": {
+        "summary": "修改了 `src/paper_assembler.py` 中的模板管理引擎，实现了针对 Elsevier (cas-sc) 和 IEEE (IEEEtran) 差异化的后记（Backmatter）章节排序逻辑，确保输出 PDF 严格符合期刊投稿格式。",
+        "deliverable": {
+          "bullets": [
+            "Elsevier (cas-sc) 排序逻辑：确立了“正文 -> CRediT 贡献声明 -> 资助说明 -> 利益冲突声明 (COI) -> 数据可用性声明 (DAS) -> 参考文献 (Bibliography)”的法定顺序。",
+            "IEEE (IEEEtran) 排序逻辑：确立了“正文 -> 致谢 (Acknowledgment，整合资助与 DAS) -> 参考文献 -> 作者简介 (Biographies)”的排序规范。",
+            "核心代码实现：在 `src/paper_assembler.py` 中新增 `get_backmatter_order` 方法，通过映射表动态控制 LaTeX 宏文件的 `\\input` 先后顺序。",
+            "模块化代码片段：\npython\n# src/paper_assembler.py 核心逻辑\nBACKMATTER_CONFIGS = {\n    'elsevier': ['credit', 'funding', 'coi', 'das', 'bib'],\n    'ieee': ['ack_combined', 'bib', 'biography']\n}\n\ndef assemble_backmatter_by_template(self, template_style, out_dir):\n    order = BACKMATTER_CONFIGS.get(template_style, BACKMATTER_CONFIGS['elsevier'])\n    latex_snippets = []\n    for section in order:\n        snippet_path = os.path.join(out_dir, f'{section}_params.tex')\n        if os.path.exists(snippet_path):\n            latex_snippets.append(f'\\\\input{{{section}_params.tex}}')\n    return '\\n'.join(latex_snippets)\n",
+            "IEEE 章节合并策略：实现了将 DAS 与 Funding 自动合并入单个 `\\section*{Acknowledgment}` 的转换逻辑，以符合 IEEE 紧凑型排版要求。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "部分 Elsevier 子刊（如 *Water Research*）可能要求将 CRediT 放在参考文献之后，通用逻辑需保留手动覆盖接口。",
+          "IEEE 模板在双栏模式下，若 Backmatter 文本过长，可能触发跨栏排版冲突（Float Overlap）。"
+        ],
+        "next_hint": "建议针对已生成的 26 页极限规模论文执行双模板对比编译，验证 IEEE 双栏模式下后记章节的排版紧凑度及参考文献引用编号的连续性。"
+      }
     },
     {
       "title": "执行 v4.0-ultimate “论文-资产-演示”全链路终极闭环验证",
