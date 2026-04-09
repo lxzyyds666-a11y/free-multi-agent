@@ -5751,6 +5751,37 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 203,
+      "title": "开发基于 GitHub Actions 的“外部数据集自动对标”社区流",
+      "worker_output": {
+        "summary": "開發並配置了基於 GitHub Actions 的「外部數據集自動對標」社區流，實現了通過 Issue 模板觸發、自動抓取公開數據並返回樣機性能反饋的持續演進閉環。",
+        "deliverable": {
+          "bullets": [
+            "Issue 模板配置 (`.github/ISSUE_TEMPLATE/bench-request.yml`): 定義了包含數據集名稱、公開 DOI 及授權協議聲明的標準化申請表格。",
+            "GitHub Action 工作流 (`.github/workflows/community-bench.yml`): 配置了基於 `issues: opened` 觸發的自動化流水線，包含 DOI 解析、數據流式獲取、超輕量推理及結果回填步驟。",
+            "DOI 解析與獲取集成: 調用 `fetch_public_data.py` 對 Issue 描述中的 DOI 進行解析，自動從 Zenodo 或其他學術存儲庫獲取樣本圖像。",
+            "超輕量對標執行單元: 指定 Actions 在容器內運行 `python micro_cli.py --ultra_light` 模式，在有限的 GitHub Runner 資源下完成對外部數據的抽樣評估。",
+            "自動化評論回饋機制: 利用 `actions/github-script` 將生成的 `benchmark_report.json` 核心指標（如檢測數、置信度分佈）自動格式化為 Markdown 並回覆至對應 Issue。"
+          ]
+        },
+        "confidence": "tentative",
+        "risks": [
+          "不同學術平台（Zenodo/Figshare/Kaggle）的 API 訪問限制或 DOI 解析邏輯差異可能導致數據獲取失敗。",
+          "GitHub Runner 磁盤空間與內存有限，若外部數據集單體文件過大，易導致 Action 運行超時或崩潰。"
+        ],
+        "next_hint": "建議在 GitHub 倉庫執行一次端到端測試，提交一個包含真實 Zenodo DOI 的 Issue，驗證工作流在解析、下載及自動評論環節的連通性。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "交付物涵盖了从 Issue 模板定义、工作流配置到数据解析及轻量化评估的全链路设计，逻辑完整且符合“超轻量”的任务约束。",
+        "fixes": [
+          "建议在 .github/workflows/community-bench.yml 中显式限制数据下载的大小上限，防止大文件导致 Runner 磁盘溢出。",
+          "建议在脚本中增加对常见学术平台（如 Zenodo, Figshare）DOI 解析的单元测试用例。"
+        ],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
