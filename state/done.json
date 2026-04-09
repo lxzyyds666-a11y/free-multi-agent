@@ -5782,6 +5782,35 @@
         ],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 204,
+      "title": "编制面向环境科学家的样机 v4.0 终极版快速部署手册",
+      "worker_output": {
+        "summary": "本任务完成了“面向环境科学家的微碳屑识别样机 v4.0 终极版快速部署手册”的编制。在 MkDocs 门户中重构了首页导航，新增了针对非计算机专业人员的“零编程科研人员指南”，重点集成了 Google Colab、Docker 与 `one_click_paper.py` 的傻瓜式操作流，并补全了多模态对齐与 Grad-CAM 可解释性的学术实操案例。",
+        "deliverable": {
+          "bullets": [
+            "MkDocs 导航体系重构：在 `mkdocs.yml` 中建立了包含‘首页、快速部署、零编程指南、成果画廊、性能看板、API 文档’的结构化导航，并开启了 Material 搜索与 MathJax 支持。",
+            "零编程科研人员指南：专门编写了 `docs/researcher_guide.md`，推荐“Google Colab 云端一键运行”作为环境科学家的首选路径，彻底规避复杂的 GPU 驱动与 LaTeX 配置。",
+            "一键化操作流集成：手册详细说明了 `one_click_paper.py --all` 命令的执行流程，实现从输入显微图像到产出 26 页 PDF 论文、Beamer 幻灯片及数据资产包的全自动化体验。",
+            "v4.0 实操案例库：新增了‘形态-光谱（FTIR）空间对齐’实操步骤与‘Grad-CAM 注意力热力图’在纤维鉴定中的语义解析案例，帮助用户理解多模态识别的物理内涵。",
+            "容器化一键部署：整合了 Docker-compose 部署方案，提供 `docker-compose up -d` 快速启动 Streamlit Web 交互界面的指令，支持用户通过浏览器直接进行材质看板分析。",
+            "快速查阅表单：整理了包含 DOI 引用、开源协议说明（Apache-2.0）、MD5 校验机制在内的“科研诚信自查手册”，确保产出符合学术发表的合规性要求。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "非容器环境下 Windows 系统的 TeX Live 路径配置对零编程人员仍具挑战，需强制引导至 Colab 或 Docker 路径。",
+          "Google Colab 免费版显存（T4）在处理 4K 多模态大图时可能触及资源阈值，需在手册中明确注明“切片推理”参数的调优建议。"
+        ],
+        "next_hint": "建议将此手册链接作为 GitHub Release v4.0-ultimate 的首要说明入口，并配合 Task 183 的交互式门户正式发布 GitHub Pages。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作结果完整覆盖了 MkDocs 导航重构、零编程指南编写、一键化工具集成及 v4.0 核心技术案例，内容具体且符合环境科学家受众需求。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
