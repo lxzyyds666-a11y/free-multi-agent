@@ -5154,7 +5154,47 @@
         ],
         "next_hint": "建议将此手册链接作为 GitHub Release v4.0-ultimate 的首要说明入口，并配合 Task 183 的交互式门户正式发布 GitHub Pages。"
       }
+    },
+    {
+      "title": "实现自动化“图形摘要 (Graphical Abstract)”合成工具",
+      "description": "编写 src/graphical_abstract_gen.py，利用 Pillow 库从 Task 180 产出的资产中提取原始显微图、材质叠加图及粒径分布直方图，按 1:2 或 4:3 比例自动拼贴并添加流程箭头，产出符合期刊投稿要求的图形摘要图片。",
+      "priority": "medium",
+      "id": 205,
+      "status": "approved",
+      "worker_output": {
+        "summary": "本任务开发了 `src/graphical_abstract_gen.py` 工具，实现了自动化合成期刊投稿所需的“图形摘要 (Graphical Abstract)”。工具支持将原始显微图、材质叠加图及粒径分布直方图按 1:2 或 4:3 比例进行标准化拼贴，并自动添加引导箭头与学术标注。",
+        "deliverable": {
+          "bullets": [
+            "核心脚本 (src/graphical_abstract_gen.py)：利用 Pillow 库构建的图形合成引擎，支持 1:2（三栏横向）和 4:3（田字格/组合型）两种主流布局。",
+            "资源提取逻辑：自动从 Task 180 的资产目录中识别并读取 `raw_sample.jpg`、`material_overlay.png` (Task 141) 和 `distribution.png` (Task 6)。",
+            "图形绘制组件：实现了基于 `ImageDraw` 的流程箭头绘制函数，支持自定义箭头的粗细、颜色及指向坐标，用于展示“采集-识别-统计”的逻辑流。",
+            "学术标注系统：支持在拼贴图中自动注入文本标签（如 'Optical Micrograph', 'Multimodal Identification', 'Size Statistics'），并预设了对衬线字体（Times New Roman 替代品）的支持。",
+            "代码实现示例：\npython\nfrom PIL import Image, ImageDraw, ImageFont\n\nclass GraphicalAbstractGen:\n    def generate_1_2_layout(self, raw_path, overlay_path, hist_path, out_path):\n        # 创建 2000x1000 画布\n        canvas = Image.new('RGB', (2000, 1000), (255, 255, 255))\n        # 比例缩放与粘贴 (Panel A, B, C)\n        # ... \n        # 绘制引导箭头\n        draw = ImageDraw.Draw(canvas)\n        self._draw_arrow(draw, (650, 500), (750, 500)) # A -> B\n        self._draw_arrow(draw, (1350, 500), (1450, 500)) # B -> C\n        canvas.save(out_path, dpi=(300, 300))",
+            "标准化输出：产出符合主流期刊（如 Elsevier, ACS）要求的 300 DPI 高清图片，文件名固定为 `graphical_abstract.png`。"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "输入图像的纵横比如果不一致（如直方图是长方形而显微图是正方形），自动缩放可能导致画面出现大面积留白或裁剪。",
+          "Pillow 库对复杂矢量箭头的支持有限，在高分辨率下箭头边缘可能存在轻微锯齿感。"
+        ],
+        "next_hint": "建议将此合成工具集成至 one_click_paper.py 总控脚本中，并在 26 页论文初稿的封面自动引用生成的图形摘要。"
+      }
+    },
+    {
+      "title": "实现自动化“审稿意见回复 (Response to Reviewers)”模板生成器",
+      "description": "编写 src/reviewer_response_gen.py，基于 Task 180 的审计结果（如精度 MAE、召回率 Recall），针对“模型可靠性”、“数据脱敏合规性”及“算力效率”等 3-5 个典型审稿问题，自动生成带有量化证据的回复文本模板。",
+      "priority": "low",
+      "id": 206,
+      "status": "todo"
+    },
+    {
+      "title": "实现基于 Jinja2 的“期刊投稿元数据”自动化核查表",
+      "description": "编写脚本提取 Task 190 的作者信息、Task 191 的贡献声明及 Task 198 的伦理宏，生成一份结构化的 submission_checklist.md，对照 Elsevier/IEEE 投稿系统的必填字段进行预对齐，确保投稿资料无遗漏。",
+      "priority": "medium",
+      "id": 207,
+      "status": "todo"
     }
   ],
-  "next_task_id": 205
+  "next_task_id": 208
 }
