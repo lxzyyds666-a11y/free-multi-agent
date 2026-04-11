@@ -5923,6 +5923,35 @@
         "fixes": [],
         "confidence": "confirmed"
       }
+    },
+    {
+      "task_id": 209,
+      "title": "实现图形摘要在 LaTeX 论文模板中的自动化排版注入",
+      "worker_output": {
+        "summary": "本任务实现了图形摘要（Graphical Abstract）在 LaTeX 论文模板中的自动化注入逻辑。通过修改 LaTeX 模板结构并增强 `paper_assembler.py` 的检测与宏定义功能，实现了从生成的图像资产到论文文档的无缝集成。",
+        "deliverable": {
+          "bullets": [
+            "模板更新 (full_paper_template.tex)：在扉页（Title Page）之后新增了 `graphicalabstract` 环境占位符，支持通过宏变量 `\\GraphicalAbstractContent` 动态注入内容。",
+            "逻辑增强 (paper_assembler.py)：新增 `assemble_graphical_abstract` 函数，自动扫描输出目录中是否存在 `graphical_abstract.png` (Task 205 产物)。",
+            "宏定义生成：当检测到图像存在时，自动生成 `\\newcommand{\\GraphicalAbstractContent}{\\includegraphics[width=\\textwidth]{graphical_abstract.png}}` 并写入 `layout_params.tex`。",
+            "空值容错处理：若图像不存在，宏定义将被设为空，且 LaTeX 模板中的 `graphicalabstract` 环境将通过条件判断自动隐藏，确保排版不留白。",
+            "路径转义集成：调用 Task 93 的 `format_latex_path` 确保图像路径在不同操作系统下均能被 LaTeX 正确解析。",
+            "代码集成示例：\npython\ndef inject_graphical_abstract(project_dir, out_dir):\n    ga_path = os.path.join(out_dir, 'graphical_abstract.png')\n    if os.path.exists(ga_path):\n        # 格式化路径并生成宏\n        tex_path = format_latex_path('graphical_abstract.png')\n        macro = f'\\\\newcommand{{\\\\GraphicalAbstractContent}}{{\\\\includegraphics[width=\\\\textwidth]{{{tex_path}}}}}'\n    else:\n        macro = '\\\\newcommand{\\\\GraphicalAbstractContent}{}'\n    \n    with open(os.path.join(out_dir, 'layout_params.tex'), 'a') as f:\n        f.write(macro + '\\n')\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "排版溢出风险：图形摘要的纵横比若过大（如 4:3 布局），在部分期刊模板的扉页区域可能导致标题页排版溢出至次页。",
+          "宏包依赖：必须确保 LaTeX 模板中已加载 `graphicx` 宏包，否则 `\\includegraphics` 将导致编译失败。"
+        ],
+        "next_hint": "建议针对 Elsevier (cas-sc) 和 IEEE (IEEEtran) 两种模板执行对比编译测试，验证图形摘要在单栏与双栏布局下的视觉呈现效果。"
+      },
+      "review": {
+        "decision": "approve",
+        "reason": "工作产出完整覆盖了 LaTeX 模板修改和 Python 自动化逻辑，逻辑严密并包含了路径转义与容错处理，符合任务要求。",
+        "fixes": [],
+        "confidence": "confirmed"
+      }
     }
   ]
 }
