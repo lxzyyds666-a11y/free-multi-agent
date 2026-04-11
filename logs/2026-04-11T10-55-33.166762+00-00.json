@@ -1,0 +1,18 @@
+{
+  "time_utc": "2026-04-11T10:55:33.166762+00:00",
+  "planner": {
+    "skipped": false,
+    "created": 3,
+    "note": "本轮任务旨在将新开发的‘投稿辅助工具集’（投稿信、核查表、图形摘要）整合进主驱动脚本，完成从‘技术识别’到‘投稿准备’的最后闭环。"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 208,
+    "summary": "修改了 `one_click_paper.py` 总控脚本，新增 `--scholar` 参数，实现了投稿资产（投稿信、图形摘要、投稿核查表）的自动化生成与最终 ZIP 资产包的一键式归集。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 208,
+    "decision": "approve"
+  }
+}

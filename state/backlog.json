@@ -5230,7 +5230,45 @@
         ],
         "next_hint": "建议将此核查表集成至 one_click_paper.py，并在资产打包前强制运行，作为“论文工厂”生产线的最后一道质量门禁。"
       }
+    },
+    {
+      "title": "集成投稿助手模块至一键生产线总控脚本",
+      "description": "修改 `one_click_paper.py`，新增 `--scholar` 参数。实现在全流程运行时自动调用 Task 202（投稿信）、Task 205（图形摘要）和 Task 207（投稿核查表）生成器，将所有文案资产同步归集至最终 ZIP 资产包中。",
+      "priority": "high",
+      "id": 208,
+      "status": "approved",
+      "worker_output": {
+        "summary": "修改了 `one_click_paper.py` 总控脚本，新增 `--scholar` 参数，实现了投稿资产（投稿信、图形摘要、投稿核查表）的自动化生成与最终 ZIP 资产包的一键式归集。",
+        "deliverable": {
+          "bullets": [
+            "新增 CLI 参数：在 `one_click_paper.py` 中集成了 `--scholar` 标志位，允许用户在常规论文生成基础上同步开启“投稿助手”模块。",
+            "子模块自动化调度：在总控流水线末端增加了对 Task 202（投稿信）、Task 205（图形摘要）和 Task 207（核查表）的顺序执行逻辑，实现了跨模块数据的自动流转。",
+            "资产包归集升级：更新了资产打包函数，将生成的 `Cover_Letter.txt`、`graphical_abstract.png` 和 `submission_checklist.md` 自动纳入最终的 ZIP 压缩包及科研诚信清单。",
+            "核心集成逻辑示例：\npython\nif args.scholar or args.all:\n    print('[Step 8/8] Running Scholar Helper Modules...')\n    # 调用 Task 202\n    subprocess.run(['python', 'src/cover_letter_gen.py', '--meta', args.metadata, '--out', cl_path])\n    # 调用 Task 205\n    subprocess.run(['python', 'src/graphical_abstract_gen.py', '--assets', args.output, '--out', ga_path])\n    # 调用 Task 207\n    subprocess.run(['python', 'src/submission_checker.py', '--meta', args.metadata, '--out', chk_path])\n    # 将产出添加至资产列表以供 ZIP 打包\n    final_assets.extend([cl_path, ga_path, chk_path])\n"
+          ]
+        },
+        "confidence": "confirmed",
+        "risks": [
+          "若前置推理步骤因算力限制跳过了材质叠加图（Task 141）的生成，图形摘要工具将因缺少输入源而报错中止。",
+          "不同操作系统下的 `subprocess` 路径分隔符差异可能影响跨模块调用的稳定性。"
+        ],
+        "next_hint": "生产线投稿辅助功能已闭环。建议针对不同期刊（Elsevier/IEEE）的元数据配置运行全流程压力测试，验证投稿信与核查表的针对性生成效果。"
+      }
+    },
+    {
+      "title": "实现图形摘要在 LaTeX 论文模板中的自动化排版注入",
+      "description": "修改 `full_paper_template.tex`，在扉页或引言前增加 `Graphical Abstract` 专用环境。更新 `paper_assembler.py`，使其能识别 `graphical_abstract.png` 是否存在，并自动通过 LaTeX 宏将其引用至论文初稿中。",
+      "priority": "medium",
+      "id": 209,
+      "status": "todo"
+    },
+    {
+      "title": "执行 v4.0-scholar 终极版全量资产导出与数据一致性终审",
+      "description": "运行 `one_click_paper.py --all --scholar`，针对全量 212 张图像产出包含“论文+幻灯片+投稿信+核查表+图形摘要”的完整学术包裹。调用审计工具验证文案、摘要与底层 detections.json 间的数值逻辑是否 100% 闭环。",
+      "priority": "high",
+      "id": 210,
+      "status": "todo"
     }
   ],
-  "next_task_id": 208
+  "next_task_id": 211
 }
