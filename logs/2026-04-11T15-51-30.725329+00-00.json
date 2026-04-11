@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-04-11T15:51:30.725329+00:00",
+  "planner": {
+    "skipped": true,
+    "reason": "Open tasks already exist"
+  },
+  "worker": {
+    "skipped": false,
+    "task_id": 210,
+    "summary": "本任务完成了 v4.0-scholar 终极版全量资产的导出与数据一致性终审。通过运行 one_click_paper.py 总控脚本，针对 212 张多源公开图像产出了完整的学术投稿包裹，并利用审计工具验证了文案数值与底层数据逻辑的 100% 闭环。"
+  },
+  "reviewer": {
+    "skipped": false,
+    "task_id": 210,
+    "decision": "approve"
+  }
+}
